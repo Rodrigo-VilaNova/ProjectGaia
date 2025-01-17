@@ -1,0 +1,66 @@
+/* Landing page styles */
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(120deg, #fff9ce, #fff98b);
+  color: #2a7125;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #f5d001;
+}
+
+p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #73a634;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn {
+  font-size: 1.25rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-btn {
+  background-color: #afdf3c;
+  color: white;
+}
+
+.register-btn {
+  background-color: #73a634;
+  color: white;
+}
+
+a {
+  text-decoration: none;
+  color: #2a7125;
+  font-size: 1.1rem;
+}
+
+  a:hover {
+    color: #f5d001;
+  }
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+a.router-link-active {
+  font-weight: bold;
+}
