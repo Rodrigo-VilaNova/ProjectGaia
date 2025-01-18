@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using static System.Net.Mime.MediaTypeNames;
@@ -72,23 +75,29 @@ namespace ProjectGaia.Server.Services
             return Convert.ToBase64String(token);
         }
 
-        public async Task<Account?> GetAccount(AppDbContext context, string token)
+        public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, string token, bool transactionless)
         {
             byte[] hashedToken = HashToken(token);
             string base64HashedToken = Convert.ToBase64String(hashedToken);
-            using var transaction = await context.Database.BeginTransactionAsync();
+
+            IDbContextTransaction? transaction = null;
+
+            if (!transactionless) transaction = await context.Database.BeginTransactionAsync();
+
             try
             {
                 Session? session = await context.Sessions.FirstOrDefaultAsync(s => s.Token == base64HashedToken);
 
-                if (session == null) return null;
+                if (session == null) return (null, (401, "Invalid session token"));
 
                 if (session.Expiration < DateTime.UtcNow)
                 {
                     context.Sessions.Remove(session);
                     await context.SaveChangesAsync();
-                    await transaction.CommitAsync();
-                    return null;
+
+                    if (!transactionless && transaction != null) await transaction.CommitAsync();
+
+                    return (null, (401, "Invalid session token"));
                 }
                 
                 session.Expiration = DateTime.UtcNow.AddDays(30);
@@ -97,64 +106,35 @@ namespace ProjectGaia.Server.Services
 
                 Account? account = await context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.ID == session.AccountID);
 
-                await transaction.CommitAsync();
+                if (!transactionless && transaction != null)
+                {
+                    await transaction.CommitAsync();
+                    transaction.Dispose();
+                }
 
-                return account;
+                return (account, null);
             }
             catch
             {
-                await transaction.RollbackAsync();
-                return null;
+                if (!transactionless && transaction != null)
+                {
+                    await transaction.RollbackAsync();
+                    transaction.Dispose();
+                }
+
+                return (null, (500, "Internal server error"));
             } 
         }
 
-        public async Task<Account?> GetAccountNoTransaction(AppDbContext context, string token)
+        public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, HttpRequest request, bool transactionless = false)
         {
-            byte[] hashedToken = HashToken(token);
-            string base64HashedToken = Convert.ToBase64String(hashedToken);
-            Session? session = await context.Sessions.FirstOrDefaultAsync(s => s.Token == base64HashedToken);
-
-            if (session == null) return null;
-
-            if (session.Expiration < DateTime.UtcNow)
-            {
-                context.Sessions.Remove(session);
-                await context.SaveChangesAsync();
-                return null;
-            }
-
-            session.Expiration = DateTime.UtcNow.AddDays(30);
-            context.Sessions.Update(session);
-            await context.SaveChangesAsync();
-
-            Account? account = await context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.ID == session.AccountID);
-            return account;
-        }
-
-        public async Task<Account?> GetAccount(AppDbContext context, HttpRequest request)
-        {
-            if (!request.Headers.ContainsKey("Authorization")) return null; //Unauthorized("Authorization header is missing.");
+            if (!request.Headers.ContainsKey("Authorization")) return (null, (401, "Authorization header is missing"));
             string authHeader = request.Headers["Authorization"].ToString();
-            if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) return null; //Unauthorized("Invalid authorization scheme.");
+            if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) return (null, (401, "Invalid authorization scheme"));
 
             string token = authHeader.Substring("Bearer ".Length).Trim();
 
-            Account? account = await GetAccount(context, token);
-
-            return account;
-        }
-
-        public async Task<Account?> GetAccountNoTransaction(AppDbContext context, HttpRequest request)
-        {
-            if (!request.Headers.ContainsKey("Authorization")) return null; //Unauthorized("Authorization header is missing.");
-            string authHeader = request.Headers["Authorization"].ToString();
-            if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) return null; //Unauthorized("Invalid authorization scheme.");
-
-            string token = authHeader.Substring("Bearer ".Length).Trim();
-
-            Account? account = await GetAccountNoTransaction(context, token);
-
-            return account;
+            return await GetAccount(context, token, transactionless);
         }
     }
 }

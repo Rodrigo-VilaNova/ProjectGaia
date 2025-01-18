@@ -20,7 +20,7 @@ namespace ProjectGaia.Server
                 options.AddPolicy("AllowSpecificOrigin",
                     builder =>
                     {
-                        builder.WithOrigins("https://127.0.0.1:58120") // Add your front-end URL here
+                        builder.WithOrigins(["https://127.0.0.1:58120", "https://localhost:58120"]) // Add your front-end URL here
                                .AllowAnyHeader()
                                .AllowAnyMethod()
                                .AllowCredentials(); // If you need cookies/auth

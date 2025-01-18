@@ -130,8 +130,10 @@ namespace ProjectGaia.Server.Controllers
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAccount()
         {
-            Account? account = await _tokenService.GetAccount(_context, Request);
-            if (account == null) return Unauthorized("Invalid or missing session token.");
+            var result = await _tokenService.GetAccount(_context, Request);
+            Account? account = result.account;
+
+            if (account == null) return StatusCodeResult(result.status);
             if (account.Status == AccountStatus.Blocked) return Forbid("Account is blocked and cannot be deleted.");
 
             await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
@@ -151,9 +153,10 @@ namespace ProjectGaia.Server.Controllers
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                Account? account = await _tokenService.GetAccountNoTransaction(_context, Request);
+                var result = await _tokenService.GetAccount(_context, Request, true);
+                Account? account = result.account;
 
-                if (account == null) return Unauthorized("Invalid or missing session token.");
+                if (account == null) return StatusCodeResult(result.status);
                 if (account.Status == AccountStatus.Blocked) return Forbid("Account is blocked and can't change password.");
 
                 if (!_passwordService.IsCorrectPassword(passwordDTO.OldPassword, account.Password ?? []))
@@ -192,5 +195,10 @@ namespace ProjectGaia.Server.Controllers
                 return StatusCode(500, "Error updating password");
             }
         }
+
+        private ObjectResult StatusCodeResult((int code, string? message)? status)
+        {
+            return StatusCode(status?.code ?? 0, status?.message);
+        } 
     }
 }

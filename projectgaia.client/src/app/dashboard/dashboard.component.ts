@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [RouterModule]
+  imports: [RouterModule, CommonModule]
 })
 export class DashboardComponent {
   constructor(private router: Router, private http: HttpClient) { }
