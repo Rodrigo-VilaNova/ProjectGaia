@@ -108,7 +108,7 @@ namespace ProjectGaia.Server.Controllers
             } 
 #pragma warning restore CS8604 // Possible null reference argument.
 
-            if (account.Status == AccountStatus.Blocked) return Forbid("Account is blocked and login is not allowed.");
+            if (account.Status == AccountStatus.Blocked) return StatusCodeResult((403, "Account is blocked and login is not allowed."));
 
             int accountID = account.ID;
 
@@ -150,7 +150,7 @@ namespace ProjectGaia.Server.Controllers
             Account? account = result.account;
 
             if (account == null) return StatusCodeResult(result.status);
-            if (account.Status == AccountStatus.Blocked) return Forbid("Account is blocked and cannot be deleted.");
+            if (account.Status == AccountStatus.Blocked) return StatusCodeResult((403, "Account is blocked and cannot be deleted."));
 
             await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
             await _context.AccessLogs.Where(al => al.AccountID == account.ID).ExecuteDeleteAsync();
@@ -173,7 +173,7 @@ namespace ProjectGaia.Server.Controllers
                 Account? account = result.account;
 
                 if (account == null) return StatusCodeResult(result.status);
-                if (account.Status == AccountStatus.Blocked) return Forbid("Account is blocked and can't change password.");
+                if (account.Status == AccountStatus.Blocked) return StatusCodeResult((403, "Account is blocked and can't change password."));
 
                 if (!_passwordService.IsCorrectPassword(passwordDTO.OldPassword, account.Password ?? []))
                 {

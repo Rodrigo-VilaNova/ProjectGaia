@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Validations;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Moq;
 using Newtonsoft.Json.Linq;
+using NuGet.Protocol;
 using ProjectGaia.Server.Controllers;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
@@ -48,6 +49,13 @@ namespace ProjectGaia.ServerTests.Tests
             _controller = new AccountController(_context, _passwordService, _tokenService);
         }
 
+        private ObjectResult AssertStatusCode(object? response, int statusCode)
+        {
+            ObjectResult assertResponse = Assert.IsAssignableFrom<ObjectResult>(response);
+            Assert.Equal(assertResponse.StatusCode, statusCode);
+            return assertResponse;
+        }
+
         [Fact]
         public async Task RegisterAccount_InvalidModel_ReturnsBadRequest()
         {
@@ -56,7 +64,9 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            Assert.IsType<BadRequestObjectResult>(result);
+            AssertStatusCode(result, 400);
+
+            
         }
 
         [Fact]
@@ -66,7 +76,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            Assert.IsType<BadRequestObjectResult>(result);
+            AssertStatusCode(result, 400);
         }
 
         [Fact]
@@ -77,7 +87,7 @@ namespace ProjectGaia.ServerTests.Tests
             await _controller.RegisterAccount(accountDTO);
             var result = await _controller.RegisterAccount(accountDTO);
 
-            Assert.IsType<ConflictObjectResult>(result);
+            AssertStatusCode(result, 409);
         }
 
         [Fact]
@@ -87,8 +97,9 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            var createdResult = Assert.IsType<CreatedResult>(result);
-            Assert.NotNull(createdResult.Value);
+            ObjectResult assertResult = AssertStatusCode(result, 201);
+            Assert.NotNull(assertResult.Value);
+            Assert.Contains("Token", assertResult.Value.ToString());
         }
 
         [Fact]
@@ -99,7 +110,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            Assert.IsType<BadRequestObjectResult>(result);
+            AssertStatusCode(result, 400);
         }
 
         [Fact]
@@ -109,7 +120,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
@@ -130,7 +141,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            Assert.IsType<ForbidResult>(result);
+            AssertStatusCode(result, 403);
         }
 
         [Fact]
@@ -143,8 +154,9 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            Assert.NotNull(okResult.Value);
+            var assertResult = AssertStatusCode(result, 200);
+            Assert.NotNull(assertResult.Value);
+            Assert.Contains("Token", assertResult.Value.ToString());
         }
 
         [Fact]
@@ -157,7 +169,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LogoutAccount();
 
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
@@ -176,7 +188,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LogoutAccount();
 
-            Assert.IsType<OkObjectResult>(result);
+            AssertStatusCode(result, 200);
         }
 
         [Fact]
@@ -189,9 +201,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteAccount();
 
-            var resultAssert = Assert.IsType<ObjectResult>(result);
-            Assert.NotNull(resultAssert.StatusCode);
-            Assert.Equal(resultAssert.StatusCode, 401);
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
@@ -217,7 +227,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteAccount();
 
-            Assert.IsType<ForbidResult>(result);
+            AssertStatusCode(result, 403);
         }
 
         [Fact]
@@ -236,7 +246,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteAccount();
 
-            Assert.IsType<OkObjectResult>(result);
+            AssertStatusCode(result, 200);
         }
 
         [Fact]
@@ -249,9 +259,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            var resultAssert = Assert.IsType<ObjectResult>(result);
-            Assert.NotNull(resultAssert.StatusCode);
-            Assert.Equal(resultAssert.StatusCode, 401);
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
@@ -271,9 +279,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            var resultAssert = Assert.IsType<ObjectResult>(result);
-            Assert.NotNull(resultAssert.StatusCode);
-            Assert.Equal(resultAssert.StatusCode, 401);
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
@@ -301,7 +307,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            Assert.IsType<ForbidResult>(result);
+            AssertStatusCode(result, 403);
         }
 
         [Fact]
@@ -322,7 +328,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
@@ -343,7 +349,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            Assert.IsType<BadRequestObjectResult>(result);
+            AssertStatusCode(result, 400);
         }
 
         [Fact]
@@ -370,7 +376,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var resultLogin = await _controller.LoginAccount(loginDTO);
 
-            Assert.IsType<OkObjectResult>(resultLogin);
+            AssertStatusCode(result, 200);
         }
     }
 }
