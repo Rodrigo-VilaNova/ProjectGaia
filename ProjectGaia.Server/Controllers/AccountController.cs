@@ -126,6 +126,22 @@ namespace ProjectGaia.Server.Controllers
             return Ok($"{{ \"Token\": \"{textToken}\" }}");
         }
 
+        // DELETE: Logout from account
+        [HttpDelete("logout")]
+        public async Task<IActionResult> LogoutAccount()
+        {
+            var result = _tokenService.GetToken(Request);
+            if (result.token == null) return StatusCodeResult(result.status);
+
+            Session? session = await _tokenService.GetSession(_context, result.token);
+            if (session == null) return Unauthorized("Invalid session token");
+
+            _context.Sessions.Remove(session);
+            await _context.SaveChangesAsync();
+
+            return Ok("Session closed successfully.");
+        }
+
         // DELETE: Delete account
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAccount()

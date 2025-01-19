@@ -40,11 +40,11 @@ namespace ProjectGaia.Server.Services
             {
                 return HashToken(Convert.FromBase64String(token));
             }
-            catch
+            catch (FormatException)
             {
                 return [];
             }
-            
+
         }
 
         public async Task<string> GenerateSessionToken(AppDbContext context, int accountID)
@@ -77,16 +77,12 @@ namespace ProjectGaia.Server.Services
 
         public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, string token, bool transactionless)
         {
-            byte[] hashedToken = HashToken(token);
-            string base64HashedToken = Convert.ToBase64String(hashedToken);
-
             IDbContextTransaction? transaction = null;
-
             if (!transactionless) transaction = await context.Database.BeginTransactionAsync();
 
             try
             {
-                Session? session = await context.Sessions.FirstOrDefaultAsync(s => s.Token == base64HashedToken);
+                Session? session = await GetSession(context, token);
 
                 if (session == null) return (null, (401, "Invalid session token"));
 
@@ -99,7 +95,7 @@ namespace ProjectGaia.Server.Services
 
                     return (null, (401, "Invalid session token"));
                 }
-                
+
                 session.Expiration = DateTime.UtcNow.AddDays(30);
                 context.Sessions.Update(session);
                 await context.SaveChangesAsync();
@@ -123,18 +119,36 @@ namespace ProjectGaia.Server.Services
                 }
 
                 return (null, (500, "Internal server error"));
-            } 
+            }
         }
 
         public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, HttpRequest request, bool transactionless = false)
+        {
+            var result = GetToken(request);
+            string? token = result.token;
+
+            if (token == null) return (null, result.status);
+
+            return await GetAccount(context, token, transactionless);
+        }
+
+        public (string? token, (int code, string? message)? status) GetToken(HttpRequest request)
         {
             if (!request.Headers.ContainsKey("Authorization")) return (null, (401, "Authorization header is missing"));
             string authHeader = request.Headers["Authorization"].ToString();
             if (!authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) return (null, (401, "Invalid authorization scheme"));
 
             string token = authHeader.Substring("Bearer ".Length).Trim();
+            return (token, null);
+        }
 
-            return await GetAccount(context, token, transactionless);
+        public async Task<Session?> GetSession(AppDbContext context, string token)
+        {
+            byte[] hashedToken = HashToken(token);
+            string base64HashedToken = Convert.ToBase64String(hashedToken);
+
+            Session? session = await context.Sessions.FirstOrDefaultAsync(s => s.Token == base64HashedToken);
+            return session;
         }
     }
 }

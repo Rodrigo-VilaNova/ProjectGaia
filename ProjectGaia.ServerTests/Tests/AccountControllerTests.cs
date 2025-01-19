@@ -148,15 +148,50 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         [Fact]
+        public async Task LogoutAccount_InvalidToken_ReturnsUnauthorized()
+        {
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer awkjdbjahwbvdhgvawdhg";
+
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.LogoutAccount();
+
+            Assert.IsType<UnauthorizedObjectResult>(result);
+        }
+
+        [Fact]
+        public async Task LogoutAccount_ValidToken_ReturnsOk()
+        {
+            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
+            var resultRegister = await _controller.RegisterAccount(accountDTO);
+
+            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.LogoutAccount();
+
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
         public async Task DeleteAccount_InvalidToken_ReturnsUnauthorized()
         {
             var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer awkjdbjahwbvdhgvawdhg";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.DeleteAccount();
 
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            var resultAssert = Assert.IsType<ObjectResult>(result);
+            Assert.NotNull(resultAssert.StatusCode);
+            Assert.Equal(resultAssert.StatusCode, 401);
         }
 
         [Fact]
@@ -173,7 +208,7 @@ namespace ProjectGaia.ServerTests.Tests
             await _context.SaveChangesAsync();
 
             var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic? response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
 
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
@@ -192,7 +227,7 @@ namespace ProjectGaia.ServerTests.Tests
             var resultRegister = await _controller.RegisterAccount(accountDTO);
 
             var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic? response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
 
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
@@ -212,9 +247,11 @@ namespace ProjectGaia.ServerTests.Tests
 
             var passwordDTO = new PasswordDTO { OldPassword = "2323", NewPassword = "NewPass2@" };
 
-            var result = await _controller.ChangePassword(passwordDTO);    
+            var result = await _controller.ChangePassword(passwordDTO);
 
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            var resultAssert = Assert.IsType<ObjectResult>(result);
+            Assert.NotNull(resultAssert.StatusCode);
+            Assert.Equal(resultAssert.StatusCode, 401);
         }
 
         [Fact]
@@ -234,7 +271,9 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            Assert.IsType<UnauthorizedObjectResult>(result);
+            var resultAssert = Assert.IsType<ObjectResult>(result);
+            Assert.NotNull(resultAssert.StatusCode);
+            Assert.Equal(resultAssert.StatusCode, 401);
         }
 
         [Fact]
@@ -251,7 +290,7 @@ namespace ProjectGaia.ServerTests.Tests
             await _context.SaveChangesAsync();
 
             var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic? response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
 
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
@@ -272,7 +311,7 @@ namespace ProjectGaia.ServerTests.Tests
             var resultRegister = await _controller.RegisterAccount(accountDTO);
 
             var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic? response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
 
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
@@ -293,7 +332,7 @@ namespace ProjectGaia.ServerTests.Tests
             var resultRegister = await _controller.RegisterAccount(accountDTO);
 
             var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic? response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
 
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
@@ -314,7 +353,7 @@ namespace ProjectGaia.ServerTests.Tests
             var resultRegister = await _controller.RegisterAccount(accountDTO);
 
             var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic? response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
 
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
