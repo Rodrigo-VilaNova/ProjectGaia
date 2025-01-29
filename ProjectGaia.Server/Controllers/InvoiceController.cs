@@ -19,6 +19,20 @@ namespace ProjectGaia.Server.Controllers
             _tokenService = tokenService;
         }
 
+        // GET: Get All Account Invoices
+        [HttpGet("get")]
+        public async Task<IActionResult> GetInvoice()
+        {
+            var result = await _tokenService.GetAccount(_context, Request);
+            Account? account = result.account;
+
+            if (account == null) return StatusCodeResult(result.status);
+
+            List<int> invoiceIDs = await _context.Invoices.AsNoTracking().Where(i => i.AccountID == account.ID).Select(i => i.ID).ToListAsync();
+
+            return Ok(invoiceIDs);
+        }
+
         // GET: Get Invoice
         [HttpGet("get/{id}")]
         public async Task<IActionResult> GetInvoice(int id)
@@ -62,16 +76,16 @@ namespace ProjectGaia.Server.Controllers
             }
             catch (DbUpdateException)
             {
-                return StatusCodeResult((500, "Error converting data, price or consumption possibly too large"));
+                return StatusCode(500, "Error converting data, price or consumption possibly too large");
             }
             catch (Exception)
             {
-                return StatusCodeResult((500, "Internal server error, try again"));
+                return StatusCode(500, "Internal server error, try again");
             }
             
             await _context.SaveChangesAsync();
 
-            return Created();
+            return Created("", invoice);
         }
 
         private ObjectResult StatusCodeResult((int code, string? message)? status)

@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ProjectGaia.Server.Data;
-using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
 
 namespace ProjectGaia.Server

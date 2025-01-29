@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectGaia.Server.Models;
+
 namespace ProjectGaia.Server.Data
 {
-    using System.Collections.Generic;
-    using System.Reflection.Emit;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.Logging;
-    using ProjectGaia.Server.Models;
-
     public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
