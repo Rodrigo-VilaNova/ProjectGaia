@@ -1,4 +1,6 @@
-﻿namespace ProjectGaia.Server.Data
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectGaia.Server.Models;
+namespace ProjectGaia.Server.Data
 {
     using System.Collections.Generic;
     using System.Reflection.Emit;
@@ -14,6 +16,7 @@
 
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Session> Sessions { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
         public DbSet<AccessLog> AccessLogs { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
 
@@ -22,16 +25,27 @@
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<Account>().ToTable("Accounts");
             modelBuilder.Entity<Account>().Property(a => a.ID).ValueGeneratedOnAdd();
             modelBuilder.Entity<Account>().HasIndex(a => a.Email).IsUnique();
 
-            modelBuilder.Entity<Session>().Property(a => a.ID).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Session>().HasIndex(a => a.Token).IsUnique();
-            modelBuilder.Entity<Session>().HasOne(a => a.Account).WithMany(a => a.Sessions);
+            modelBuilder.Entity<Session>().ToTable("Sessions");
+            modelBuilder.Entity<Session>().Property(s => s.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Session>().HasIndex(s => s.Token).IsUnique();
+            modelBuilder.Entity<Session>().HasOne(s => s.Account).WithMany(a => a.Sessions);
 
+            modelBuilder.Entity<Invoice>().ToTable("Invoices");
+            modelBuilder.Entity<Invoice>().Property(i => i.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Invoice>().HasIndex(i => i.AccountID);
+            modelBuilder.Entity<Invoice>().HasOne(i => i.Account).WithMany(a => a.Invoices);
+            modelBuilder.Entity<Invoice>().Property(i => i.Price).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Invoice>().Property(i => i.Consumption).HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<AccessLog>().ToTable("AccessLogs");
             modelBuilder.Entity<AccessLog>().Property(a => a.ID).ValueGeneratedOnAdd();
             modelBuilder.Entity<AccessLog>().HasOne(a => a.Account).WithMany(a => a.AccessLogs);
 
+            modelBuilder.Entity<ErrorLog>().ToTable("ErrorLogs");
             modelBuilder.Entity<ErrorLog>().Property(a => a.ID).ValueGeneratedOnAdd();
             modelBuilder.Entity<ErrorLog>().HasOne(a => a.Account).WithMany(a => a.ErrorLogs);
 
@@ -102,6 +116,8 @@
                 }
             );
         }
+
+public DbSet<ProjectGaia.Server.Models.Invoice> Invoice { get; set; } = default!;
     }
 
 }

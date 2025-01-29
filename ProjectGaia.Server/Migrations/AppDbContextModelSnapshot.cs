@@ -40,7 +40,7 @@ namespace ProjectGaia.Server.Migrations
 
                     b.HasIndex("AccountID");
 
-                    b.ToTable("AccessLogs");
+                    b.ToTable("AccessLogs", (string)null);
                 });
 
             modelBuilder.Entity("ProjectGaia.Server.Models.Account", b =>
@@ -75,7 +75,7 @@ namespace ProjectGaia.Server.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
 
                     b.HasData(
                         new
@@ -165,7 +165,37 @@ namespace ProjectGaia.Server.Migrations
 
                     b.HasIndex("AccountID");
 
-                    b.ToTable("ErrorLogs");
+                    b.ToTable("ErrorLogs", (string)null);
+                });
+
+            modelBuilder.Entity("ProjectGaia.Server.Models.Invoice", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("AccountID")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Consumption")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("EmissionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UploadDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("AccountID");
+
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("ProjectGaia.Server.Models.Session", b =>
@@ -193,7 +223,7 @@ namespace ProjectGaia.Server.Migrations
                     b.HasIndex("Token")
                         .IsUnique();
 
-                    b.ToTable("Sessions");
+                    b.ToTable("Sessions", (string)null);
                 });
 
             modelBuilder.Entity("ProjectGaia.Server.Models.AccessLog", b =>
@@ -218,6 +248,17 @@ namespace ProjectGaia.Server.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("ProjectGaia.Server.Models.Invoice", b =>
+                {
+                    b.HasOne("ProjectGaia.Server.Models.Account", "Account")
+                        .WithMany("Invoices")
+                        .HasForeignKey("AccountID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("ProjectGaia.Server.Models.Session", b =>
                 {
                     b.HasOne("ProjectGaia.Server.Models.Account", "Account")
@@ -234,6 +275,8 @@ namespace ProjectGaia.Server.Migrations
                     b.Navigation("AccessLogs");
 
                     b.Navigation("ErrorLogs");
+
+                    b.Navigation("Invoices");
 
                     b.Navigation("Sessions");
                 });
