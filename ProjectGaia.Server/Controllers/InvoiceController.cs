@@ -21,7 +21,7 @@ namespace ProjectGaia.Server.Controllers
 
         // GET: Get All Account Invoices
         [HttpGet("get")]
-        public async Task<IActionResult> GetInvoice()
+        public async Task<IActionResult> GetInvoices()
         {
             var result = await _tokenService.GetAccount(_context, Request);
             Account? account = result.account;
@@ -45,7 +45,7 @@ namespace ProjectGaia.Server.Controllers
             Invoice? invoice = await _context.Invoices.AsNoTracking().FirstOrDefaultAsync(i => i.ID == id);
             if (invoice == null) return StatusCode(404, "Invoice not found");
 
-            if (invoice.AccountID == id) return StatusCode(403, "Access denied. This invoice belongs to another user");
+            if (invoice.AccountID != account.ID) return StatusCode(403, "Access denied. This invoice belongs to another user");
 
             return Ok(invoice);
         }
@@ -80,7 +80,7 @@ namespace ProjectGaia.Server.Controllers
             }
             catch (Exception)
             {
-                return StatusCode(500, "Internal server error, try again");
+                return StatusCode(500, "Internal server error. Try again");
             }
             
             await _context.SaveChangesAsync();
