@@ -88,6 +88,35 @@ namespace ProjectGaia.Server.Controllers
             return Created("", invoice);
         }
 
+        // DELETE: Delete Invoice
+        [HttpGet("delete/{id}")]
+        public async Task<IActionResult> DeleteInvoice(int id)
+        {
+            var result = await _tokenService.GetAccount(_context, Request);
+            Account? account = result.account;
+
+            if (account == null) return StatusCodeResult(result.status);
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                Invoice? invoice = await _context.Invoices.AsNoTracking().FirstOrDefaultAsync(i => i.ID == id);
+                if (invoice == null) return StatusCode(404, "Invoice not found");
+
+                if (invoice.AccountID != account.ID) return StatusCode(403, "Access denied. This invoice belongs to another user");
+                _context.Invoices.Remove(invoice);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error. Try again");
+            }
+
+            return Ok("Invoice and related data deleted successfully.");
+        }
+
         private ObjectResult StatusCodeResult((int code, string? message)? status)
         {
             return StatusCode(status?.code ?? 0, status?.message);
