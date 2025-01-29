@@ -19,6 +19,23 @@ namespace ProjectGaia.Server.Controllers
             _tokenService = tokenService;
         }
 
+        // GET: Get Invoice
+        [HttpGet("get/{id}")]
+        public async Task<IActionResult> GetInvoice(int id)
+        {
+            var result = await _tokenService.GetAccount(_context, Request);
+            Account? account = result.account;
+
+            if (account == null) return StatusCodeResult(result.status);
+
+            Invoice? invoice = await _context.Invoices.AsNoTracking().FirstOrDefaultAsync(i => i.ID == id);
+            if (invoice == null) return StatusCode(404, "Invoice not found");
+
+            if (invoice.AccountID == id) return StatusCode(403, "Access denied. This invoice belongs to another user");
+
+            return Ok(invoice);
+        }
+
         // POST: Upload Invoice
         [HttpPost("upload")]
         public async Task<IActionResult> UploadInvoice([FromBody] InvoiceDTO invoiceDTO)
