@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProjectGaia.Server.Controllers;
@@ -24,7 +25,7 @@ namespace ProjectGaia.ServerTests.Tests
         {
             _testOutputHelper = testOutputHelper;
 
-            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBTests;Trusted_Connection=True;MultipleActiveResultSets=true";
+            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBInvoiceTests;Trusted_Connection=True;MultipleActiveResultSets=true";
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseSqlServer(connectionString)
@@ -39,77 +40,244 @@ namespace ProjectGaia.ServerTests.Tests
             _controller = new InvoiceController(_context, _tokenService);
         }
 
+        private ObjectResult AssertStatusCode(object? response, int statusCode)
+        {
+            ObjectResult assertResponse = Assert.IsAssignableFrom<ObjectResult>(response);
+            Assert.Equal(assertResponse.StatusCode, statusCode);
+            return assertResponse;
+        }
+
         [Fact]
         public async Task UploadInvoice_ValidInvoice_ReturnsCreated()
         {
-            var account = new Account { ID = 1, Email = "test@example.com" };
-            
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var invoiceDTO = new InvoiceDTO { Price = 100, Consumption = 200, EmissionDate = DateTime.UtcNow };
             var result = await _controller.UploadInvoice(invoiceDTO);
-            var createdResult = Assert.IsType<CreatedResult>(result);
 
-            Assert.NotNull(createdResult.Value);
+            AssertStatusCode(result, 201);
         }
 
         [Fact]
         public async Task UploadInvoice_InvalidModel_ReturnsBadRequest()
         {
-            _controller.ModelState.AddModelError("Price", "Required");
-            var invoiceDTO = new InvoiceDTO { Consumption = 200, EmissionDate = DateTime.UtcNow };
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var invoiceDTO = new InvoiceDTO { Price = 100, EmissionDate = DateTime.UtcNow };
             var result = await _controller.UploadInvoice(invoiceDTO);
-            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal(400, badRequestResult.StatusCode);
+
+            AssertStatusCode(result, 400);
         }
 
         [Fact]
-        public async Task GetInvoices_ValidAccount_ReturnsInvoices()
+        public async Task UploadInvoice_InvalidToken_ReturnsUnauthorized()
         {
-            var account = new Account { ID = 1, Email = "test@example.com" };
-            _context.Accounts.Add(account);
-            _context.Invoices.Add(new Invoice { ID = 1, AccountID = 1, Price = 100, Consumption = 200 });
-            await _context.SaveChangesAsync();
+            string token = "UserZeroToken-Invalid";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
-            
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var invoiceDTO = new InvoiceDTO { Price = 100, Consumption = 200, EmissionDate = DateTime.UtcNow };
+            var result = await _controller.UploadInvoice(invoiceDTO);
+
+            AssertStatusCode(result, 401);
+        }
+
+        [Fact]
+        public async Task UploadInvoice_NoToken_ReturnsUnauthorized()
+        {
+            var mockHttpContext = new DefaultHttpContext();
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var invoiceDTO = new InvoiceDTO { Price = 100, Consumption = 200, EmissionDate = DateTime.UtcNow };
+            var result = await _controller.UploadInvoice(invoiceDTO);
+
+            AssertStatusCode(result, 401);
+        }
+
+        [Fact]
+        public async Task GetInvoices_ValidToken_ReturnsInvoices()
+        {
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.GetInvoices();
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var invoiceIds = Assert.IsType<List<int>>(okResult.Value);
 
-            Assert.Single(invoiceIds);
-            Assert.Contains(1, invoiceIds);
+            var resultObject = AssertStatusCode(result, 200);
+
+            var invoiceIDs = Assert.IsType<List<int>>(resultObject.Value);
+
+            Assert.Single(invoiceIDs);
+            Assert.Contains(1, invoiceIDs);
+        }
+
+        [Fact]
+        public async Task GetInvoices_InvalidToken_ReturnsUnauthorized()
+        {
+            string token = "UserZeroToken-Invalid";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.GetInvoices();
+
+            AssertStatusCode(result, 401);
+        }
+
+        [Fact]
+        public async Task GetInvoices_NoToken_ReturnsUnauthorized()
+        {
+            var mockHttpContext = new DefaultHttpContext();
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.GetInvoices();
+
+            AssertStatusCode(result, 401);
         }
 
         [Fact]
         public async Task GetInvoice_InvoiceExists_ReturnsInvoice()
         {
-            var account = new Account { ID = 1, Email = "test@example.com" };
-            var invoice = new Invoice { ID = 1, AccountID = 1, Price = 100, Consumption = 200 };
-            _context.Accounts.Add(account);
-            _context.Invoices.Add(invoice);
-            await _context.SaveChangesAsync();
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
-            
-
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.GetInvoice(1);
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedInvoice = Assert.IsType<Invoice>(okResult.Value);
 
-            Assert.Equal(invoice.ID, returnedInvoice.ID);
+            AssertStatusCode(result, 200);
         }
 
         [Fact]
         public async Task GetInvoice_InvoiceDoesNotExist_ReturnsNotFound()
         {
-            var account = new Account { ID = 1, Email = "test@example.com" };
-            
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
-            var result = await _controller.GetInvoice(999);
-            var notFoundResult = Assert.IsType<ObjectResult>(result);
-            Assert.Equal(404, notFoundResult.StatusCode);
+            var result = await _controller.GetInvoice(69);
+
+            AssertStatusCode(result, 404);
+        }
+
+        [Fact]
+        public async Task GetInvoice_InvalidToken_ReturnsUnauthorized()
+        {
+            string token = "UserZeroToken-Invalid";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.GetInvoice(1);
+
+            AssertStatusCode(result, 401);
+        }
+
+        [Fact]
+        public async Task GetInvoice_WrongAccountToken_ReturnsForbidden()
+        {
+            string token = "UserOneToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.GetInvoice(1);
+
+            AssertStatusCode(result, 403);
+        }
+
+        [Fact]
+        public async Task GetInvoice_NoToken_ReturnsUnauthorized()
+        {
+            var mockHttpContext = new DefaultHttpContext();
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.GetInvoice(1);
+
+            AssertStatusCode(result, 401);
+        }
+
+        [Fact]
+        public async Task DeleteInvoice_ValidToken_ReturnsOK()
+        {
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.DeleteInvoice(1);
+
+            AssertStatusCode(result, 200);
+        }
+
+        [Fact]
+        public async Task DeleteInvoice_WrongAccountToken_ReturnsForbidden()
+        {
+            string token = "UserOneToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.DeleteInvoice(1);
+
+            AssertStatusCode(result, 403);
+        }
+
+        [Fact]
+        public async Task DeleteInvoice_InvalidToken_ReturnsUnauthorized()
+        {
+            string token = "UserOneToken-Invalid";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.DeleteInvoice(1);
+
+            AssertStatusCode(result, 401);
+        }
+
+        [Fact]
+        public async Task DeleteInvoice_NoToken_ReturnsUnauthorized()
+        {
+            var mockHttpContext = new DefaultHttpContext();
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var result = await _controller.DeleteInvoice(1);
+
+            AssertStatusCode(result, 401);
         }
     }
 }

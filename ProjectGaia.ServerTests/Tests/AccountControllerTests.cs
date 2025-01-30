@@ -32,7 +32,7 @@ namespace ProjectGaia.ServerTests.Tests
         {
             _testOutputHelper = testOutputHelper;
 
-            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBTests;Trusted_Connection=True;MultipleActiveResultSets=true";
+            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBAccountTests;Trusted_Connection=True;MultipleActiveResultSets=true";
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseSqlServer(connectionString)

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Humanizer.Bytes;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using ProjectGaia.Server.Models;
@@ -121,23 +122,35 @@ namespace ProjectGaia.Server.Data
                 new Session
                 {
                     ID = 1,
-                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("User-0-Token"))),
-                    Expiration = DateTime.UtcNow.AddDays(30),
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserZeroToken"))),
+                    Expiration = new DateTime(2025, 2, 28),
                     AccountID = 3
                 },
                 new Session
                 {
                     ID = 2,
-                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("User-1-Token"))),
-                    Expiration = DateTime.UtcNow.AddDays(30),
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserOneToken"))),
+                    Expiration = new DateTime(2025, 2, 28),
                     AccountID = 4
                 },
                 new Session
                 {
                     ID = 3,
-                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("User-2-Token"))),
-                    Expiration = DateTime.UtcNow.AddDays(30),
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserTwoToken"))),
+                    Expiration = new DateTime(2025, 2, 28),
                     AccountID = 5
+                }
+            );
+
+            modelBuilder.Entity<Invoice>().HasData(
+                new Invoice
+                {
+                    ID = 1,
+                    Price = 3,
+                    Consumption = 2,
+                    EmissionDate = new DateTime(2025, 1, 16),
+                    UploadDate = new DateTime(2025, 1, 18),
+                    AccountID = 3
                 }
             );
         }

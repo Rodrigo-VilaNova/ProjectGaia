@@ -59,13 +59,13 @@ namespace ProjectGaia.Server.Controllers
 
             if (account == null) return StatusCodeResult(result.status);
 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid || invoiceDTO.Price == null || invoiceDTO.Consumption == null || invoiceDTO.EmissionDate == null) return BadRequest(ModelState);
 
             Invoice invoice = new Invoice
             {
-                Price = invoiceDTO.Price,
-                Consumption = invoiceDTO.Consumption,
-                EmissionDate = invoiceDTO.EmissionDate,
+                Price = invoiceDTO.Price.Value,
+                Consumption = invoiceDTO.Consumption.Value,
+                EmissionDate = invoiceDTO.EmissionDate.Value,
                 UploadDate = DateTime.UtcNow,
                 AccountID = account.ID
             };
