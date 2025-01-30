@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using ProjectGaia.Server.Models;
+using ProjectGaia.Server.Services;
 
 namespace ProjectGaia.Server.Data
 {
@@ -44,32 +47,33 @@ namespace ProjectGaia.Server.Data
             modelBuilder.Entity<ErrorLog>().Property(a => a.ID).ValueGeneratedOnAdd();
             modelBuilder.Entity<ErrorLog>().HasOne(a => a.Account).WithMany(a => a.ErrorLogs);
 
+            PasswordService passwordService = new PasswordService();
 
             modelBuilder.Entity<Account>().HasData(
                 new Account
                 {
                     ID = 1,
-                    Name = "Patient Zero",
-                    Email = "patientzero@gmail.com",
-                    Password = [],
+                    Name = "Admin Zero",
+                    Email = "Admin0@gmail.com",
+                    Password = passwordService.HashPassword("Admin0@gmail.com"),
                     Type = AccountType.Admin,
                     Status = AccountStatus.Active
                 },
                 new Account
                 {
                     ID = 2,
-                    Name = "Patient One",
-                    Email = "patientone@gmail.com",
-                    Password = [],
+                    Name = "Admin One",
+                    Email = "Admin1@gmail.com",
+                    Password = passwordService.HashPassword("Admin1@gmail.com"),
                     Type = AccountType.Admin,
-                    Status = AccountStatus.Blocked
+                    Status = AccountStatus.Active,
                 },
                 new Account
                 {
                     ID = 3,
                     Name = "User Zero",
-                    Email = "userzero@gmail.com",
-                    Password = [],
+                    Email = "User0@gmail.com",
+                    Password = passwordService.HashPassword("User0@gmail.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Active
                 },
@@ -77,8 +81,8 @@ namespace ProjectGaia.Server.Data
                 {
                     ID = 4,
                     Name = "User One",
-                    Email = "userone@gmail.com",
-                    Password = [],
+                    Email = "User1@gmail.com",
+                    Password = passwordService.HashPassword("User1@gmail.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Active
                 },
@@ -86,8 +90,8 @@ namespace ProjectGaia.Server.Data
                 {
                     ID = 5,
                     Name = "User Two",
-                    Email = "usertwo@gmail.com",
-                    Password = [],
+                    Email = "User2@gmail.com",
+                    Password = passwordService.HashPassword("User2@gmail.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Active
                 },
@@ -95,8 +99,8 @@ namespace ProjectGaia.Server.Data
                 {
                     ID = 6,
                     Name = "User Three",
-                    Email = "userthree@gmail.com",
-                    Password = [],
+                    Email = "User3@gmail.com",
+                    Password = passwordService.HashPassword("User3@gmail.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Blocked
                 },
@@ -104,15 +108,38 @@ namespace ProjectGaia.Server.Data
                 {
                     ID = 7,
                     Name = "User Four",
-                    Email = "userfour@gmail.com",
-                    Password = [],
+                    Email = "User4@gmail.com",
+                    Password = passwordService.HashPassword("User4@gmail.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Blocked
                 }
             );
+
+            TokenService tokenService = new TokenService();
+
+            modelBuilder.Entity<Session>().HasData(
+                new Session
+                {
+                    ID = 1,
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("User-0-Token"))),
+                    Expiration = DateTime.UtcNow.AddDays(30),
+                    AccountID = 3
+                },
+                new Session
+                {
+                    ID = 2,
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("User-1-Token"))),
+                    Expiration = DateTime.UtcNow.AddDays(30),
+                    AccountID = 4
+                },
+                new Session
+                {
+                    ID = 3,
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("User-2-Token"))),
+                    Expiration = DateTime.UtcNow.AddDays(30),
+                    AccountID = 5
+                }
+            );
         }
-
-public DbSet<ProjectGaia.Server.Models.Invoice> Invoice { get; set; } = default!;
     }
-
 }

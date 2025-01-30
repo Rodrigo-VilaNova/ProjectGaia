@@ -72,7 +72,7 @@ namespace ProjectGaia.Server.Controllers
 
             try
             {
-                await _context.Invoice.AddAsync(invoice);
+                await _context.Invoices.AddAsync(invoice);
             }
             catch (DbUpdateException)
             {
@@ -89,7 +89,7 @@ namespace ProjectGaia.Server.Controllers
         }
 
         // DELETE: Delete Invoice
-        [HttpGet("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
             var result = await _tokenService.GetAccount(_context, Request);
