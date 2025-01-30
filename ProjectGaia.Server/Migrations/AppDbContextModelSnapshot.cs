@@ -196,6 +196,17 @@ namespace ProjectGaia.Server.Migrations
                     b.HasIndex("AccountID");
 
                     b.ToTable("Invoices", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            AccountID = 3,
+                            Consumption = 2m,
+                            EmissionDate = new DateTime(2025, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Price = 3m,
+                            UploadDate = new DateTime(2025, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("ProjectGaia.Server.Models.Session", b =>

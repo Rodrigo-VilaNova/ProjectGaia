@@ -130,6 +130,11 @@ namespace ProjectGaia.Server.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Invoices",
+                columns: new[] { "ID", "AccountID", "Consumption", "EmissionDate", "Price", "UploadDate" },
+                values: new object[] { 1, 3, 2m, new DateTime(2025, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), 3m, new DateTime(2025, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
                 table: "Sessions",
                 columns: new[] { "ID", "AccountID", "Expiration", "Token" },
                 values: new object[,]
