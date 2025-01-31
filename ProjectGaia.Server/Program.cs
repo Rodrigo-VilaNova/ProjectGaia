@@ -1,3 +1,6 @@
+using System.Text.Json;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using ProjectGaia.Server.Data;
@@ -9,6 +12,13 @@ namespace ProjectGaia.Server
     {
         public static void Main(string[] args)
         {
+            SetupCredentials();
+            Console.WriteLine($"Using email: {Environment.GetEnvironmentVariable("email")}");
+
+            /*EmailSender emailSender = new EmailSender();
+            Task task = emailSender.SendEmailAsync("202200196@estudantes.ips.pt", "Project Gaia Assunto Teste", "Isto é um corpo de teste do project gaia");
+            task.Wait();*/
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<PasswordService>();
@@ -19,10 +29,10 @@ namespace ProjectGaia.Server
                 options.AddPolicy("AllowSpecificOrigin",
                     builder =>
                     {
-                        builder.WithOrigins(["https://127.0.0.1:58120", "https://localhost:58120"]) // Add your front-end URL here
+                        builder.WithOrigins(["https://127.0.0.1:58120", "https://localhost:58120"]) //Front-end URL
                                .AllowAnyHeader()
                                .AllowAnyMethod()
-                               .AllowCredentials(); // If you need cookies/auth
+                               .AllowCredentials(); //Cookies/auth
                     });
             });
 
@@ -90,6 +100,115 @@ namespace ProjectGaia.Server
             app.MapFallbackToFile("/index.html");
 
             app.Run();
+        }
+
+        private static void SetupCredentials()
+        {
+            string filePath = "./credentials.json";
+            Dictionary<string, string>? credentials = null;
+
+            bool invalidCredentials = false;
+
+            if (File.Exists(filePath))
+            {
+                Console.WriteLine($"Credentials file found. Reading...");
+
+                try
+                {
+                    string json = File.ReadAllText(filePath);
+                    credentials = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                    
+                    if (credentials != null)
+                    {
+                        if (credentials.Count == 2 && credentials.ContainsKey("email") && credentials.ContainsKey("password"))
+                        {
+                            string email = credentials.GetValueOrDefault("email") ?? "";
+                            string password = credentials.GetValueOrDefault("password") ?? "";
+                            invalidCredentials = !CheckCredentials(email, password);
+
+                            if (invalidCredentials) Console.WriteLine("Invalid credentials stored. Recreating...");
+                        }
+                        else Console.WriteLine("Invalid credentials file. Recreating...");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error reading credentials file: {ex.Message}");
+                }
+            }
+            else Console.WriteLine("Credentials file not found. Creating...");
+
+            if (credentials == null || credentials.Count != 2 || !credentials.ContainsKey("email") || !credentials.ContainsKey("password") || invalidCredentials)
+            {
+                credentials = new Dictionary<string, string>();
+
+                while (true)
+                {
+                    string email;
+                    while (true)
+                    {
+                        Console.Write("Email: ");
+                        email = Console.ReadLine() ?? "";
+                        if (!string.IsNullOrWhiteSpace(email)) break;
+                        Console.WriteLine("Invalid email.");
+                    }
+
+                    string password;
+                    while (true)
+                    {
+                        Console.Write("Password: ");
+                        password = Console.ReadLine() ?? "";
+                        if (!string.IsNullOrWhiteSpace(password)) break;
+                        Console.WriteLine("Invalid password.");
+                    }
+
+                    if (CheckCredentials(email, password))
+                    {
+                        Console.WriteLine("Credentials validated.");
+                        credentials.Add("email", email);
+                        credentials.Add("password", password);
+                        break;
+                    }
+
+                    Console.WriteLine("Credentials incorrect.");
+                }
+
+                Console.WriteLine("Writing credentials to file...");
+                SaveCredentials(filePath, credentials);
+                Console.WriteLine($"Credentials saved to \"{filePath}\"");
+            }
+
+            Environment.SetEnvironmentVariable("email", credentials["email"]);
+            Environment.SetEnvironmentVariable("password", credentials["password"]);
+        }
+
+        private static bool CheckCredentials(string email, string password)
+        {
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    client.Connect("smtp.gmail.com", 465, true);
+                    client.Authenticate(email, password);
+                    client.Disconnect(true);
+                    return true;
+                }
+            }
+            catch (AuthenticationException)
+            {
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error checking credentials: " + ex.Message);
+                return false;
+            }
+        }
+
+        private static void SaveCredentials(string filePath, Dictionary<string, string> credentials)
+        {
+            string json = JsonSerializer.Serialize(credentials, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(filePath, json);
         }
     }
 }

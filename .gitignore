@@ -486,3 +486,4 @@ $RECYCLE.BIN/
 # Custom
 obj/
 bin/
+credentials.json
