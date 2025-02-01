@@ -8,7 +8,7 @@ using ProjectGaia.Server.Services;
 namespace ProjectGaia.Server.Controllers
 {
     [ApiController]
-    [Route("account")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
         private readonly AppDbContext _context;
