@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -11,12 +12,14 @@ namespace ProjectGaia.Server.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ConfirmationService _confirmationService;
         private readonly PasswordService _passwordService;
         private readonly TokenService _tokenService;
 
-        public AccountController(AppDbContext context, PasswordService passwordService, TokenService tokenService)
+        public AccountController(AppDbContext context, ConfirmationService confirmationService, PasswordService passwordService, TokenService tokenService)
         {
             _context = context;
+            _confirmationService = confirmationService;
             _passwordService = passwordService;
             _tokenService = tokenService;
         }
@@ -25,37 +28,192 @@ namespace ProjectGaia.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAccount([FromBody] AccountDTO accountDTO)
         {
-            if (!ModelState.IsValid || accountDTO.Password == null)
-            {
-                return BadRequest(ModelState); // Return a 400 BadRequest if validation fails
-            }
-
-            if (!_passwordService.IsValidPassword(accountDTO.Password))
-            {
-                return BadRequest("Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character."); // Return a 400 BadRequest if the password does not comply with the requirements
-            }
-
-            bool alreadyExists = await _context.Accounts.AnyAsync(a => a.Email == accountDTO.Email);
-            if (alreadyExists)
-            {
-                return Conflict("An account with this email already exists."); // Return a 409 Conflict if the email is taken
-            }
-
-            var account = new Account
-            {
-                Name = accountDTO.Name,
-                Email = accountDTO.Email,
-                Password = _passwordService.HashPassword(accountDTO.Password),
-                Type = AccountType.User,
-                Status = AccountStatus.Active
-            };
-
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                var accountEntry = _context.Accounts.Add(account);
+                if (!ModelState.IsValid || accountDTO.Name == null || accountDTO.Email == null || accountDTO.Password == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, ModelState);
+                }
+
+                if (string.IsNullOrWhiteSpace(accountDTO.Name) || accountDTO.Name.Trim().Length > 64)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, "Name length must be between 1 and 64.");
+                }
+
+                if (!_passwordService.IsValidPassword(accountDTO.Password))
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+                }
+
+                bool confirmationAlreadyExists = await _context.Confirmations.AnyAsync(c => c.Email == accountDTO.Email);
+                if (confirmationAlreadyExists)
+                {
+                    Confirmation currentConfirmation = await _context.Confirmations.FirstAsync(c => c.Email == accountDTO.Email);
+
+                    if (currentConfirmation.Expiration > DateTime.UtcNow)
+                    {
+                        await transaction.RollbackAsync();
+                        return StatusCode(409, "An account confirmation with this email is already pending.");
+                    }
+                    else
+                    {
+                        _context.Confirmations.Remove(currentConfirmation);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                bool accountAlreadyExists = await _context.Accounts.AnyAsync(a => a.Email == accountDTO.Email);
+                if (accountAlreadyExists)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(409, "An account with this email already exists.");
+                }
+
+                byte[] token;
+                byte[] hashedToken;
+                string hexToken;
+                string hexHashedToken;
+
+                while (true)
+                {
+                    token = _confirmationService.GenerateRandomToken();
+                    hashedToken = _confirmationService.HashToken(token);
+                    hexHashedToken = Convert.ToHexString(hashedToken);
+                    bool isUnique = !await _context.Confirmations.AnyAsync(t => t.Token == hexHashedToken);
+                    if (isUnique) break;
+                }
+                hexToken = Convert.ToHexString(token);
+
+                Confirmation confirmation = new Confirmation
+                {
+                    Token = hexHashedToken,
+                    Expiration = DateTime.UtcNow.AddMinutes(30),
+                    Name = accountDTO.Name.Trim(),
+                    Email = accountDTO.Email,
+                    Password = _passwordService.HashPassword(accountDTO.Password),
+                };
+
+                bool isUnitTest = Environment.GetEnvironmentVariable("IS_UNIT_TEST") != null;
+                if (!isUnitTest)
+                {
+                    var scheme = Request.Scheme;
+                    var host = Request.Host;
+                    var parameters = new { token = hexToken};
+                    var path = Url.Action("LoginAccount", "Account", parameters);
+
+                    string fullUrl = $"{scheme}://{host}{path}";
+
+                    string subject = $"Welcome to Project Gaia, {confirmation.Name}!";
+                    string body = $"To complete the registration of your Project Gaia account please open the following link:\n{fullUrl}";
+
+                    Console.WriteLine($"Activation URL: {fullUrl}");
+
+                    EmailSender emailSender = new EmailSender();
+                    await emailSender.SendEmailAsync(confirmation.Email, subject, body);
+                }
+
+                var confirmationEntry = _context.Confirmations.Add(confirmation);
                 await _context.SaveChangesAsync();
-                int accountID = accountEntry.Entity.ID;
+                await transaction.CommitAsync();
+
+                return StatusCode(202, "A confirmation email was sent if the email exists.");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error creating account/session.");
+            }   
+        }
+
+        // GET: Confirm account
+        [HttpGet("confirm")]
+        public async Task<IActionResult> LoginAccount([FromQuery] string? token)
+        {
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (token == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, "Token parameter missing.");
+                }    
+
+                string hexHashedToken = Convert.ToHexString(_confirmationService.HashToken(token));
+                Confirmation? confirmation = await _context.Confirmations.FirstOrDefaultAsync(c => c.Token == hexHashedToken);
+
+                if (confirmation == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(404, "Invalid token.");
+                }
+                
+                if (confirmation.Expiration <= DateTime.UtcNow)
+                {
+                    _context.Confirmations.Remove(confirmation);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return StatusCode(404, "Token expired.");
+                }
+
+                Account account = new Account
+                {
+                    Name = confirmation.Name,
+                    Email = confirmation.Email,
+                    Password = confirmation.Password,
+                    Type = AccountType.User,
+                    Status = AccountStatus.Active
+                };
+
+                await _context.Accounts.AddAsync(account);
+                _context.Confirmations.Remove(confirmation);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return StatusCode(201, "Account confirmation successful");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error confirming account.");
+            }
+        }
+
+        // POST: Login into account
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAccount([FromBody] LoginDTO loginDTO)
+        {
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (!ModelState.IsValid || loginDTO.Password == null) return StatusCode(400, ModelState);
+
+                Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == loginDTO.Email);
+#pragma warning disable CS8604 // Possible null reference argument.
+                if (account == null || !_passwordService.IsCorrectPassword(loginDTO.Password, account.Password)) // Return a 401 Unauthorized if the email/password combination is incorrect
+                {
+                    if (account != null)
+                    {
+                        ErrorLog errorLog = new ErrorLog
+                        {
+                            Date = DateTime.UtcNow,
+                            Type = "Login attempt, incorrect password",
+                            AccountID = account.ID,
+                        };
+
+                        _context.ErrorLogs.Add(errorLog);
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return StatusCode(401, "Invalid email or password.");
+                }
+#pragma warning restore CS8604 // Possible null reference argument.
+
+                if (account.Status == AccountStatus.Blocked) return StatusCode(403, "Account is blocked and login is not allowed.");
+
+                int accountID = account.ID;
 
                 string textToken = await _tokenService.GenerateSessionToken(_context, accountID);
 
@@ -68,111 +226,82 @@ namespace ProjectGaia.Server.Controllers
                 _context.AccessLogs.Add(accessLog);
                 await _context.SaveChangesAsync();
 
-                await transaction.CommitAsync();
-
-                return Created("", $"{{ \"Token\": \"{textToken}\" }}");
+                return StatusCode(200, $"{{ \"Token\": \"{textToken}\" }}");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Error creating account/session");
+                return StatusCode(500, "Internal server error logging into account.");
             }
-            
-        }
-
-        // POST: Login into account
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginAccount([FromBody] LoginDTO loginDTO)
-        {
-            if (!ModelState.IsValid || loginDTO.Password == null) return BadRequest(ModelState); // Return a 400 BadRequest if validation fails
-
-            Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == loginDTO.Email);
-#pragma warning disable CS8604 // Possible null reference argument.
-            if (account == null || !_passwordService.IsCorrectPassword(loginDTO.Password, account.Password)) // Return a 401 Unauthorized if the email/password combination is incorrect
-            {
-                if (account != null)
-                {
-                    ErrorLog errorLog = new ErrorLog
-                    {
-                        Date = DateTime.UtcNow,
-                        Type = "Login attempt, incorrect password",
-                        AccountID = account.ID,
-                    };
-
-                    _context.ErrorLogs.Add(errorLog);
-                    await _context.SaveChangesAsync();
-                }
-
-                return Unauthorized("Invalid email or password.");
-            } 
-#pragma warning restore CS8604 // Possible null reference argument.
-
-            if (account.Status == AccountStatus.Blocked) return StatusCodeResult((403, "Account is blocked and login is not allowed."));
-
-            int accountID = account.ID;
-
-            string textToken = await _tokenService.GenerateSessionToken(_context, accountID);
-
-            AccessLog accessLog = new AccessLog
-            {
-                Date = DateTime.UtcNow,
-                AccountID = accountID
-            };
-
-            _context.AccessLogs.Add(accessLog);
-            await _context.SaveChangesAsync();
-
-            return Ok($"{{ \"Token\": \"{textToken}\" }}");
         }
 
         // DELETE: Logout from account
         [HttpDelete("logout")]
         public async Task<IActionResult> LogoutAccount()
         {
-            var result = _tokenService.GetToken(Request);
-            if (result.token == null) return StatusCodeResult(result.status);
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var result = _tokenService.GetToken(Request);
+                if (result.token == null) return StatusCodeResult(result.status);
 
-            Session? session = await _tokenService.GetSession(_context, result.token);
-            if (session == null) return Unauthorized("Invalid session token");
+                Session? session = await _tokenService.GetSession(_context, result.token);
+                if (session == null) return StatusCode(401, "Invalid session token");
 
-            _context.Sessions.Remove(session);
-            await _context.SaveChangesAsync();
+                _context.Sessions.Remove(session);
+                await _context.SaveChangesAsync();
 
-            return Ok("Session closed successfully.");
+                return StatusCode(200, "Session closed successfully.");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error logging out of account.");
+            }
         }
 
         // DELETE: Delete account
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAccount()
         {
-            var result = await _tokenService.GetAccount(_context, Request);
-            Account? account = result.account;
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var result = await _tokenService.GetAccount(_context, Request);
+                Account? account = result.account;
 
-            if (account == null) return StatusCodeResult(result.status);
-            if (account.Status == AccountStatus.Blocked) return StatusCodeResult((403, "Account is blocked and cannot be deleted."));
+                if (account == null) return StatusCodeResult(result.status);
+                if (account.Status == AccountStatus.Blocked) return StatusCode(403, "Account is blocked and cannot be deleted.");
 
-            await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
-            await _context.AccessLogs.Where(al => al.AccountID == account.ID).ExecuteDeleteAsync();
-            await _context.ErrorLogs.Where(el => el.AccountID == account.ID).ExecuteDeleteAsync();
-            await _context.Accounts.Where(a => a.ID == account.ID).ExecuteDeleteAsync();
+                await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
+                await _context.AccessLogs.Where(al => al.AccountID == account.ID).ExecuteDeleteAsync();
+                await _context.ErrorLogs.Where(el => el.AccountID == account.ID).ExecuteDeleteAsync();
+                await _context.Accounts.Where(a => a.ID == account.ID).ExecuteDeleteAsync();
 
-            return Ok("Account and related data deleted successfully.");
+                return StatusCode(200, "Account and related data deleted successfully.");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error deleting account.");
+            }
         }
 
         // PUT: Change password
         [HttpPut("password")]
         public async Task<IActionResult> ChangePassword([FromBody] PasswordDTO passwordDTO)
         {
-            if (!ModelState.IsValid || passwordDTO.OldPassword == null || passwordDTO.NewPassword == null) return BadRequest(ModelState);
-
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+
+                if (!ModelState.IsValid || passwordDTO.OldPassword == null || passwordDTO.NewPassword == null) return BadRequest(ModelState);
+
                 var result = await _tokenService.GetAccount(_context, Request, true);
                 Account? account = result.account;
 
                 if (account == null) return StatusCodeResult(result.status);
-                if (account.Status == AccountStatus.Blocked) return StatusCodeResult((403, "Account is blocked and can't change password."));
+                if (account.Status == AccountStatus.Blocked) return StatusCode(403, "Account is blocked and can't change password.");
 
                 if (!_passwordService.IsCorrectPassword(passwordDTO.OldPassword, account.Password ?? []))
                 {
@@ -186,28 +315,27 @@ namespace ProjectGaia.Server.Controllers
                     _context.ErrorLogs.Add(errorLog);
                     await _context.SaveChangesAsync();
 
-                    return Unauthorized("Old password and account password do not match.");
+                    return StatusCode(401, "Old password and account password do not match.");
                 }
 
                 if (!_passwordService.IsValidPassword(passwordDTO.NewPassword))
                 {
-                    return BadRequest("Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character."); // Return a 400 BadRequest if the password does not comply with the requirements
+                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character."); // Return a 400 BadRequest if the password does not comply with the requirements
                 }
 
                 _context.ChangeTracker.Clear();
-                account.Password = _passwordService.HashPassword(passwordDTO.NewPassword); 
+                account.Password = _passwordService.HashPassword(passwordDTO.NewPassword);
                 _context.Accounts.Update(account);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
 
-                return Ok("Password updated successfully.");
+                return StatusCode(200, "Password updated successfully.");
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Error updating password");
+                return StatusCode(500, "Internal server error updating password.");
             }
         }
 

@@ -17,6 +17,7 @@ namespace ProjectGaia.Server
 
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddScoped<ConfirmationService>();
             builder.Services.AddScoped<PasswordService>();
             builder.Services.AddScoped<TokenService>();
 

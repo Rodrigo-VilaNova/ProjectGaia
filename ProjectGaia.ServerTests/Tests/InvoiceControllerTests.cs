@@ -23,6 +23,8 @@ namespace ProjectGaia.ServerTests.Tests
 
         public InvoiceControllerTests(ITestOutputHelper testOutputHelper)
         {
+            Environment.SetEnvironmentVariable("IS_UNIT_TEST", "");
+
             _testOutputHelper = testOutputHelper;
 
             string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBInvoiceTests;Trusted_Connection=True;MultipleActiveResultSets=true";

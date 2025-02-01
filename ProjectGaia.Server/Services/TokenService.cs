@@ -1,15 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
+﻿using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ProjectGaia.Server.Services
 {
