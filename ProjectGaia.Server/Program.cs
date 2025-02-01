@@ -15,10 +15,6 @@ namespace ProjectGaia.Server
             SetupCredentials();
             Console.WriteLine($"Using email: {Environment.GetEnvironmentVariable("email")}");
 
-            /*EmailSender emailSender = new EmailSender();
-            Task task = emailSender.SendEmailAsync("202200196@estudantes.ips.pt", "Project Gaia Assunto Teste", "Isto é um corpo de teste do project gaia");
-            task.Wait();*/
-
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddScoped<PasswordService>();

@@ -487,3 +487,4 @@ $RECYCLE.BIN/
 obj/
 bin/
 credentials.json
+ProjectGaia.Server/Migrations/
