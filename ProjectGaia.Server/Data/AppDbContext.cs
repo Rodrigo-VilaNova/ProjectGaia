@@ -14,6 +14,7 @@ namespace ProjectGaia.Server.Data
         }
 
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Confirmation> Confirmations { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<AccessLog> AccessLogs { get; set; }
@@ -28,9 +29,16 @@ namespace ProjectGaia.Server.Data
             modelBuilder.Entity<Account>().Property(a => a.ID).ValueGeneratedOnAdd();
             modelBuilder.Entity<Account>().HasIndex(a => a.Email).IsUnique();
 
+            modelBuilder.Entity<Confirmation>().ToTable("Confirmations");
+            modelBuilder.Entity<Confirmation>().Property(c => c.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Confirmation>().HasIndex(c => c.Token).IsUnique();
+            modelBuilder.Entity<Confirmation>().HasIndex(c => c.Expiration);
+            modelBuilder.Entity<Confirmation>().HasIndex(c => c.Email).IsUnique();
+
             modelBuilder.Entity<Session>().ToTable("Sessions");
             modelBuilder.Entity<Session>().Property(s => s.ID).ValueGeneratedOnAdd();
             modelBuilder.Entity<Session>().HasIndex(s => s.Token).IsUnique();
+            modelBuilder.Entity<Session>().HasIndex(s => s.Expiration);
             modelBuilder.Entity<Session>().HasOne(s => s.Account).WithMany(a => a.Sessions);
 
             modelBuilder.Entity<Invoice>().ToTable("Invoices");
@@ -45,8 +53,8 @@ namespace ProjectGaia.Server.Data
             modelBuilder.Entity<AccessLog>().HasOne(a => a.Account).WithMany(a => a.AccessLogs);
 
             modelBuilder.Entity<ErrorLog>().ToTable("ErrorLogs");
-            modelBuilder.Entity<ErrorLog>().Property(a => a.ID).ValueGeneratedOnAdd();
-            modelBuilder.Entity<ErrorLog>().HasOne(a => a.Account).WithMany(a => a.ErrorLogs);
+            modelBuilder.Entity<ErrorLog>().Property(e => e.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ErrorLog>().HasOne(e => e.Account).WithMany(a => a.ErrorLogs);
 
             PasswordService passwordService = new PasswordService();
 

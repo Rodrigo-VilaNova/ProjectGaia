@@ -7,7 +7,7 @@ using ProjectGaia.Server.Services;
 namespace ProjectGaia.Server.Controllers
 {
     [ApiController]
-    [Route("invoice")]
+    [Route("api/invoices")]
     public class InvoiceController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -20,7 +20,7 @@ namespace ProjectGaia.Server.Controllers
         }
 
         // GET: Get All Account Invoices
-        [HttpGet("get")]
+        [HttpGet("")]
         public async Task<IActionResult> GetInvoices()
         {
             var result = await _tokenService.GetAccount(_context, Request);
@@ -34,7 +34,7 @@ namespace ProjectGaia.Server.Controllers
         }
 
         // GET: Get Invoice
-        [HttpGet("get/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoice(int id)
         {
             var result = await _tokenService.GetAccount(_context, Request);
@@ -51,7 +51,7 @@ namespace ProjectGaia.Server.Controllers
         }
 
         // POST: Upload Invoice
-        [HttpPost("upload")]
+        [HttpPost("")]
         public async Task<IActionResult> UploadInvoice([FromBody] InvoiceDTO invoiceDTO)
         {
             var result = await _tokenService.GetAccount(_context, Request);
@@ -59,7 +59,7 @@ namespace ProjectGaia.Server.Controllers
 
             if (account == null) return StatusCodeResult(result.status);
 
-            if (!ModelState.IsValid || invoiceDTO.Price == null || invoiceDTO.Consumption == null || invoiceDTO.EmissionDate == null) return BadRequest(ModelState);
+            if (!ModelState.IsValid || invoiceDTO.Price == null || invoiceDTO.Consumption == null || invoiceDTO.EmissionDate == null) return StatusCode(400, ModelState);
 
             Invoice invoice = new Invoice
             {
@@ -85,11 +85,11 @@ namespace ProjectGaia.Server.Controllers
             
             await _context.SaveChangesAsync();
 
-            return Created("", invoice);
+            return StatusCode(201, invoice);
         }
 
         // DELETE: Delete Invoice
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
             var result = await _tokenService.GetAccount(_context, Request);
@@ -114,7 +114,7 @@ namespace ProjectGaia.Server.Controllers
                 return StatusCode(500, "Internal server error. Try again");
             }
 
-            return Ok("Invoice and related data deleted successfully.");
+            return StatusCode(200, "Invoice and related data deleted successfully.");
         }
 
         private ObjectResult StatusCodeResult((int code, string? message)? status)

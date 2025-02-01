@@ -24,12 +24,15 @@ namespace ProjectGaia.ServerTests.Tests
     {
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly AppDbContext _context;
+        private readonly ConfirmationService _confirmationService;
         private readonly PasswordService _passwordService;
         private readonly TokenService _tokenService;
         private readonly AccountController _controller;
 
         public AccountControllerTests(ITestOutputHelper testOutputHelper)
         {
+            Environment.SetEnvironmentVariable("IS_UNIT_TEST", "");
+
             _testOutputHelper = testOutputHelper;
 
             string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBAccountTests;Trusted_Connection=True;MultipleActiveResultSets=true";
@@ -43,10 +46,10 @@ namespace ProjectGaia.ServerTests.Tests
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
 
-
+            _confirmationService = new ConfirmationService();
             _passwordService = new PasswordService();
             _tokenService = new TokenService();
-            _controller = new AccountController(_context, _passwordService, _tokenService);
+            _controller = new AccountController(_context, _confirmationService, _passwordService, _tokenService);
         }
 
         private ObjectResult AssertStatusCode(object? response, int statusCode)
