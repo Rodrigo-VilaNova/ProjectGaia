@@ -2,13 +2,26 @@
   <div class="page-container">
     <div class="navbar">
       <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
-      <p>Teste1</p>
+      <p class="btn page-selected-btn">Invoices</p>
       <p>Teste2</p>
       <p>Teste3</p>
       <div class="profile-circle"></div>
     </div>
     <div class="invoices-container">
-      Simple Quick Test
+      <h2>Your Invoices</h2>
+      <ul *ngIf="invoices.length > 0; else noInvoices">
+        <li *ngFor="let invoice of invoices" class="invoice-item">
+          <p><strong>ID:</strong> {{ invoice.id }}</p>
+          <p><strong>Price:</strong> ${{ invoice.price }}</p>
+          <p><strong>Consumption:</strong> {{ invoice.consumption }} kWh</p>
+          <p><strong>Emission Date:</strong> {{ invoice.emissionDate | date }}</p>
+          <p><strong>Upload Date:</strong> {{ invoice.uploadDate | date }}</p>
+          <hr />
+        </li>
+      </ul>
+      <ng-template #noInvoices>
+        <p>No invoices available.</p>
+      </ng-template>
     </div>
   </div>
 </body>
