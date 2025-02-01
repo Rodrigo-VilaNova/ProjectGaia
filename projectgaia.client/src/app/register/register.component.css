@@ -1,10 +1,39 @@
 /* Shared styles for all pages */
+* {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+}
+
+.page-container {
+  display: flex;
+  position: fixed;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+}
+
 .auth-container, .dashboard-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100vw;
   background: linear-gradient(120deg, #fff9ce, #fff98b);
   color: #2a7125;
   text-align: center;
@@ -12,9 +41,10 @@
 }
 
 h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 3rem;
+  margin-bottom: 2rem;
   color: #f5d001;
+  text-shadow: -1px -1px 0 #574a00, 1px -1px 0 #574a00, -1px 1px 0 #574a00, 1px 1px 0 #574a00;
 }
 
 .description {
@@ -28,7 +58,8 @@ h2 {
 }
 
 label {
-  font-size: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
   display: block;
   margin-bottom: 0.5rem;
   color: #73a634;
@@ -38,14 +69,13 @@ input {
   font-size: 1rem;
   padding: 0.5rem;
   border-radius: 5px;
-  width: 100%;
-  max-width: 400px;
+  max-width: 20vw;
   border: 1px solid #ccc;
 }
 
-  input:focus {
-    border-color: #f5d001;
-  }
+input:focus {
+  border-color: #f5d001;
+}
 
 .text-danger {
   font-size: 0.875rem;
@@ -91,4 +121,18 @@ input {
   color: #721c24;
   padding: 1rem;
   border-radius: 5px;
+}
+
+.image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(120deg, hsla(92, 93%, 84%, 1) 20%, hsla(0, 0%, 100%, 1) 100%);
+}
+
+.image-container img {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
 }
