@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../interceptors/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent {
   loading = false;
   errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService: AuthService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128)]]
@@ -36,13 +37,14 @@ export class LoginComponent {
       password: this.loginForm.value.password
     };
 
-    this.http.post<LoginResponse>('https://localhost:7277/account/login', credentials)
+    this.http.post<LoginResponse>('https://localhost:7277/api/account/login', credentials)
       .subscribe(
         (response) => {
           console.log('Login successful. Token:', response.Token); // Log the token
 
           // Store the token (e.g., in localStorage)
           localStorage.setItem('authToken', response.Token);
+          this.authService.setToken(response.Token);
 
           // Redirect to the home page or another route
           this.router.navigate(['/dashboard']);
