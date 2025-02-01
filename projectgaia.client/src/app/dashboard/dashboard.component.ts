@@ -34,4 +34,7 @@ export class DashboardComponent {
       );
     }
   }
+  goToInvoices() {
+    this.router.navigate(['/invoices']);
+  }
 }
