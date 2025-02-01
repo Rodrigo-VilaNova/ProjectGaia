@@ -15,7 +15,7 @@ export interface Invoice {
   providedIn: 'root'
 })
 export class InvoiceService {
-  private apiUrl = 'http://localhost:58120/api/invoices';
+  private apiUrl = 'https://localhost:7277/api/invoices';
 
   constructor(private http: HttpClient) { }
 

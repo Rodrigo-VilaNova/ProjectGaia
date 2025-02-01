@@ -51,7 +51,7 @@ export class RegisterComponent {
       password: this.registerForm.value.password
     };
 
-    this.http.post<RegisterResponse>('https://localhost:7277/account/register', accountDTO)
+    this.http.post<RegisterResponse>('https://localhost:7277/api/account/register', accountDTO)
       .subscribe(
         (response) => {
           console.log('Registration successful. Token:', response.Token); // Log the token

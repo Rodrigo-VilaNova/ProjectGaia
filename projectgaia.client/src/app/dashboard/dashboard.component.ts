@@ -20,7 +20,7 @@ export class DashboardComponent {
 
   deleteAccount() {
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      this.http.delete('https://localhost:7277/account/delete', {
+      this.http.delete('https://localhost:7277/api/account/delete', {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }, responseType: 'text'
       }).subscribe(
         () => {
