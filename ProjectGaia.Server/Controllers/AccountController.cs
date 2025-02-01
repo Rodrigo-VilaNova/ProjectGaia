@@ -98,8 +98,6 @@ namespace ProjectGaia.Server.Controllers
                 };
 
                 bool isUnitTest = Environment.GetEnvironmentVariable("IS_UNIT_TEST") != null;
-
-                Console.WriteLine($"Is Unit Test: {isUnitTest}");
                 if (!isUnitTest)
                 {
                     var scheme = Request.Scheme;
@@ -124,7 +122,7 @@ namespace ProjectGaia.Server.Controllers
 
                 return StatusCode(202, "A confirmation email was sent if the email exists.");
             }
-            catch (IOException ex)
+            catch
             {
                 await transaction.RollbackAsync();
                 return StatusCode(500, "Internal server error creating account/session.");
@@ -333,10 +331,9 @@ namespace ProjectGaia.Server.Controllers
                 {
                     await transaction.RollbackAsync();
                     return BadRequest(ModelState);
-                }
-                   
+                }   
 
-                var result = await _tokenService.GetAccount(_context, Request, true);
+                var result = await _tokenService.GetAccount(_context, Request);
                 Account? account = result.account;
 
                 if (account == null)

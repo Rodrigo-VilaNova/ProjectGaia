@@ -37,7 +37,6 @@ namespace ProjectGaia.Server.Services
             {
                 return [];
             }
-
         }
 
         public async Task<string> GenerateSessionToken(AppDbContext context, int accountID)
@@ -68,61 +67,37 @@ namespace ProjectGaia.Server.Services
             return Convert.ToBase64String(token);
         }
 
-        public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, string token, bool transactionless)
+        public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, string token)
         {
-            IDbContextTransaction? transaction = null;
-            if (!transactionless) transaction = await context.Database.BeginTransactionAsync();
+            Session? session = await GetSession(context, token);
 
-            try
+            if (session == null) return (null, (401, "Invalid session token"));
+
+            if (session.Expiration < DateTime.UtcNow)
             {
-                Session? session = await GetSession(context, token);
-
-                if (session == null) return (null, (401, "Invalid session token"));
-
-                if (session.Expiration < DateTime.UtcNow)
-                {
-                    context.Sessions.Remove(session);
-                    await context.SaveChangesAsync();
-
-                    if (!transactionless && transaction != null) await transaction.CommitAsync();
-
-                    return (null, (401, "Invalid session token"));
-                }
-
-                session.Expiration = DateTime.UtcNow.AddDays(30);
-                context.Sessions.Update(session);
+                context.Sessions.Remove(session);
                 await context.SaveChangesAsync();
 
-                Account? account = await context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.ID == session.AccountID);
-
-                if (!transactionless && transaction != null)
-                {
-                    await transaction.CommitAsync();
-                    transaction.Dispose();
-                }
-
-                return (account, null);
+                return (null, (401, "Invalid session token"));
             }
-            catch
-            {
-                if (!transactionless && transaction != null)
-                {
-                    await transaction.RollbackAsync();
-                    transaction.Dispose();
-                }
 
-                return (null, (500, "Internal server error"));
-            }
+            session.Expiration = DateTime.UtcNow.AddDays(30);
+            context.Sessions.Update(session);
+            await context.SaveChangesAsync();
+
+            Account? account = await context.Accounts.AsNoTracking().FirstOrDefaultAsync(a => a.ID == session.AccountID);
+
+            return (account, null);
         }
 
-        public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, HttpRequest request, bool transactionless = false)
+        public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, HttpRequest request)
         {
             var result = GetToken(request);
             string? token = result.token;
 
             if (token == null) return (null, result.status);
 
-            return await GetAccount(context, token, transactionless);
+            return await GetAccount(context, token);
         }
 
         public (string? token, (int code, string? message)? status) GetToken(HttpRequest request)

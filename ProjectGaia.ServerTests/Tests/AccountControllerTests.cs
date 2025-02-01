@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -31,7 +33,7 @@ namespace ProjectGaia.ServerTests.Tests
 
         public AccountControllerTests(ITestOutputHelper testOutputHelper)
         {
-            Environment.SetEnvironmentVariable("IS_UNIT_TEST", "");
+            Environment.SetEnvironmentVariable("IS_UNIT_TEST", "-");
 
             _testOutputHelper = testOutputHelper;
 
@@ -52,10 +54,10 @@ namespace ProjectGaia.ServerTests.Tests
             _controller = new AccountController(_context, _confirmationService, _passwordService, _tokenService);
         }
 
-        private ObjectResult AssertStatusCode(object? response, int statusCode)
+        private ObjectResult AssertStatusCode(int statusCode, object? response)
         {
             ObjectResult assertResponse = Assert.IsAssignableFrom<ObjectResult>(response);
-            Assert.Equal(assertResponse.StatusCode, statusCode);
+            Assert.Equal(statusCode, assertResponse.StatusCode);
             return assertResponse;
         }
 
@@ -67,7 +69,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            AssertStatusCode(result, 400);
+            AssertStatusCode(400, result);
 
             
         }
@@ -79,7 +81,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            AssertStatusCode(result, 400);
+            AssertStatusCode(400, result);
         }
 
         [Fact]
@@ -90,7 +92,7 @@ namespace ProjectGaia.ServerTests.Tests
             await _controller.RegisterAccount(accountDTO);
             var result = await _controller.RegisterAccount(accountDTO);
 
-            AssertStatusCode(result, 409);
+            AssertStatusCode(409, result);
         }
 
         [Fact]
@@ -100,9 +102,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            ObjectResult assertResult = AssertStatusCode(result, 201);
-            Assert.NotNull(assertResult.Value);
-            Assert.Contains("Token", assertResult.Value.ToString());
+            ObjectResult assertResult = AssertStatusCode(202, result);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            AssertStatusCode(result, 400);
+            AssertStatusCode(400, result);
         }
 
         [Fact]
@@ -123,20 +123,17 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
         public async Task LoginAccount_AccountBlocked_ReturnsForbidden()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var loginDTO = new LoginDTO { Email = accountDTO.Email, Password = accountDTO.Password };
+            var loginDTO = new LoginDTO { Email = "User0@gmail.com", Password = "User0@gmail.com" };
 
-            await _controller.RegisterAccount(accountDTO);
-            Account? account = await _context.Accounts.OrderBy(a => a.ID).LastOrDefaultAsync();
+            Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.ID == 3);
 
             Assert.NotNull(account);
-            Assert.Equal(accountDTO.Email, loginDTO.Email);
 
             account.Status = AccountStatus.Blocked;
             _context.Accounts.Update(account);
@@ -144,20 +141,17 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            AssertStatusCode(result, 403);
+            AssertStatusCode(403, result);
         }
 
         [Fact]
         public async Task LoginAccount_ValidCredentials_ReturnsOk()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var loginDTO = new LoginDTO { Email = accountDTO.Email, Password = accountDTO.Password };
-
-            await _controller.RegisterAccount(accountDTO);
+            var loginDTO = new LoginDTO { Email = "User0@gmail.com", Password = "User0@gmail.com" };
 
             var result = await _controller.LoginAccount(loginDTO);
 
-            var assertResult = AssertStatusCode(result, 200);
+            var assertResult = AssertStatusCode(200, result);
             Assert.NotNull(assertResult.Value);
             Assert.Contains("Token", assertResult.Value.ToString());
         }
@@ -172,26 +166,23 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.LogoutAccount();
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
         public async Task LogoutAccount_ValidToken_ReturnsOk()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.LogoutAccount();
 
-            AssertStatusCode(result, 200);
+            AssertStatusCode(200, result);
         }
 
         [Fact]
@@ -204,15 +195,13 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteAccount();
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
         public async Task DeleteAccount_AccountBlocked_ReturnsForbidden()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-            Account? account = await _context.Accounts.OrderBy(a => a.ID).LastOrDefaultAsync();
+            Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.ID == 3);
 
             Assert.NotNull(account);
 
@@ -220,36 +209,33 @@ namespace ProjectGaia.ServerTests.Tests
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
 
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.DeleteAccount();
 
-            AssertStatusCode(result, 403);
+            AssertStatusCode(403, result);
         }
 
         [Fact]
         public async Task DeleteAccount_ValidToken_ReturnsOk()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.DeleteAccount();
 
-            AssertStatusCode(result, 200);
+            AssertStatusCode(200, result);
         }
 
         [Fact]
@@ -262,35 +248,28 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
         public async Task ChangePassword_InvalidToken_ReturnsUnauthorized()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-
             var mockHttpContext = new DefaultHttpContext();
             mockHttpContext.Request.Headers["Authorization"] = $"Bearer awkjdbjahwbvdhgvawdhg";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
-            var passwordDTO = new PasswordDTO { OldPassword = accountDTO.Password, NewPassword = "NewPass2@" };
+            var passwordDTO = new PasswordDTO { OldPassword = "User0@gmail.com", NewPassword = "User01@gmail.com" };
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
         public async Task ChangePassword_AccountBlocked_ReturnsForbidden()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-            Account? account = await _context.Accounts.OrderBy(a => a.ID).LastOrDefaultAsync();
+            Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.ID == 3);
 
             Assert.NotNull(account);
 
@@ -298,88 +277,79 @@ namespace ProjectGaia.ServerTests.Tests
             _context.Accounts.Update(account);
             await _context.SaveChangesAsync();
 
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
-            var passwordDTO = new PasswordDTO { OldPassword = accountDTO.Password, NewPassword = "NewPass2@" };
+            var passwordDTO = new PasswordDTO { OldPassword = "User0@gmail.com", NewPassword = "User01@gmail.com" };
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            AssertStatusCode(result, 403);
+            AssertStatusCode(403, result);
         }
 
         [Fact]
         public async Task ChangePassword_InvalidOldPassword_ReturnsUnauthorized()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
-            var passwordDTO = new PasswordDTO { OldPassword = "sus amogus", NewPassword = "NewPass2@" };
+            var passwordDTO = new PasswordDTO { OldPassword = "Wr0ngP455w0rd!", NewPassword = "User01@gmail.com" };
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
         public async Task ChangePassword_InvalidNewPassword_ReturnsBadRequest()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
-            var passwordDTO = new PasswordDTO { OldPassword = accountDTO.Password, NewPassword = "amogus" };
+            var passwordDTO = new PasswordDTO { OldPassword = "User0@gmail.com", NewPassword = "user0" };
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            AssertStatusCode(result, 400);
+            AssertStatusCode(400, result);
         }
 
         [Fact]
         public async Task ChangePassword_ValidInput_ReturnsOk()
         {
-            var accountDTO = new AccountDTO { Name = "Test User", Email = "test@example.com", Password = "ValidPass1!" };
-            var resultRegister = await _controller.RegisterAccount(accountDTO);
-
-            var createdResult = Assert.IsType<CreatedResult>(resultRegister);
-            dynamic response = JObject.Parse(createdResult.Value?.ToString() ?? "");
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
 
             var mockHttpContext = new DefaultHttpContext();
-            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {response.Token}";
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
 
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
-            var passwordDTO = new PasswordDTO { OldPassword = accountDTO.Password, NewPassword = "NewPass2@" };
+            var passwordDTO = new PasswordDTO { OldPassword = "User0@gmail.com", NewPassword = "User01@gmail.com" };
 
             var result = await _controller.ChangePassword(passwordDTO);
 
-            var test = Assert.IsType<OkObjectResult>(result);
+            var test = AssertStatusCode(200, result);
 
-            var loginDTO = new LoginDTO { Email = accountDTO.Email, Password = passwordDTO.NewPassword };
+            var loginDTO = new LoginDTO { Email = "User0@gmail.com", Password = passwordDTO.NewPassword };
 
             var resultLogin = await _controller.LoginAccount(loginDTO);
 
-            AssertStatusCode(result, 200);
+            AssertStatusCode(200, result);
         }
     }
 }

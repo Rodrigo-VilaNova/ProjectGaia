@@ -23,7 +23,7 @@ namespace ProjectGaia.ServerTests.Tests
 
         public InvoiceControllerTests(ITestOutputHelper testOutputHelper)
         {
-            Environment.SetEnvironmentVariable("IS_UNIT_TEST", "");
+            Environment.SetEnvironmentVariable("IS_UNIT_TEST", "-");
 
             _testOutputHelper = testOutputHelper;
 
@@ -42,10 +42,10 @@ namespace ProjectGaia.ServerTests.Tests
             _controller = new InvoiceController(_context, _tokenService);
         }
 
-        private ObjectResult AssertStatusCode(object? response, int statusCode)
+        private ObjectResult AssertStatusCode(int statusCode, object? response)
         {
             ObjectResult assertResponse = Assert.IsAssignableFrom<ObjectResult>(response);
-            Assert.Equal(assertResponse.StatusCode, statusCode);
+            Assert.Equal(statusCode, assertResponse.StatusCode);
             return assertResponse;
         }
 
@@ -62,7 +62,7 @@ namespace ProjectGaia.ServerTests.Tests
             var invoiceDTO = new InvoiceDTO { Price = 100, Consumption = 200, EmissionDate = DateTime.UtcNow };
             var result = await _controller.UploadInvoice(invoiceDTO);
 
-            AssertStatusCode(result, 201);
+            AssertStatusCode(201, result);
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace ProjectGaia.ServerTests.Tests
             var invoiceDTO = new InvoiceDTO { Price = 100, EmissionDate = DateTime.UtcNow };
             var result = await _controller.UploadInvoice(invoiceDTO);
 
-            AssertStatusCode(result, 400);
+            AssertStatusCode(400, result);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ namespace ProjectGaia.ServerTests.Tests
             var invoiceDTO = new InvoiceDTO { Price = 100, Consumption = 200, EmissionDate = DateTime.UtcNow };
             var result = await _controller.UploadInvoice(invoiceDTO);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace ProjectGaia.ServerTests.Tests
             var invoiceDTO = new InvoiceDTO { Price = 100, Consumption = 200, EmissionDate = DateTime.UtcNow };
             var result = await _controller.UploadInvoice(invoiceDTO);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoices();
 
-            var resultObject = AssertStatusCode(result, 200);
+            var resultObject = AssertStatusCode(200, result);
 
             var invoiceIDs = Assert.IsType<List<int>>(resultObject.Value);
 
@@ -141,7 +141,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoices();
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoices();
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -167,7 +167,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoice(1);
 
-            AssertStatusCode(result, 200);
+            AssertStatusCode(200, result);
         }
 
         [Fact]
@@ -182,7 +182,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoice(69);
 
-            AssertStatusCode(result, 404);
+            AssertStatusCode(404, result);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoice(1);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -212,7 +212,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoice(1);
 
-            AssertStatusCode(result, 403);
+            AssertStatusCode(403, result);
         }
 
         [Fact]
@@ -223,7 +223,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.GetInvoice(1);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -238,7 +238,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteInvoice(1);
 
-            AssertStatusCode(result, 200);
+            AssertStatusCode(200, result);
         }
 
         [Fact]
@@ -253,7 +253,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteInvoice(1);
 
-            AssertStatusCode(result, 403);
+            AssertStatusCode(403, result);
         }
 
         [Fact]
@@ -268,7 +268,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteInvoice(1);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
 
         [Fact]
@@ -279,7 +279,7 @@ namespace ProjectGaia.ServerTests.Tests
 
             var result = await _controller.DeleteInvoice(1);
 
-            AssertStatusCode(result, 401);
+            AssertStatusCode(401, result);
         }
     }
 }

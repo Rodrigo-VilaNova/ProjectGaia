@@ -8,11 +8,9 @@ namespace ProjectGaia.Server.Services
     {
         public byte[] HashPassword(string password)
         {
-            // Example using SHA256, but a stronger algorithm like bcrypt or PBKDF2 is recommended
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                //return Convert.ToBase64String(hashBytes);
                 return hashBytes;
             }
         }
