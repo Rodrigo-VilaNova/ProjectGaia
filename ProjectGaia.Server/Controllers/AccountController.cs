@@ -69,7 +69,7 @@ namespace ProjectGaia.Server.Controllers
                 bool accountAlreadyExists = await _context.Accounts.AnyAsync(a => a.Email == accountDTO.Email);
                 if (accountAlreadyExists)
                 {
-                    await transaction.RollbackAsync();
+                    await transaction.CommitAsync();
                     return StatusCode(409, "An account with this email already exists.");
                 }
 
@@ -98,6 +98,8 @@ namespace ProjectGaia.Server.Controllers
                 };
 
                 bool isUnitTest = Environment.GetEnvironmentVariable("IS_UNIT_TEST") != null;
+
+                Console.WriteLine($"Is Unit Test: {isUnitTest}");
                 if (!isUnitTest)
                 {
                     var scheme = Request.Scheme;
@@ -122,7 +124,7 @@ namespace ProjectGaia.Server.Controllers
 
                 return StatusCode(202, "A confirmation email was sent if the email exists.");
             }
-            catch
+            catch (IOException ex)
             {
                 await transaction.RollbackAsync();
                 return StatusCode(500, "Internal server error creating account/session.");
@@ -188,7 +190,11 @@ namespace ProjectGaia.Server.Controllers
             using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                if (!ModelState.IsValid || loginDTO.Password == null) return StatusCode(400, ModelState);
+                if (!ModelState.IsValid || loginDTO.Password == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, ModelState);
+                }
 
                 Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == loginDTO.Email);
 #pragma warning disable CS8604 // Possible null reference argument.
@@ -205,13 +211,19 @@ namespace ProjectGaia.Server.Controllers
 
                         _context.ErrorLogs.Add(errorLog);
                         await _context.SaveChangesAsync();
+                        await transaction.CommitAsync();
                     }
+                    else await transaction.RollbackAsync();
 
                     return StatusCode(401, "Invalid email or password.");
                 }
 #pragma warning restore CS8604 // Possible null reference argument.
 
-                if (account.Status == AccountStatus.Blocked) return StatusCode(403, "Account is blocked and login is not allowed.");
+                if (account.Status == AccountStatus.Blocked)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(403, "Account is blocked and login is not allowed.");
+                }
 
                 int accountID = account.ID;
 
@@ -225,6 +237,7 @@ namespace ProjectGaia.Server.Controllers
 
                 _context.AccessLogs.Add(accessLog);
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
                 return StatusCode(200, $"{{ \"Token\": \"{textToken}\" }}");
             }
@@ -243,13 +256,22 @@ namespace ProjectGaia.Server.Controllers
             try
             {
                 var result = _tokenService.GetToken(Request);
-                if (result.token == null) return StatusCodeResult(result.status);
+                if (result.token == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCodeResult(result.status);
+                }
 
                 Session? session = await _tokenService.GetSession(_context, result.token);
-                if (session == null) return StatusCode(401, "Invalid session token");
+                if (session == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(401, "Invalid session token");
+                }       
 
                 _context.Sessions.Remove(session);
                 await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
                 return StatusCode(200, "Session closed successfully.");
             }
@@ -270,13 +292,25 @@ namespace ProjectGaia.Server.Controllers
                 var result = await _tokenService.GetAccount(_context, Request);
                 Account? account = result.account;
 
-                if (account == null) return StatusCodeResult(result.status);
-                if (account.Status == AccountStatus.Blocked) return StatusCode(403, "Account is blocked and cannot be deleted.");
+                if (account == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCodeResult(result.status);
+                }
+                    
+                if (account.Status == AccountStatus.Blocked)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(403, "Account is blocked and cannot be deleted.");
+                }
 
                 await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
                 await _context.AccessLogs.Where(al => al.AccountID == account.ID).ExecuteDeleteAsync();
                 await _context.ErrorLogs.Where(el => el.AccountID == account.ID).ExecuteDeleteAsync();
                 await _context.Accounts.Where(a => a.ID == account.ID).ExecuteDeleteAsync();
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
 
                 return StatusCode(200, "Account and related data deleted successfully.");
             }
@@ -295,13 +329,27 @@ namespace ProjectGaia.Server.Controllers
             try
             {
 
-                if (!ModelState.IsValid || passwordDTO.OldPassword == null || passwordDTO.NewPassword == null) return BadRequest(ModelState);
+                if (!ModelState.IsValid || passwordDTO.OldPassword == null || passwordDTO.NewPassword == null)
+                {
+                    await transaction.RollbackAsync();
+                    return BadRequest(ModelState);
+                }
+                   
 
                 var result = await _tokenService.GetAccount(_context, Request, true);
                 Account? account = result.account;
 
-                if (account == null) return StatusCodeResult(result.status);
-                if (account.Status == AccountStatus.Blocked) return StatusCode(403, "Account is blocked and can't change password.");
+                if (account == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCodeResult(result.status);
+                }
+                    
+                if (account.Status == AccountStatus.Blocked)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(403, "Account is blocked and can't change password.");
+                }               
 
                 if (!_passwordService.IsCorrectPassword(passwordDTO.OldPassword, account.Password ?? []))
                 {
@@ -314,12 +362,14 @@ namespace ProjectGaia.Server.Controllers
 
                     _context.ErrorLogs.Add(errorLog);
                     await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
 
                     return StatusCode(401, "Old password and account password do not match.");
                 }
 
                 if (!_passwordService.IsValidPassword(passwordDTO.NewPassword))
                 {
+                    await transaction.RollbackAsync();
                     return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character."); // Return a 400 BadRequest if the password does not comply with the requirements
                 }
 
@@ -327,7 +377,6 @@ namespace ProjectGaia.Server.Controllers
                 account.Password = _passwordService.HashPassword(passwordDTO.NewPassword);
                 _context.Accounts.Update(account);
                 await _context.SaveChangesAsync();
-
                 await transaction.CommitAsync();
 
                 return StatusCode(200, "Password updated successfully.");
