@@ -24,8 +24,8 @@
         <tbody>
           <tr *ngFor="let invoice of invoices">
             <td>{{ invoice.id }}</td>
-            <td>{{ invoice.price }}</td>
-            <td>{{ invoice.consumption }}</td>
+            <td>{{ invoice.price }}€</td>
+            <td>{{ invoice.consumption }}kWh</td>
             <td>{{ invoice.emissionDate | date }}</td>
             <td>{{ invoice.uploadDate | date }}</td>
           </tr>

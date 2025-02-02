@@ -15,14 +15,15 @@ export class InvoicesComponent {
   invoices: Invoice[] = [];
   constructor(private router: Router, private http: HttpClient, private invoiceService: InvoiceService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loadInvoices();
   }
 
-  loadInvoices(): void {
-    this.invoiceService.getInvoices().subscribe(
-      (data) => {
-        this.invoices = data;
+  loadInvoices() {
+    this.invoiceService.getUserInvoices().subscribe(
+      (sortedInvoices) => {
+        this.invoices = sortedInvoices;
+        console.log('Invoices fetched and sorted:', this.invoices);
       },
       (error) => {
         console.error('Error fetching invoices:', error);
