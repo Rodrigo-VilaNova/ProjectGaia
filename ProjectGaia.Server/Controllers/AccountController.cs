@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Identity.Client;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -103,7 +104,7 @@ namespace ProjectGaia.Server.Controllers
                     var scheme = Request.Scheme;
                     var host = Request.Host;
                     var parameters = new { token = hexToken};
-                    var path = Url.Action("LoginAccount", "Account", parameters);
+                    var path = Url.Action("ConfirmAccount", "Account", parameters);
 
                     string fullUrl = $"{scheme}://{host}{path}";
 
@@ -116,7 +117,7 @@ namespace ProjectGaia.Server.Controllers
                     await emailSender.SendEmailAsync(confirmation.Email, subject, body);
                 }
 
-                var confirmationEntry = _context.Confirmations.Add(confirmation);
+                await _context.Confirmations.AddAsync(confirmation);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
@@ -156,7 +157,7 @@ namespace ProjectGaia.Server.Controllers
                     _context.Confirmations.Remove(confirmation);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
-                    return StatusCode(404, "Token expired.");
+                    return StatusCode(410, "Token expired.");
                 }
 
                 Account account = new Account
@@ -243,6 +244,154 @@ namespace ProjectGaia.Server.Controllers
             {
                 await transaction.RollbackAsync();
                 return StatusCode(500, "Internal server error logging into account.");
+            }
+        }
+
+        // POST: Send password reset email
+        [HttpPost("recovery")]
+        public async Task<IActionResult> SendRecoveryEmail([FromBody] RecoveryDTO recoveryDTO)
+        {
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (!ModelState.IsValid || recoveryDTO.Email == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, ModelState);
+                }
+
+                Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.Email == recoveryDTO.Email);
+                if (account == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(404, "Account doesn't exist.");
+                }
+
+                bool recoveryAlreadyExists = await _context.Recoveries.AnyAsync(r => r.AccountID == account.ID);
+                if (recoveryAlreadyExists)
+                {
+                    Recovery currentRecovery = await _context.Recoveries.FirstAsync(r => r.AccountID == account.ID);
+
+                    if (currentRecovery.Expiration > DateTime.UtcNow)
+                    {
+                        await transaction.RollbackAsync();
+                        return StatusCode(409, "A password reset for this account is already pending. Try again later.");
+                    }
+                    else
+                    {
+                        _context.Recoveries.Remove(currentRecovery);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                byte[] token;
+                byte[] hashedToken;
+                string hexToken;
+                string hexHashedToken;
+
+                while (true)
+                {
+                    token = _confirmationService.GenerateRandomToken();
+                    hashedToken = _confirmationService.HashToken(token);
+                    hexHashedToken = Convert.ToHexString(hashedToken);
+                    bool isUnique = !await _context.Recoveries.AnyAsync(r => r.Token == hexHashedToken);
+                    if (isUnique) break;
+                }
+                hexToken = Convert.ToHexString(token);
+
+                Recovery recovery = new Recovery
+                {
+                    Token = hexHashedToken,
+                    Expiration = DateTime.UtcNow.AddMinutes(30),
+                    AccountID = account.ID
+                };
+
+                bool isUnitTest = Environment.GetEnvironmentVariable("IS_UNIT_TEST") != null;
+                if (!isUnitTest)
+                {
+                    var scheme = Request.Scheme;
+                    var host = Request.Host;
+                    var parameters = new { token = hexToken };
+                    var path = Url.Action("ResetPassword", "Account", parameters);
+
+                    string fullUrl = $"{scheme}://{host}{path}";
+
+                    string subject = $"Hello there, {account.Name}, a password reset was requested for your Project Gaia account";
+                    string body = $"To reset your Project Gaia account password please open the following link:\n{fullUrl}";
+
+                    Console.WriteLine($"Activation URL: {fullUrl}");
+
+                    EmailSender emailSender = new EmailSender();
+                    //await emailSender.SendEmailAsync(recoveryDTO.Email, subject, body);
+                }
+
+                await _context.Recoveries.AddAsync(recovery);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return StatusCode(202, "A password reset link was sent to your email.");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error creating account/session.");
+            }
+        }
+
+        // Put: Reset account password
+        [HttpPut("recovery")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetDTO resetDTO)
+        {
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (!ModelState.IsValid || resetDTO.Token == null || resetDTO.Password == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, ModelState);
+                }
+
+                string hexHashedToken = Convert.ToHexString(_confirmationService.HashToken(resetDTO.Token));
+                Recovery? recovery = await _context.Recoveries.FirstOrDefaultAsync(r => r.Token == hexHashedToken);
+
+                if (recovery == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(404, "Invalid token.");
+                }
+
+                if (recovery.Expiration <= DateTime.UtcNow)
+                {
+                    _context.Recoveries.Remove(recovery);
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                    return StatusCode(410, "Token expired.");
+                }
+
+                if (!_passwordService.IsValidPassword(resetDTO.Password))
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+                }
+
+                Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.ID == recovery.AccountID);
+                if (account == null)
+                {
+                    await transaction.RollbackAsync();
+                    return StatusCode(404, "Account doesn't exist.");
+                }
+
+                account.Password = _passwordService.HashPassword(resetDTO.Password);
+                _context.Accounts.Update(account);
+                _context.Recoveries.Remove(recovery);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return StatusCode(200, "Password reset successfully.");
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error confirming account.");
             }
         }
 

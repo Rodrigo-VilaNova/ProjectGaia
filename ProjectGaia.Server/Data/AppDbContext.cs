@@ -15,6 +15,7 @@ namespace ProjectGaia.Server.Data
 
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Confirmation> Confirmations { get; set; }
+        public DbSet<Recovery> Recoveries { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
         public DbSet<AccessLog> AccessLogs { get; set; }
@@ -34,6 +35,12 @@ namespace ProjectGaia.Server.Data
             modelBuilder.Entity<Confirmation>().HasIndex(c => c.Token).IsUnique();
             modelBuilder.Entity<Confirmation>().HasIndex(c => c.Expiration);
             modelBuilder.Entity<Confirmation>().HasIndex(c => c.Email).IsUnique();
+
+            modelBuilder.Entity<Recovery>().ToTable("Recoveries");
+            modelBuilder.Entity<Recovery>().Property(c => c.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Recovery>().HasIndex(c => c.Token).IsUnique();
+            modelBuilder.Entity<Recovery>().HasIndex(c => c.Expiration);
+            modelBuilder.Entity<Recovery>().HasIndex(c => c.AccountID).IsUnique();
 
             modelBuilder.Entity<Session>().ToTable("Sessions");
             modelBuilder.Entity<Session>().Property(s => s.ID).ValueGeneratedOnAdd();
@@ -121,6 +128,46 @@ namespace ProjectGaia.Server.Data
                     Password = passwordService.HashPassword("User4@gmail.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Blocked
+                }
+            );
+
+            ConfirmationService confirmationService = new ConfirmationService();
+
+            modelBuilder.Entity<Confirmation>().HasData(
+                new Confirmation
+                {
+                    ID = 1,
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserFiveToken"))),
+                    Expiration = new DateTime(3025, 2, 2),
+                    Name = "User Five",
+                    Email = "User5@gmail.com",
+                    Password = passwordService.HashPassword("User5@gmail.com")
+                },
+                new Confirmation
+                {
+                    ID = 2,
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserSixToken"))),
+                    Expiration = new DateTime(1025, 2, 2),
+                    Name = "User Six",
+                    Email = "User6@gmail.com",
+                    Password = passwordService.HashPassword("User6@gmail.com")
+                }
+            );
+
+            modelBuilder.Entity<Recovery>().HasData(
+                new Recovery
+                {
+                    ID = 1,
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserZeroToken"))),
+                    Expiration = new DateTime(3025, 2, 2),
+                    AccountID = 3
+                },
+                new Recovery
+                {
+                    ID = 2,
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserOneToken"))),
+                    Expiration = new DateTime(1025, 2, 2),
+                    AccountID = 4
                 }
             );
 

@@ -30,7 +30,7 @@ namespace ProjectGaia.Server.Controllers
 
             List<int> invoiceIDs = await _context.Invoices.AsNoTracking().Where(i => i.AccountID == account.ID).Select(i => i.ID).ToListAsync();
 
-            return Ok(invoiceIDs);
+            return StatusCode(200, invoiceIDs);
         }
 
         // GET: Get Invoice
@@ -47,7 +47,7 @@ namespace ProjectGaia.Server.Controllers
 
             if (invoice.AccountID != account.ID) return StatusCode(403, "Access denied. This invoice belongs to another user");
 
-            return Ok(invoice);
+            return StatusCode(200, invoice);
         }
 
         // POST: Upload Invoice

@@ -70,8 +70,6 @@ namespace ProjectGaia.ServerTests.Tests
             var result = await _controller.RegisterAccount(accountDTO);
 
             AssertStatusCode(400, result);
-
-            
         }
 
         [Fact]
@@ -96,13 +94,174 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         [Fact]
-        public async Task RegisterAccount_ValidInput_ReturnsCreated()
+        public async Task RegisterAccount_ValidInput_ReturnsAccepted()
         {
             var accountDTO = new AccountDTO { Email = "test@example.com", Password = "ValidPass1!", Name = "Test User" };
 
             var result = await _controller.RegisterAccount(accountDTO);
 
-            ObjectResult assertResult = AssertStatusCode(202, result);
+            AssertStatusCode(202, result);
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_ValidInput_ReturnsCreated()
+        {
+            string token = "UserFiveToken";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            var result = await _controller.ConfirmAccount(hexToken);
+
+            AssertStatusCode(201, result);
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_InvalidInput_ReturnsGone()
+        {
+            string token = "UserSixToken";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            var result = await _controller.ConfirmAccount(hexToken);
+
+            AssertStatusCode(410, result);
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_InvalidInput_ReturnsNotFound()
+        {
+            string token = "UserFiveToken-Invalid";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            var result = await _controller.ConfirmAccount(hexToken);
+
+            AssertStatusCode(404, result);
+        }
+
+        [Fact]
+        public async Task ConfirmAccount_InvalidInput_ReturnsBadRequest()
+        {
+            var result = await _controller.ConfirmAccount(null);
+
+            AssertStatusCode(400, result);
+        }
+
+        [Fact]
+        public async Task SendRecoveryEmail_ValidInput_ReturnsAccepted()
+        {
+            RecoveryDTO recoveryDTO = new RecoveryDTO
+            {
+                Email = "User2@gmail.com"
+            };
+
+            var result = await _controller.SendRecoveryEmail(recoveryDTO);
+
+            AssertStatusCode(202, result);
+        }
+
+        [Fact]
+        public async Task SendRecoveryEmail_InvalidInput_ReturnsNotFound()
+        {
+            RecoveryDTO recoveryDTO = new RecoveryDTO
+            {
+                Email = "User0-Invalid@gmail.com"
+            };
+
+            var result = await _controller.SendRecoveryEmail(recoveryDTO);
+
+            AssertStatusCode(404, result);
+        }
+
+        [Fact]
+        public async Task SendRecoveryEmail_BadInput_ReturnsBadRequest()
+        {
+            RecoveryDTO recoveryDTO = new RecoveryDTO
+            {
+                Email = null
+            };
+
+            var result = await _controller.SendRecoveryEmail(recoveryDTO);
+
+            AssertStatusCode(400, result);
+        }
+
+        [Fact]
+        public async Task SendRecoveryEmail_DuplicateRequest_ReturnsConflict()
+        {
+            RecoveryDTO recoveryDTO = new RecoveryDTO
+            {
+                Email = "User0@gmail.com"
+            };
+
+            var result = await _controller.SendRecoveryEmail(recoveryDTO);
+
+            AssertStatusCode(409, result);
+        }
+
+        [Fact]
+        public async Task ResetPassword_ValidInput_ReturnsOk()
+        {
+            string token = "UserZeroToken";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            ResetDTO resetDTO = new ResetDTO
+            {
+                Token = hexToken,
+                Password = "User01@gmail.com"
+            };
+
+            var result = await _controller.ResetPassword(resetDTO);
+
+            AssertStatusCode(200, result);
+        }
+
+        [Fact]
+        public async Task ResetPassword_InvalidToken_ReturnsNotFound()
+        {
+            string token = "UserZeroToken-Invalid";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            ResetDTO resetDTO = new ResetDTO
+            {
+                Token = hexToken,
+                Password = "User01@gmail.com"
+            };
+
+            var result = await _controller.ResetPassword(resetDTO);
+
+            AssertStatusCode(404, result);
+        }
+
+        [Fact]
+        public async Task ResetPassword_ExpiredToken_ReturnsGone()
+        {
+            string token = "UserOneToken";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            ResetDTO resetDTO = new ResetDTO
+            {
+                Token = hexToken,
+                Password = "User11@gmail.com"
+            };
+
+            var result = await _controller.ResetPassword(resetDTO);
+
+            AssertStatusCode(410, result);
+        }
+
+        [Fact]
+        public async Task ResetPassword_InvalidPassword_ReturnsBadRequest()
+        {
+            string token = "UserZeroToken";
+            string hexToken = Convert.ToHexString(Encoding.UTF8.GetBytes(token));
+
+            ResetDTO resetDTO = new ResetDTO
+            {
+                Token = hexToken,
+                Password = "123"
+            };
+
+            var result = await _controller.ResetPassword(resetDTO);
+
+            AssertStatusCode(400, result);
         }
 
         [Fact]
