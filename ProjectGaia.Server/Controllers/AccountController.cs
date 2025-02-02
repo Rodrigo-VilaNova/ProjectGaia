@@ -131,7 +131,7 @@ namespace ProjectGaia.Server.Controllers
 
         // GET: Confirm account
         [HttpGet("confirm")]
-        public async Task<IActionResult> LoginAccount([FromQuery] string? token)
+        public async Task<IActionResult> ConfirmAccount([FromQuery] string? token)
         {
             using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
             try
