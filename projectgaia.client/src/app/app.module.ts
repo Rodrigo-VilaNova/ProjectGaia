@@ -9,6 +9,7 @@ import { RegisterComponent } from './register/register.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { authInterceptor } from './interceptors/auth.interceptor';
+import { RegisterConfirmComponent } from './register-confirm/register-confirm.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { authInterceptor } from './interceptors/auth.interceptor';
     RegisterComponent,
     InvoicesComponent,
     ReactiveFormsModule,
+    RegisterConfirmComponent,
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),

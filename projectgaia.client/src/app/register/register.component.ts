@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { tap, catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -51,28 +52,15 @@ export class RegisterComponent {
       password: this.registerForm.value.password
     };
 
-    this.http.post<RegisterResponse>('https://localhost:7277/api/account/register', accountDTO)
-      .subscribe(
-        (response) => {
-          console.log('Registration successful. Token:', response.Token); // Log the token
-
-          // Optionally store the token (e.g., in localStorage)
-          localStorage.setItem('authToken', response.Token);
-
-          // Redirect to the login page or another route
-          this.router.navigate(['/dashboard']);
+    this.http.post('https://localhost:7277/api/account/register', accountDTO, { observe: 'response', responseType: 'text' })
+      .subscribe({
+        next: response => {
+          console.log('Status Code:', response.status);
         },
-        (error) => {
-          console.error('Registration error:', error); // Log the error for debugging
-          this.errorMessage = 'Registration failed. Please try again.';
-          this.loading = false;
+        error: error => {
+          console.log('Error Status Code:', error.status);
         }
-      );
-
+      });
   }
-}
-
-interface RegisterResponse {
-  Token: string;
 }
 
