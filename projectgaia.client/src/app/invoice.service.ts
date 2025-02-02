@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface Invoice {
   id: number;
@@ -15,11 +16,17 @@ export interface Invoice {
   providedIn: 'root'
 })
 export class InvoiceService {
-  private apiUrl = 'https://localhost:7277/api/invoices';
+  private apiUrl = 'https://localhost:7277/api/invoices/';
 
   constructor(private http: HttpClient) { }
 
-  getInvoices(): Observable<Invoice[]> {
-    return this.http.get<Invoice[]>(this.apiUrl);
+  getInvoices(invoiceIds: number[]): Observable<any[]> {
+    // Create an array of HTTP GET observables
+    const requests = invoiceIds.map(id => this.http.get<any>(`${this.apiUrl}/${id}`));
+
+    // Use forkJoin to make all requests in parallel, then sort the results
+    return forkJoin(requests).pipe(
+      map(invoices => invoices.sort((a, b) => a.id - b.id)) // Sort by ID
+    );
   }
 }
