@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { tap, catchError, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -52,7 +53,7 @@ export class RegisterComponent {
       password: this.registerForm.value.password
     };
 
-    this.http.post('https://localhost:7277/api/account/register', accountDTO, { observe: 'response', responseType: 'text' })
+    this.http.post(`${environment.apiUrl}/account/register`, accountDTO, { observe: 'response', responseType: 'text' })
       .subscribe({
         next: response => {
           console.log('Status Code:', response.status);

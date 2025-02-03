@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../interceptors/auth.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -37,7 +38,7 @@ export class LoginComponent {
       password: this.loginForm.value.password
     };
 
-    this.http.post<LoginResponse>('https://localhost:7277/api/account/login', credentials)
+    this.http.post<LoginResponse>(`${environment.apiUrl}/account/login`, credentials)
       .subscribe(
         (response) => {
           console.log('Login successful. Token:', response.Token); // Log the token

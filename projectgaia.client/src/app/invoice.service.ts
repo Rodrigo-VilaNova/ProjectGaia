@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 export interface Invoice {
   id: number;
@@ -16,7 +17,7 @@ export interface Invoice {
   providedIn: 'root'
 })
 export class InvoiceService {
-  private apiUrl = 'https://localhost:7277/api/invoices';
+  private apiUrl = `${environment.apiUrl}/invoices`;
 
   constructor(private http: HttpClient) { }
 

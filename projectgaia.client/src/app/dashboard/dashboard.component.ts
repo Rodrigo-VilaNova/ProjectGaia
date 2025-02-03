@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,7 +21,7 @@ export class DashboardComponent {
 
   deleteAccount() {
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      this.http.delete('https://localhost:7277/api/account/delete', {
+      this.http.delete(`${environment.apiUrl}/account/delete`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }, responseType: 'text'
       }).subscribe(
         () => {
