@@ -489,3 +489,4 @@ bin/
 credentials.json
 ProjectGaia.Server/Migrations/
 /ProjectGaia.Server/Certificates/
+/ProjectGaia.Server/wwwroot/*
