@@ -488,3 +488,4 @@ obj/
 bin/
 credentials.json
 ProjectGaia.Server/Migrations/
+/ProjectGaia.Server/Certificates/

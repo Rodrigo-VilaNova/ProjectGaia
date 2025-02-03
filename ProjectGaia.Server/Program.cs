@@ -12,10 +12,19 @@ namespace ProjectGaia.Server
     {
         public static void Main(string[] args)
         {
+            string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            Console.WriteLine($"Environment: {environment}");
+
             SetupCredentials();
             Console.WriteLine($"Using email: {Environment.GetEnvironmentVariable("email")}");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            if (builder.Environment.IsProduction())
+            {
+                builder.Configuration["Kestrel:Certificates:Default:Path"] = "./Certificates/domain.cert.pem";
+                builder.Configuration["Kestrel:Certificates:Default:KeyPath"] = "./Certificates/private.key.pem";
+            }
 
             builder.Services.AddScoped<ConfirmationService>();
             builder.Services.AddScoped<PasswordService>();
@@ -23,14 +32,13 @@ namespace ProjectGaia.Server
 
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowSpecificOrigin",
-                    builder =>
-                    {
-                        builder.WithOrigins(["https://127.0.0.1:58120", "https://localhost:58120"]) //Front-end URL
-                               .AllowAnyHeader()
-                               .AllowAnyMethod()
-                               .AllowCredentials(); //Cookies/auth
-                    });
+                options.AddPolicy("AllowSpecificOrigin", policy =>
+                {
+                    if (builder.Environment.IsProduction()) policy.WithOrigins(["https://gaia.pombos.net:443"]);
+                    else policy.WithOrigins(["https://127.0.0.1:58120", "https://localhost:58120"]);
+
+                    policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
+                });
             });
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -79,7 +87,7 @@ namespace ProjectGaia.Server
             app.UseStaticFiles();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
+            //if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -90,7 +98,6 @@ namespace ProjectGaia.Server
             app.UseCors("AllowSpecificOrigin");
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
