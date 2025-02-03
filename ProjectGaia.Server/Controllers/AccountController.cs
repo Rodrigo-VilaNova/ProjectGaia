@@ -339,7 +339,7 @@ namespace ProjectGaia.Server.Controllers
         }
 
         // Put: Reset account password
-        [HttpPut("recovery")]
+        [HttpPut("reset")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetDTO resetDTO)
         {
             using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();

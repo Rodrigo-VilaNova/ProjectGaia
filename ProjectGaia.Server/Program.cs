@@ -2,6 +2,7 @@ using System.Text.Json;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Services;
@@ -42,8 +43,10 @@ namespace ProjectGaia.Server
             });
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<AppDbContext>(options => options
+                    .UseSqlServer(connectionString)
+                    .ConfigureWarnings(b => b.Ignore(SqlServerEventId.SavepointsDisabledBecauseOfMARS))
+                    );
             //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddControllers();/*.AddJsonOptions(options =>
