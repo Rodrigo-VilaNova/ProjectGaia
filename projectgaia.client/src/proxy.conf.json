@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://localhost:5001",
+    "target": "https://localhost:5001/api",
     "secure": false, // Ignore SSL cert issues (for development)
     "changeOrigin": true
   }

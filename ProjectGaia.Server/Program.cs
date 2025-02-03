@@ -35,7 +35,7 @@ namespace ProjectGaia.Server
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
                     if (builder.Environment.IsProduction()) policy.WithOrigins(["https://gaia.pombos.net:443"]);
-                    else policy.WithOrigins(["https://127.0.0.1:58120", "https://localhost:58120"]);
+                    else policy.WithOrigins(["http://127.0.0.1:5002", "http://localhost:5002"]);
 
                     policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
