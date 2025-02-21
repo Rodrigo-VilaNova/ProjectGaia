@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
@@ -7,9 +8,9 @@ import { LandingPageComponent } from './landing-page/landing-page.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { InvoicesComponent } from './invoices/invoices.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { RegisterConfirmComponent } from './register-confirm/register-confirm.component';
+import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
 
 @NgModule({
   declarations: [
@@ -18,12 +19,14 @@ import { RegisterConfirmComponent } from './register-confirm/register-confirm.co
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
     LandingPageComponent,
     LoginComponent,
     RegisterComponent,
     InvoicesComponent,
-    ReactiveFormsModule,
     RegisterConfirmComponent,
+    AddInvoiceComponent,
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),

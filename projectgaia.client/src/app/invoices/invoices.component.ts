@@ -31,6 +31,10 @@ export class InvoicesComponent {
     );
   }
 
+  goToAddInvoice() {
+    this.router.navigate(['/add-invoice']);
+  }
+
   goToDashboard() {
     this.router.navigate(['/dashboard']);
   }

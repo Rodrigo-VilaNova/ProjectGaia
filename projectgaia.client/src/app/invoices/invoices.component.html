@@ -11,6 +11,8 @@
     <div class="invoices-container">
       <h2>Your Invoices</h2>
 
+      <button (click)="goToAddInvoice()" class="btn add-invoice-btn">+ Add Invoice</button>
+
       <table *ngIf="invoices.length > 0; else noInvoices" class="invoice-table">
         <thead>
           <tr>

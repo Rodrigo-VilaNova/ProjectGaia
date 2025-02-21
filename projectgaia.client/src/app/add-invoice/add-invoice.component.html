@@ -1,0 +1,34 @@
+<body>
+  <div class="page-container">
+    <div class="navbar">
+      <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
+      <button (click)="goToInvoices()" class="btn page-selected-btn">Invoices</button>
+      <p>Teste2</p>
+      <p>Teste3</p>
+      <div class="profile-circle"></div>
+    </div>
+
+    <div class="form-container">
+      <h2>Add New Invoice</h2>
+      <form class="form-group" [formGroup]="invoiceForm" (ngSubmit)="submitInvoice()">
+        <label for="price">Price (€):</label>
+        <input type="number" id="price" formControlName="price" required />
+
+        <label for="consumption">Consumption (kWh):</label>
+        <input type="number" id="consumption" formControlName="consumption" required />
+
+        <label for="emissionDate">Emission Date:</label>
+        <input type="date" id="emissionDate" formControlName="emissionDate" required />
+
+        <div class="button-container">
+          <button (click)="submitInvoice()" class="btn submit-btn">Add Invoice</button>
+          <button (click)="goToInvoices()" class="btn cancel-btn">Cancel</button>
+        </div>
+      </form>
+
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+      <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+    </div>
+  </div>
+</body>
+
