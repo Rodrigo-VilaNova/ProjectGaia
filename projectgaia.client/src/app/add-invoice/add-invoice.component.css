@@ -147,3 +147,7 @@ input {
 .cancel-btn:hover {
   background-color: #c9302c;
 }
+
+.error-message {
+    color: #bf1717;
+}

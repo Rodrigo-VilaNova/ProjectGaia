@@ -63,6 +63,10 @@ html, body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.invoice-table td:first-child {
+  text-align: center;
+}
+
 .invoice-table th, .invoice-table td {
   padding: 12px;
   border: 1px solid #ddd;
@@ -143,4 +147,26 @@ h3 {
 
 .add-invoice-btn:hover {
   background-color: #8dc63f;
+}
+
+.delete-btn {
+  margin-bottom: 1rem;
+  background-color: #d9534f;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.delete-btn:hover {
+  background-color: #c9302c;
 }

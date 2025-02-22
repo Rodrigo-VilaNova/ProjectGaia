@@ -31,19 +31,37 @@ export class AddInvoiceComponent {
     });
   }
 
+  isSubmitting = false;
+
   submitInvoice() {
-    /*this.http.post('https://localhost:7277/api/invoices', this.invoice).subscribe(
+    // Verifica se todos os campos estão preenchidos
+    if (!this.invoice.price || !this.invoice.consumption || !this.invoice.emissionDate) {
+      this.errorMessage = 'Please fill in all fields before submitting.';
+      return;
+    }
+
+    if (this.isSubmitting) return;
+    this.isSubmitting = true;
+
+    const invoiceDTO = {
+      price: this.invoice.price,
+      consumption: this.invoice.consumption,
+      emissionDate: this.invoice.emissionDate
+    };
+
+    this.http.post('https://localhost:7277/api/invoices', invoiceDTO).subscribe(
       (response) => {
         this.successMessage = 'Invoice added successfully!';
-        setTimeout(() => {
-          this.router.navigate(['/invoices']); // Redireciona para a página das faturas
-        }, 2000);
+
+        this.router.navigate(['/invoices']);
       },
       (error) => {
-        this.errorMessage = 'Error adding invoice. Please try again.';
+        console.error('Error adding invoice:', error);
+        this.errorMessage = error.error || 'Error adding invoice. Please try again.';
       }
-    );*/
-    console.log(this.invoiceForm.value);
+    ).add(() => {
+      this.isSubmitting = false;
+    });
   }
 
   goToDashboard() {
