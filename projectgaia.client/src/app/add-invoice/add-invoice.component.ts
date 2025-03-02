@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-add-invoice',
@@ -49,7 +50,7 @@ export class AddInvoiceComponent {
       emissionDate: this.invoice.emissionDate
     };
 
-    this.http.post('https://localhost:7277/api/invoices', invoiceDTO).subscribe(
+    this.http.post(`${environment.apiUrl}/invoices`, invoiceDTO).subscribe(
       (response) => {
         this.successMessage = 'Invoice added successfully!';
 

@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { InvoiceService, Invoice } from '../invoice.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-invoices',
@@ -50,7 +51,7 @@ export class InvoicesComponent {
     if (!confirmDelete) return;
 
     const deleteRequests = this.selectedInvoices.map(id =>
-      this.http.delete(`https://localhost:7277/api/invoices/${id}`).toPromise()
+      this.http.delete(`${environment.apiUrl}/invoices/${id}`).toPromise()
     );
 
     Promise.all(deleteRequests)
@@ -66,7 +67,7 @@ export class InvoicesComponent {
   }
 
   getInvoices() {
-    this.http.get<Invoice[]>('https://localhost:7277/api/invoices').subscribe(
+    this.http.get<Invoice[]>(`${environment.apiUrl}/invoices`).subscribe(
       (data) => {
         this.invoices = data;
       },
