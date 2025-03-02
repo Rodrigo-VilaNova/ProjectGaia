@@ -11,9 +11,15 @@
     <div class="invoices-container">
       <h2>Your Invoices</h2>
 
+      <button (click)="goToAddInvoice()" class="btn add-invoice-btn">+ Add Invoice</button>
+      <button (click)="deleteSelectedInvoices()" class="btn delete-btn" [disabled]="selectedInvoices.length === 0">
+        Delete Selected
+      </button>
+
       <table *ngIf="invoices.length > 0; else noInvoices" class="invoice-table">
         <thead>
           <tr>
+            <th></th>
             <th>ID</th>
             <th>Price (€)</th>
             <th>Consumption (kWh)</th>
@@ -23,6 +29,9 @@
         </thead>
         <tbody>
           <tr *ngFor="let invoice of invoices">
+            <td>
+              <input type="checkbox" (change)="toggleInvoiceSelection(invoice.id, $event)" />
+            </td>
             <td>{{ invoice.id }}</td>
             <td>{{ invoice.price }}€</td>
             <td>{{ invoice.consumption }}kWh</td>

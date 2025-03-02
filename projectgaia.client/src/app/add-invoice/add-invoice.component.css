@@ -53,51 +53,15 @@ html, body {
   background-color: #5a8f2b;
 }
 
-.invoice-table {
-  width: 80%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.invoice-table td:first-child {
-  text-align: center;
-}
-
-.invoice-table th, .invoice-table td {
-  padding: 12px;
-  border: 1px solid #ddd;
-  text-align: center;
-}
-
-.invoice-table th {
-  background-color: #73a634;
-  color: white;
-  font-weight: bold;
-}
-
-.invoice-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.invoice-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-.invoices-container {
+.form-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background: linear-gradient(120deg, #fff9ce, #fff98b);
+  justify-content: center;
   height: 100vh;
-}
-
-hr {
-  border: 0.5px solid #ddd;
+  background: linear-gradient(120deg, #fff9ce, #fff98b);
+  color: #2a7125;
+  text-align: center;
 }
 
 h2 {
@@ -107,9 +71,26 @@ h2 {
   text-shadow: -1px -1px 0 #574a00, 1px -1px 0 #574a00, -1px 1px 0 #574a00, 1px 1px 0 #574a00;
 }
 
-h3 {
-  font-size: 2.2rem;
-  font-weight: bold;
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.form-group * {
+    margin-bottom: 1.2rem;
+}
+
+label {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .btn {
@@ -132,41 +113,41 @@ h3 {
   background-color: rgba(167, 255, 32, 0.1)
 }
 
-.add-invoice-btn {
-  margin-bottom: 1rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  font-weight: bold;
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.submit-btn {
   background-color: #afdf3c;
   color: white;
+  padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.add-invoice-btn:hover {
+.submit-btn:hover {
   background-color: #8dc63f;
 }
 
-.delete-btn {
-  margin-bottom: 1rem;
+.cancel-btn {
   background-color: #d9534f;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.5rem;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 1rem;
-  font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
-.delete-btn:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+.cancel-btn:hover {
+  background-color: #c9302c;
 }
 
-.delete-btn:hover {
-  background-color: #c9302c;
+.error-message {
+    color: #bf1717;
 }

@@ -13,6 +13,7 @@ import { InvoiceService, Invoice } from '../invoice.service';
 })
 export class InvoicesComponent {
   invoices: Invoice[] = [];
+  selectedInvoices: number[] = [];
   constructor(private router: Router, private http: HttpClient, private invoiceService: InvoiceService) { }
 
   ngOnInit() {
@@ -29,6 +30,52 @@ export class InvoicesComponent {
         console.error('Error fetching invoices:', error);
       }
     );
+  }
+
+  toggleInvoiceSelection(invoiceId: number, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      this.selectedInvoices.push(invoiceId);
+    } else {
+      this.selectedInvoices = this.selectedInvoices.filter(id => id !== invoiceId);
+    }
+  }
+
+  deleteSelectedInvoices() {
+    if (this.selectedInvoices.length === 0) {
+      return;
+    }
+
+    const confirmDelete = confirm("Are you sure you wish to delete selected invoices?");
+    if (!confirmDelete) return;
+
+    const deleteRequests = this.selectedInvoices.map(id =>
+      this.http.delete(`https://localhost:7277/api/invoices/${id}`).toPromise()
+    );
+
+    Promise.all(deleteRequests)
+      .then(() => {
+        this.invoices = this.invoices.filter(invoice => !this.selectedInvoices.includes(invoice.id));
+        this.selectedInvoices = [];
+      })
+      .catch(error => {
+        console.error("Erro ao apagar faturas", error);
+      })
+      .finally(() => { window.location.reload(); }
+      );
+  }
+
+  getInvoices() {
+    this.http.get<Invoice[]>('https://localhost:7277/api/invoices').subscribe(
+      (data) => {
+        this.invoices = data;
+      },
+      (error) => console.error("Erro ao carregar faturas", error)
+    );
+  }
+
+  goToAddInvoice() {
+    this.router.navigate(['/add-invoice']);
   }
 
   goToDashboard() {
