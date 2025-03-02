@@ -178,21 +178,21 @@ namespace ProjectGaia.Server.Data
                 {
                     ID = 1,
                     Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserZeroToken"))),
-                    Expiration = new DateTime(2025, 2, 28),
+                    Expiration = new DateTime(3025, 2, 28),
                     AccountID = 3
                 },
                 new Session
                 {
                     ID = 2,
                     Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserOneToken"))),
-                    Expiration = new DateTime(2025, 2, 28),
+                    Expiration = new DateTime(3025, 2, 28),
                     AccountID = 4
                 },
                 new Session
                 {
                     ID = 3,
                     Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserTwoToken"))),
-                    Expiration = new DateTime(2025, 2, 28),
+                    Expiration = new DateTime(3025, 2, 28),
                     AccountID = 5
                 }
             );
