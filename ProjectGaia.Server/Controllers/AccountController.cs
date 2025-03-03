@@ -41,13 +41,13 @@ namespace ProjectGaia.Server.Controllers
                 if (string.IsNullOrWhiteSpace(accountDTO.Name) || accountDTO.Name.Trim().Length > 64)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(400, "Name length must be between 1 and 64.");
+                    return StatusCode(400, "Name length must be between 1 and 64");
                 }
 
                 if (!_passwordService.IsValidPassword(accountDTO.Password))
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character");
                 }
 
                 bool confirmationAlreadyExists = await _context.Confirmations.AnyAsync(c => c.Email == accountDTO.Email);
@@ -58,7 +58,7 @@ namespace ProjectGaia.Server.Controllers
                     if (currentConfirmation.Expiration > DateTime.UtcNow)
                     {
                         await transaction.RollbackAsync();
-                        return StatusCode(409, "An account confirmation with this email is already pending.");
+                        return StatusCode(409, "An account confirmation with this email is already pending");
                     }
                     else
                     {
@@ -71,7 +71,7 @@ namespace ProjectGaia.Server.Controllers
                 if (accountAlreadyExists)
                 {
                     await transaction.CommitAsync();
-                    return StatusCode(409, "An account with this email already exists.");
+                    return StatusCode(409, "An account with this email already exists");
                 }
 
                 byte[] token;
@@ -121,12 +121,12 @@ namespace ProjectGaia.Server.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return StatusCode(202, "A confirmation email was sent if the email exists.");
+                return StatusCode(202, "A confirmation email was sent if the email exists");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error creating account/session.");
+                return StatusCode(500, "Internal server error creating account");
             }   
         }
 
@@ -140,7 +140,7 @@ namespace ProjectGaia.Server.Controllers
                 if (token == null)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(400, "Token parameter missing.");
+                    return StatusCode(400, "Token parameter missing");
                 }    
 
                 string hexHashedToken = Convert.ToHexString(_confirmationService.HashToken(token));
@@ -149,7 +149,7 @@ namespace ProjectGaia.Server.Controllers
                 if (confirmation == null)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(404, "Invalid token.");
+                    return StatusCode(404, "Invalid token");
                 }
                 
                 if (confirmation.Expiration <= DateTime.UtcNow)
@@ -157,7 +157,7 @@ namespace ProjectGaia.Server.Controllers
                     _context.Confirmations.Remove(confirmation);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
-                    return StatusCode(410, "Token expired.");
+                    return StatusCode(410, "Token expired");
                 }
 
                 Account account = new Account
@@ -178,7 +178,7 @@ namespace ProjectGaia.Server.Controllers
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error confirming account.");
+                return StatusCode(500, "Internal server error confirming account");
             }
         }
 
@@ -214,14 +214,14 @@ namespace ProjectGaia.Server.Controllers
                     }
                     else await transaction.RollbackAsync();
 
-                    return StatusCode(401, "Invalid email or password.");
+                    return StatusCode(401, "Invalid email or password");
                 }
 #pragma warning restore CS8604 // Possible null reference argument.
 
                 if (account.Status == AccountStatus.Blocked)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(403, "Account is blocked and login is not allowed.");
+                    return StatusCode(403, "Account is blocked and login is not allowed");
                 }
 
                 int accountID = account.ID;
@@ -243,7 +243,7 @@ namespace ProjectGaia.Server.Controllers
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error logging into account.");
+                return StatusCode(500, "Internal server error logging into account");
             }
         }
 
@@ -264,7 +264,7 @@ namespace ProjectGaia.Server.Controllers
                 if (account == null)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(404, "Account doesn't exist.");
+                    return StatusCode(404, "Account doesn't exist");
                 }
 
                 bool recoveryAlreadyExists = await _context.Recoveries.AnyAsync(r => r.AccountID == account.ID);
@@ -275,7 +275,7 @@ namespace ProjectGaia.Server.Controllers
                     if (currentRecovery.Expiration > DateTime.UtcNow)
                     {
                         await transaction.RollbackAsync();
-                        return StatusCode(409, "A password reset for this account is already pending. Try again later.");
+                        return StatusCode(409, "A password reset for this account is already pending, try again later");
                     }
                     else
                     {
@@ -329,12 +329,12 @@ namespace ProjectGaia.Server.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return StatusCode(202, "A password reset link was sent to your email.");
+                return StatusCode(202, "A password reset link was sent to your email");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error creating account/session.");
+                return StatusCode(500, "Internal server error creating account/session");
             }
         }
 
@@ -357,7 +357,7 @@ namespace ProjectGaia.Server.Controllers
                 if (recovery == null)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(404, "Invalid token.");
+                    return StatusCode(404, "Invalid token");
                 }
 
                 if (recovery.Expiration <= DateTime.UtcNow)
@@ -365,20 +365,20 @@ namespace ProjectGaia.Server.Controllers
                     _context.Recoveries.Remove(recovery);
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
-                    return StatusCode(410, "Token expired.");
+                    return StatusCode(410, "Token expired");
                 }
 
                 if (!_passwordService.IsValidPassword(resetDTO.Password))
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character");
                 }
 
                 Account? account = await _context.Accounts.FirstOrDefaultAsync(a => a.ID == recovery.AccountID);
                 if (account == null)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(404, "Account doesn't exist.");
+                    return StatusCode(404, "Account doesn't exist");
                 }
 
                 account.Password = _passwordService.HashPassword(resetDTO.Password);
@@ -386,12 +386,12 @@ namespace ProjectGaia.Server.Controllers
                 _context.Recoveries.Remove(recovery);
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
-                return StatusCode(200, "Password reset successfully.");
+                return StatusCode(200, "Password reset successfully");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error confirming account.");
+                return StatusCode(500, "Internal server error confirming account");
             }
         }
 
@@ -420,12 +420,12 @@ namespace ProjectGaia.Server.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return StatusCode(200, "Session closed successfully.");
+                return StatusCode(200, "Session closed successfully");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error logging out of account.");
+                return StatusCode(500, "Internal server error logging out of account");
             }
         }
 
@@ -448,7 +448,7 @@ namespace ProjectGaia.Server.Controllers
                 if (account.Status == AccountStatus.Blocked)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(403, "Account is blocked and cannot be deleted.");
+                    return StatusCode(403, "Account is blocked and cannot be deleted");
                 }
 
                 await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
@@ -459,12 +459,12 @@ namespace ProjectGaia.Server.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return StatusCode(200, "Account and related data deleted successfully.");
+                return StatusCode(200, "Account and related data deleted successfully");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error deleting account.");
+                return StatusCode(500, "Internal server error deleting account");
             }
         }
 
@@ -494,7 +494,7 @@ namespace ProjectGaia.Server.Controllers
                 if (account.Status == AccountStatus.Blocked)
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(403, "Account is blocked and can't change password.");
+                    return StatusCode(403, "Account is blocked and can't change password");
                 }               
 
                 if (!_passwordService.IsCorrectPassword(passwordDTO.OldPassword, account.Password ?? []))
@@ -510,13 +510,13 @@ namespace ProjectGaia.Server.Controllers
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    return StatusCode(401, "Old password and account password do not match.");
+                    return StatusCode(401, "Old password and account password do not match");
                 }
 
                 if (!_passwordService.IsValidPassword(passwordDTO.NewPassword))
                 {
                     await transaction.RollbackAsync();
-                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character."); // Return a 400 BadRequest if the password does not comply with the requirements
+                    return StatusCode(400, "Password must be between 8 and 128 characters, and include at least one uppercase letter, one lowercase letter, one number, and one special character"); // Return a 400 BadRequest if the password does not comply with the requirements
                 }
 
                 _context.ChangeTracker.Clear();
@@ -525,12 +525,12 @@ namespace ProjectGaia.Server.Controllers
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return StatusCode(200, "Password updated successfully.");
+                return StatusCode(200, "Password updated successfully");
             }
             catch
             {
                 await transaction.RollbackAsync();
-                return StatusCode(500, "Internal server error updating password.");
+                return StatusCode(500, "Internal server error updating password");
             }
         }
 

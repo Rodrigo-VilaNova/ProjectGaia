@@ -42,7 +42,7 @@ namespace ProjectGaia.Server
                 });
             });
 
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
             builder.Services.AddDbContext<AppDbContext>(options => options
                     .UseSqlServer(connectionString)
                     .ConfigureWarnings(b => b.Ignore(SqlServerEventId.SavepointsDisabledBecauseOfMARS))
@@ -157,7 +157,7 @@ namespace ProjectGaia.Server
                         Console.Write("Email: ");
                         email = Console.ReadLine() ?? "";
                         if (!string.IsNullOrWhiteSpace(email)) break;
-                        Console.WriteLine("Invalid email.");
+                        Console.WriteLine("Invalid email");
                     }
 
                     string password;
@@ -166,18 +166,18 @@ namespace ProjectGaia.Server
                         Console.Write("Password: ");
                         password = Console.ReadLine() ?? "";
                         if (!string.IsNullOrWhiteSpace(password)) break;
-                        Console.WriteLine("Invalid password.");
+                        Console.WriteLine("Invalid password");
                     }
 
                     if (CheckCredentials(email, password))
                     {
-                        Console.WriteLine("Credentials validated.");
+                        Console.WriteLine("Credentials validated");
                         credentials.Add("email", email);
                         credentials.Add("password", password);
                         break;
                     }
 
-                    Console.WriteLine("Credentials incorrect.");
+                    Console.WriteLine("Credentials incorrect");
                 }
 
                 Console.WriteLine("Writing credentials to file...");

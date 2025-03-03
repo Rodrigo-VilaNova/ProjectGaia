@@ -114,7 +114,7 @@ namespace ProjectGaia.Server.Controllers
                 return StatusCode(500, "Internal server error. Try again");
             }
 
-            return StatusCode(200, "Invoice and related data deleted successfully.");
+            return StatusCode(200, "Invoice and related data deleted successfully");
         }
 
         private ObjectResult StatusCodeResult((int code, string? message)? status)

@@ -8,7 +8,7 @@
           <label for="name">Username</label>
           <input id="name" type="text" formControlName="name" class="form-control" />
           <div *ngIf="registerForm.get('name')?.invalid && registerForm.get('name')?.touched" class="text-danger">
-            Username is required (max 64 characters).
+            Required (max 64 characters)
           </div>
         </div>
 
@@ -16,17 +16,36 @@
           <label for="email">Email</label>
           <input id="email" type="email" formControlName="email" class="form-control" />
           <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger">
-            Enter a valid email address.
+            Invalid email address
           </div>
         </div>
 
         <div class="form-group">
           <label for="password">Password</label>
           <input id="password" type="password" formControlName="password" class="form-control" />
-          <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger">
-            Password is required.
+
+          <div *ngIf="registerForm.get('password')?.touched">
+            <div *ngIf="registerForm.get('password')?.hasError('required')" class="text-danger">
+              Required
+            </div>
+            <div *ngIf="registerForm.get('password')?.hasError('minlength')" class="text-danger">
+              Must be at least 8 characters long
+            </div>
+            <div *ngIf="registerForm.get('password')?.hasError('maxlength')" class="text-danger">
+              Must be at most 128 characters long
+            </div>
+            <div *ngIf="registerForm.get('password')?.hasError('passwordStrength') && !registerForm.get('password')?.hasError('minlength')" class="text-danger">
+              Requirements:
+              <ul>
+                <li>One uppercase letter</li>
+                <li>One lowercase letter</li>
+                <li>One digit</li>
+                <li>One special character (!&#64;#$%^&* etc.)</li>
+              </ul>
+            </div>
           </div>
         </div>
+
 
         <div class="form-group">
           <label for="confirmPassword">Confirm Password</label>
