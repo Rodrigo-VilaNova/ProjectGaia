@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../interceptors/auth.service';
 import { environment } from '../../environments/environment';
@@ -21,7 +21,7 @@ export class LoginComponent {
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService: AuthService) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128)]]
+      password: ['', [Validators.required]]
     });
   }
 
@@ -39,23 +39,22 @@ export class LoginComponent {
     };
 
     this.http.post<LoginResponse>(`${environment.apiUrl}/account/login`, credentials)
-      .subscribe(
-        (response) => {
+      .subscribe({
+        next: response => {
           console.log('Login successful. Token:', response.Token); // Log the token
 
-          // Store the token (e.g., in localStorage)
-          localStorage.setItem('authToken', response.Token);
+          // localStorage.setItem('authToken', response.Token);
           this.authService.setToken(response.Token);
 
-          // Redirect to the home page or another route
           this.router.navigate(['/dashboard']);
         },
-        (error) => {
-          console.error('Login error:', error); // Log the error for debugging
-          this.errorMessage = 'Login failed. Please check your credentials and try again.';
+        error: (error: HttpErrorResponse) => {
           this.loading = false;
+
+          this.errorMessage = error.error || `An unexpected error occured with no message, error code ${error.status}`;
+          console.log('Error Status Code:', error.status, 'Response:', error.error);
         }
-      );
+      });
   }
 }
 
