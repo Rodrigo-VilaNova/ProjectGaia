@@ -7,14 +7,15 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { LandingPageComponent } from './landing-page/landing-page.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { RegisterConfirmComponent } from './register-confirm/register-confirm.component';
+import { RegisteredComponent } from './registered/registered.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { authInterceptor } from './interceptors/auth.interceptor';
-import { RegisterConfirmComponent } from './register-confirm/register-confirm.component';
 import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ], // Only AppComponent should be declared here
   imports: [
     BrowserModule,
@@ -24,9 +25,10 @@ import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
     LandingPageComponent,
     LoginComponent,
     RegisterComponent,
-    InvoicesComponent,
     RegisterConfirmComponent,
-    AddInvoiceComponent,
+    RegisteredComponent,
+    InvoicesComponent,
+    AddInvoiceComponent
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),

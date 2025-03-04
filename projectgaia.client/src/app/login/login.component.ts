@@ -41,9 +41,8 @@ export class LoginComponent {
     this.http.post<LoginResponse>(`${environment.apiUrl}/account/login`, credentials)
       .subscribe({
         next: response => {
-          console.log('Login successful. Token:', response.Token); // Log the token
+          console.log('Login successful. Token:', response.Token);
 
-          // localStorage.setItem('authToken', response.Token);
           this.authService.setToken(response.Token);
 
           this.router.navigate(['/dashboard']);

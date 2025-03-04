@@ -1,0 +1,7 @@
+<body>
+  <div class="container">
+    <h1 *ngIf="isLoading">Loading...</h1>
+    <h1 *ngIf="!isLoading">{{ message }}</h1>
+    <button *ngIf="!isLoading" (click)="returnToLanding()" class="btn">Return to Landing Page</button>
+  </div>
+</body>

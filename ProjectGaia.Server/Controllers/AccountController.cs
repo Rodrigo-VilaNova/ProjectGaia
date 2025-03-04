@@ -106,7 +106,10 @@ namespace ProjectGaia.Server.Controllers
                     var parameters = new { token = hexToken};
                     var path = Url.Action("ConfirmAccount", "Account", parameters);
 
-                    string fullUrl = $"{scheme}://{host}{path}";
+                    string fullUrl = $"{scheme}://{host}{path}".Replace("/api/account/", "/");
+
+                    string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    if (environment == "Development") fullUrl = fullUrl.Replace("https://localhost:5001/", "http://localhost:5002/");
 
                     string subject = $"Welcome to Project Gaia, {confirmation.Name}!";
                     string body = $"To complete the registration of your Project Gaia account please open the following link:\n{fullUrl}";

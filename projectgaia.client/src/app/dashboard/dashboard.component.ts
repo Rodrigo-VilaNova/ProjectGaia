@@ -3,6 +3,7 @@ import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
+import { AuthService } from '../interceptors/auth.service'
 
 @Component({
   selector: 'app-dashboard',
@@ -12,10 +13,10 @@ import { environment } from '../../environments/environment';
   imports: [RouterModule, CommonModule]
 })
 export class DashboardComponent {
-  constructor(private router: Router, private http: HttpClient) { }
+  constructor(private router: Router, private http: HttpClient, private authService: AuthService) { }
 
   logout() {
-    localStorage.removeItem('authToken');
+    this.authService.removeToken();
     this.router.navigate(['']);
   }
 
