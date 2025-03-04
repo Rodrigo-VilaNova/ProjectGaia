@@ -63,6 +63,7 @@ export class RegisterComponent {
       .subscribe({
         next: response => {
           console.log('Status Code:', response.status);
+          this.router.navigate(['/register-sent']);
         },
         error: (error: HttpErrorResponse) => {
           this.loading = false;
