@@ -15,19 +15,31 @@ import { AuthService } from '../interceptors/auth.service'
 export class DashboardComponent {
   constructor(private router: Router, private http: HttpClient, private authService: AuthService) { }
 
-  logout() {
+  clearToken() {
     this.authService.removeToken();
     this.router.navigate(['']);
   }
 
+  logoutAccount() {
+    this.http.delete(`${environment.apiUrl}/account/logout`, { responseType: 'text' })
+      .subscribe(
+      () => {
+        this.clearToken();
+      },
+      (error) => {
+        console.error('Error logging out:', error);
+        alert('Failed to logout. Please try again.');
+      }
+    );
+  }
+
   deleteAccount() {
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      this.http.delete(`${environment.apiUrl}/account/delete`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }, responseType: 'text'
-      }).subscribe(
+      this.http.delete(`${environment.apiUrl}/account/delete`, { responseType: 'text' })
+        .subscribe(
         () => {
           alert('Account deleted successfully.');
-          this.logout();
+          this.clearToken();
         },
         (error) => {
           console.error('Error deleting account:', error);
