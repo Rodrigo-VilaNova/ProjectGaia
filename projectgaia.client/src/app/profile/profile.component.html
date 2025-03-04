@@ -1,0 +1,17 @@
+<body>
+  <div class="page-container">
+    <div class="navbar">
+      <h3>Project Gaia</h3>
+      <button (click)="goBack()" class="btn">← Back</button>
+    </div>
+    <div class="dashboard-container">
+      <h2>Your Profile</h2>
+      <p class="description">Manage your account settings.</p>
+
+      <div class="action-buttons">
+        <button (click)="logoutAccount()" class="btn logout-btn">Logout</button>
+        <button (click)="deleteAccount()" class="btn delete-btn">Delete Account</button>
+      </div>
+    </div>
+  </div>
+</body>

@@ -1,0 +1,168 @@
+/* Shared styles for all pages */
+* {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100vh;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 10vh;
+  width: 100%;
+  background: rgba(167, 255, 32, 0.5);
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  left: 0;
+}
+
+.profile-circle {
+  width: 50px;
+  height: 50px;
+  background-color: #73a634;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+  .profile-circle:hover {
+    background-color: #5a8f2b;
+  }
+
+.auth-container, .dashboard-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(120deg, #fff9ce, #fff98b);
+  color: #2a7125;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  color: #f5d001;
+  text-shadow: -1px -1px 0 #574a00, 1px -1px 0 #574a00, -1px 1px 0 #574a00, 1px 1px 0 #574a00;
+}
+
+h3 {
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.description {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #73a634;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  font-size: 1rem;
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #73a634;
+}
+
+input {
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 400px;
+  border: 1px solid #ccc;
+}
+
+  input:focus {
+    border-color: #f5d001;
+  }
+
+.text-danger {
+  font-size: 0.875rem;
+  color: #f44336;
+}
+
+.btn {
+  font-size: 1.25rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn {
+  background-color: #afdf3c;
+  color: white;
+}
+
+.logout-btn {
+  background-color: #f5d001;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #73a634;
+  color: white;
+}
+
+.events-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
+.invoices-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
+.simulation-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.alert {
+  margin-top: 1rem;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border-radius: 5px;
+}

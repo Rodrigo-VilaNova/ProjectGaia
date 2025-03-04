@@ -10,6 +10,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
 import { AuthGuard } from './auth.guard';
+import { ProfileComponent } from './profile/profile.component';
 
 
 const routes: Routes = [
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'register-sent', component: RegisterConfirmComponent },
   { path: 'confirm', component: RegisteredComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'account', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'invoices', component: InvoicesComponent, canActivate: [AuthGuard] },
   { path: 'add-invoice', component: AddInvoiceComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },

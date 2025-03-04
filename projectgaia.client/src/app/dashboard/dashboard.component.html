@@ -5,16 +5,11 @@
       <button (click)="goToInvoices()" class="btn invoices-btn">Invoices</button>
       <button class="btn events-btn">Teste2</button>
       <button class="btn simulation-btn">Teste2</button>
-      <div class="profile-circle"></div>
+      <div class="profile-circle" (click)="goToProfile()"></div>
     </div>
     <div class="dashboard-container">
       <h2>Welcome to Your Dashboard</h2>
       <p class="description">Manage your account, settings, and more.</p>
-
-      <div class="action-buttons">
-        <button (click)="logoutAccount()" class="btn logout-btn">Logout</button>
-        <button (click)="deleteAccount()" class="btn delete-btn">Delete Account</button>
-      </div>
     </div>
   </div>
 </body>
