@@ -1,0 +1,32 @@
+<body>
+  <div class="confirm-container">
+    <h1>Reset Your Password</h1>
+
+    <!-- Formulário de reset de senha -->
+    <form *ngIf="!serverResponse && !serverError" (ngSubmit)="onSubmit()" [formGroup]="emailForm">
+      <div class="form-group">
+        <label for="email">Enter your email address</label>
+        <input id="email" type="email" formControlName="email" class="form-control" />
+        <div *ngIf="emailForm.get('email')?.invalid && emailForm.get('email')?.touched" class="text-danger">
+          Please enter a valid email address.
+        </div>
+      </div>
+
+      <button type="submit" class="btn" [disabled]="emailForm.invalid || loading">
+        {{ loading ? 'Loading...' : 'Submit' }}
+      </button>
+    </form>
+
+    <!-- Exibir resposta ou erro -->
+    <div *ngIf="serverResponse" class="response-message">
+      {{ serverResponse }}
+    </div>
+
+    <div *ngIf="serverError" class="text-danger">
+      {{ serverError }}
+    </div>
+
+    <!-- Botão para voltar à página inicial -->
+    <button (click)="goToLandingPage()" class="btn">Back to Landing Page</button>
+  </div>
+</body>

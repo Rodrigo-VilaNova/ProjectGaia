@@ -325,7 +325,7 @@ namespace ProjectGaia.Server.Controllers
                     Console.WriteLine($"Activation URL: {fullUrl}");
 
                     EmailSender emailSender = new EmailSender();
-                    //await emailSender.SendEmailAsync(recoveryDTO.Email, subject, body);
+                    await emailSender.SendEmailAsync(recoveryDTO.Email, subject, body);
                 }
 
                 await _context.Recoveries.AddAsync(recovery);
