@@ -21,6 +21,10 @@ export class InvoicesComponent {
     this.loadInvoices();
   }
 
+  goToProfile() {
+    this.router.navigate(['/account']);
+  }
+
   loadInvoices() {
     this.invoiceService.getUserInvoices().subscribe(
       (sortedInvoices) => {
