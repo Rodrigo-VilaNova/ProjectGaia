@@ -23,6 +23,10 @@ export class ProfileComponent {
     this.router.navigate(['']);
   }
 
+  changePassword() {
+    this.router.navigate(['/change-password']);
+  }
+
   logoutAccount() {
     this.http.delete(`${environment.apiUrl}/account/logout`, { responseType: 'text' })
       .subscribe(
