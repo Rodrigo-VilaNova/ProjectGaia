@@ -317,7 +317,10 @@ namespace ProjectGaia.Server.Controllers
                     var parameters = new { token = hexToken };
                     var path = Url.Action("ResetPassword", "Account", parameters);
 
-                    string fullUrl = $"{scheme}://{host}{path}";
+                    string fullUrl = $"{scheme}://{host}{path}".Replace("/api/account/", "/");
+
+                    string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    if (environment == "Development") fullUrl = fullUrl.Replace("https://localhost:5001/", "http://localhost:5002/");
 
                     string subject = $"Hello there, {account.Name}, a password reset was requested for your Project Gaia account";
                     string body = $"To reset your Project Gaia account password please open the following link:\n{fullUrl}";

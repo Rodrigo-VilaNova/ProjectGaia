@@ -82,6 +82,19 @@ p {
   opacity: 0.9;
 }
 
+.forgot-password {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #555;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.forgot-password:hover {
+  color: #333;
+}
+
 /* Right column - Image */
 .image-container {
   flex: 1;

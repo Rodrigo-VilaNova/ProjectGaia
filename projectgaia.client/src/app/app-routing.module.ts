@@ -13,7 +13,7 @@ import { AuthGuard } from './auth.guard';
 import { ProfileComponent } from './profile/profile.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { RecoveryComponent } from './recovery/recovery.component';
-
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
@@ -25,6 +25,7 @@ const routes: Routes = [
   { path: 'account', component: ProfileComponent, canActivate: [AuthGuard] },
   { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthGuard] },
   { path: 'recovery', component: RecoveryComponent },
+  { path: 'reset', component: ResetPasswordComponent },
   { path: 'invoices', component: InvoicesComponent, canActivate: [AuthGuard] },
   { path: 'add-invoice', component: AddInvoiceComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },

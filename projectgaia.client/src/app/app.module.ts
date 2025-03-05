@@ -12,6 +12,11 @@ import { RegisteredComponent } from './registered/registered.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { authInterceptor } from './interceptors/auth.interceptor';
 import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
+import { RecoveryComponent } from './recovery/recovery.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +32,12 @@ import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
     RegisterComponent,
     RegisterConfirmComponent,
     RegisteredComponent,
+    RecoveryComponent,
+    ResetPasswordComponent,
+    ChangePasswordComponent,
+    DashboardComponent,
     InvoicesComponent,
+    ProfileComponent,
     AddInvoiceComponent
   ],
   providers: [
