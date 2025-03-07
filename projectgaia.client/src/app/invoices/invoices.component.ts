@@ -4,17 +4,40 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { InvoiceService, Invoice } from '../invoice.service';
 import { environment } from '../../environments/environment';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-invoices',
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule]
+  imports: [RouterModule, CommonModule, FormsModule]
 })
-export class InvoicesComponent {
+export class InvoicesComponent implements OnInit {
   invoices: Invoice[] = [];
+  filteredInvoices: Invoice[] = [];
   selectedInvoices: number[] = [];
+  showFilterOverlay = false;
+
+  filterOptions = {
+    price: { min: null, max: null, order: null },
+    consumption: { min: null, max: null, order: null },
+    emissionDate: { order: null },
+    uploadDate: { order: null }
+  };
+
+  filters = {
+    idOrder: '', // 'asc' or 'desc'
+    priceMin: null,
+    priceMax: null,
+    consumptionMin: null,
+    consumptionMax: null,
+    emissionDateMin: '',
+    emissionDateMax: '',
+    uploadDateMin: '',
+    uploadDateMax: ''
+  };
+
   constructor(private router: Router, private http: HttpClient, private invoiceService: InvoiceService) { }
 
   ngOnInit() {
@@ -25,16 +48,54 @@ export class InvoicesComponent {
     this.router.navigate(['/account']);
   }
 
+  toggleFilterOverlay() {
+    this.showFilterOverlay = !this.showFilterOverlay;
+  }
+
   loadInvoices() {
     this.invoiceService.getUserInvoices().subscribe(
-      (sortedInvoices) => {
-        this.invoices = sortedInvoices;
-        console.log('Invoices fetched and sorted:', this.invoices);
+      (data) => {
+        this.invoices = data;
+        this.applyFilters();
       },
       (error) => {
         console.error('Error fetching invoices:', error);
       }
     );
+  }
+
+  applyFilters() {
+    this.filteredInvoices = [...this.invoices];
+
+    // Apply min/max filters
+    this.filteredInvoices = this.filteredInvoices.filter(invoice =>
+      (this.filterOptions.price.min == null || invoice.price >= this.filterOptions.price.min) &&
+      (this.filterOptions.price.max == null || invoice.price <= this.filterOptions.price.max) &&
+      (this.filterOptions.consumption.min == null || invoice.consumption >= this.filterOptions.consumption.min) &&
+      (this.filterOptions.consumption.max == null || invoice.consumption <= this.filterOptions.consumption.max)
+    );
+
+    // Apply sorting
+    Object.keys(this.filterOptions).forEach(key => {
+      const typedKey = key as keyof Invoice; // Explicitly cast key
+      const { order } = this.filterOptions[typedKey as keyof typeof this.filterOptions];
+
+      if (order) {
+        this.filteredInvoices.sort((a, b) =>
+          order === 'asc' ? (a[typedKey] > b[typedKey] ? 1 : -1) : (a[typedKey] < b[typedKey] ? 1 : -1)
+        );
+      }
+    });
+  }
+
+  resetFilters() {
+    this.filterOptions = {
+      price: { min: null, max: null, order: null },
+      consumption: { min: null, max: null, order: null },
+      emissionDate: { order: null },
+      uploadDate: { order: null }
+    };
+    this.applyFilters();
   }
 
   toggleInvoiceSelection(invoiceId: number, event: Event) {
@@ -47,12 +108,8 @@ export class InvoicesComponent {
   }
 
   deleteSelectedInvoices() {
-    if (this.selectedInvoices.length === 0) {
-      return;
-    }
-
-    const confirmDelete = confirm("Are you sure you wish to delete selected invoices?");
-    if (!confirmDelete) return;
+    if (this.selectedInvoices.length === 0) return;
+    if (!confirm("Are you sure you wish to delete selected invoices?")) return;
 
     const deleteRequests = this.selectedInvoices.map(id =>
       this.http.delete(`${environment.apiUrl}/invoices/${id}`).toPromise()
@@ -64,19 +121,9 @@ export class InvoicesComponent {
         this.selectedInvoices = [];
       })
       .catch(error => {
-        console.error("Erro ao apagar faturas", error);
+        console.error("Error deleting invoices:", error);
       })
-      .finally(() => { window.location.reload(); }
-      );
-  }
-
-  getInvoices() {
-    this.http.get<Invoice[]>(`${environment.apiUrl}/invoices`).subscribe(
-      (data) => {
-        this.invoices = data;
-      },
-      (error) => console.error("Erro ao carregar faturas", error)
-    );
+      .finally(() => { window.location.reload(); });
   }
 
   goToAddInvoice() {

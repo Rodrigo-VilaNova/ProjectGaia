@@ -12,8 +12,6 @@ html, body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  top: 0;
-  left: 0;
 }
 
 .page-container {
@@ -169,4 +167,108 @@ h3 {
 
 .delete-btn:hover {
   background-color: #c9302c;
+}
+
+
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.filter-box {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  font-weight: bold;
+}
+
+.range-container {
+  display: flex;
+  gap: 10px;
+}
+
+input, select {
+  padding: 8px;
+  font-size: 16px;
+  width: 100%;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.filter-btn {
+  margin-bottom: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #0781f2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.apply-filters-btn, .reset-filters-btn, .close-filters-btn {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #0781f2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn:hover {
+  background-color: #075df2;
+}
+
+button.apply-filters-btn {
+  background-color: #afdf3c;
+}
+
+button.apply-filters-btn:hover {
+  background-color: #8dc63f;
+}
+
+button.reset-filters-btn {
+  background-color: #ffa726;
+}
+
+button.reset-filters-btn:hover {
+  background-color: #cf8519;
+}
+
+button.close-filters-btn {
+  background-color: #dc3545;
+}
+
+button.close-filters-btn:hover {
+  background-color: #c82333;
 }

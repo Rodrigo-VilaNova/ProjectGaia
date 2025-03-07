@@ -3,20 +3,58 @@
     <div class="navbar">
       <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
       <p class="btn page-selected-btn">Invoices</p>
-      <p>Teste2</p>
-      <p>Teste3</p>
       <div class="profile-circle" (click)="goToProfile()"></div>
     </div>
 
     <div class="invoices-container">
       <h2>Your Invoices</h2>
+      <div class="button-group">
+        <button (click)="toggleFilterOverlay()" class="btn filter-btn">Filter</button>
+        <button (click)="goToAddInvoice()" class="btn add-invoice-btn">+ Add Invoice</button>
+        <button (click)="deleteSelectedInvoices()" class="btn delete-btn" [disabled]="selectedInvoices.length === 0"> Delete Selected </button>
+      </div>
+      <div *ngIf="showFilterOverlay" class="filter-overlay">
+        <div class="filter-box">
+          <h3>Filter Invoices</h3>
+          <label>ID Order:</label>
+          <select [(ngModel)]="filters.idOrder">
+            <option value="">None</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+          </select>
 
-      <button (click)="goToAddInvoice()" class="btn add-invoice-btn">+ Add Invoice</button>
-      <button (click)="deleteSelectedInvoices()" class="btn delete-btn" [disabled]="selectedInvoices.length === 0">
-        Delete Selected
-      </button>
+          <label>Price (€) Range:</label>
+          <div class="range-container">
+            <input type="number" [(ngModel)]="filters.priceMin" placeholder="Min" />
+            <input type="number" [(ngModel)]="filters.priceMax" placeholder="Max" />
+          </div>
 
-      <table *ngIf="invoices.length > 0; else noInvoices" class="invoice-table">
+          <label>Consumption (kWh) Range:</label>
+          <div class="range-container">
+            <input type="number" [(ngModel)]="filters.consumptionMin" placeholder="Min" />
+            <input type="number" [(ngModel)]="filters.consumptionMax" placeholder="Max" />
+          </div>
+
+          <label>Emission Date:</label>
+          <div class="range-container">
+            <input type="date" [(ngModel)]="filters.emissionDateMin" />
+            <input type="date" [(ngModel)]="filters.emissionDateMax" />
+          </div>
+
+          <label>Upload Date:</label>
+          <div class="range-container">
+            <input type="date" [(ngModel)]="filters.uploadDateMin" />
+            <input type="date" [(ngModel)]="filters.uploadDateMax" />
+          </div>
+
+          <button (click)="applyFilters()" class="btn apply-filters-btn">Apply</button>
+          <button (click)="resetFilters()" class="btn reset-filters-btn">Reset</button>
+          <button (click)="toggleFilterOverlay()" class="btn close-filters-btn">Close</button>
+        </div>
+      </div>
+
+
+      <table *ngIf="filteredInvoices.length > 0; else noInvoices" class="invoice-table">
         <thead>
           <tr>
             <th></th>
@@ -28,10 +66,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let invoice of invoices">
-            <td>
-              <input type="checkbox" (change)="toggleInvoiceSelection(invoice.id, $event)" />
-            </td>
+          <tr *ngFor="let invoice of filteredInvoices">
+            <td><input type="checkbox" (change)="toggleInvoiceSelection(invoice.id, $event)" /></td>
             <td>{{ invoice.id }}</td>
             <td>{{ invoice.price }}€</td>
             <td>{{ invoice.consumption }}kWh</td>
