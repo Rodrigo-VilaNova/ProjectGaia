@@ -130,6 +130,18 @@ h3 {
   background-color: rgba(167, 255, 32, 0.1)
 }
 
+.events-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
+.invoices-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
+.simulation-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
 .add-invoice-btn {
   margin-bottom: 1rem;
   padding: 0.5rem 1rem;
@@ -168,8 +180,6 @@ h3 {
 .delete-btn:hover {
   background-color: #c9302c;
 }
-
-
 
 .button-group {
   display: flex;

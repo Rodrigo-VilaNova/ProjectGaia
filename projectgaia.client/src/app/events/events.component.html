@@ -1,0 +1,24 @@
+<body>
+  <div class="page-container">
+    <div class="navbar">
+      <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
+      <button (click)="goToInvoices()" class="btn invoices-btn">Invoices</button>
+      <p class="btn page-selected-btn">Events</p>
+      <button class="btn simulation-btn">Teste2</button>
+      <div class="profile-circle" (click)="goToProfile()"></div>
+    </div>
+
+    <div class="events-container">
+      <h2>Events Calendar</h2>
+
+      <input type="text" bsDatepicker [(ngModel)]="selectedDate" (bsValueChange)="onDateChange($event)"/>
+
+      <h3>Reminders</h3>
+      <ul>
+        <li *ngFor="let event of events">
+          <strong>{{ event.date | date }}:</strong> {{ event.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</body>

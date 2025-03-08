@@ -17,10 +17,12 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProfileComponent } from './profile/profile.component';
+import { EventsComponent } from './events/events.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ], // Only AppComponent should be declared here
   imports: [
     BrowserModule,
@@ -38,7 +40,9 @@ import { ProfileComponent } from './profile/profile.component';
     DashboardComponent,
     InvoicesComponent,
     ProfileComponent,
-    AddInvoiceComponent
+    AddInvoiceComponent,
+    EventsComponent,
+    BrowserAnimationsModule,
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),

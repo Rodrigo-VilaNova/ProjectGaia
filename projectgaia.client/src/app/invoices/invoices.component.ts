@@ -133,4 +133,12 @@ export class InvoicesComponent implements OnInit {
   goToDashboard() {
     this.router.navigate(['/dashboard']);
   }
+
+  goToEvents() {
+    this.router.navigate(['/events']);
+  }
+
+  goToSimulation() {
+    this.router.navigate(['/simulation']);
+  }
 }
