@@ -153,6 +153,12 @@ input[type="date"] {
   background-color: #f1f1f1;
 }
 
+.overdue-label {
+  color: red;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
 .add-event-btn {
   padding: 10px 15px;
   background-color: #0781f2;

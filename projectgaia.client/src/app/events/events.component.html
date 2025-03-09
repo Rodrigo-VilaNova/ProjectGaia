@@ -29,7 +29,10 @@
           <tr *ngFor="let event of filteredEvents">
             <td>{{ event.name }}</td>
             <td>{{ event.description }}</td>
-            <td>{{ event.date }}</td>
+            <td>
+              <span *ngIf="isOverdue(event.date)" class="overdue-label">(Overdue)</span>
+              {{ event.date }}
+            </td>
           </tr>
         </tbody>
       </table>
