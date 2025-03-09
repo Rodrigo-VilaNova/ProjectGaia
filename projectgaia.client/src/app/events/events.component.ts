@@ -16,18 +16,24 @@ import { AuthService } from '../interceptors/auth.service';
 
 export class EventsComponent {
 
-  selectedDate: Date | null = null;
+  selectedDate: string = '';
+  filteredEvents: { date: string; description: string; name: string }[] = [];
 
   events = [
-    { date: new Date(2024, 2, 10), name: "Reunião de Equipa" },
-    { date: new Date(2024, 2, 15), name: "Apresentação de Projeto" },
-    { date: new Date(2024, 2, 20), name: "Entrega de Relatório" }
+    { date: '2025-03-10', description: "Reunião da DevTeam", name: "Reunião de Equipa" },
+    { date: '2025-03-10', description: "Apresentação de Project Gaia", name: "Apresentação de Projeto" },
+    { date: '2025-03-15', description: "Entrega do Projeto", name: "Entrega de Relatório" },
+    { date: '2025-03-20', description: "Check-in com o Cliente às 16h00", name: "Check-in com o Cliente" }
   ];
 
   constructor(private router: Router) { }
 
-  onDateChange(newDate: Date) {
-    this.selectedDate = newDate;
+  filterEvents() {
+    if (!this.selectedDate) {
+      this.filteredEvents = [];
+      return;
+    }
+    this.filteredEvents = this.events.filter(event => event.date === this.selectedDate);
   }
 
   goToDashboard() {

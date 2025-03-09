@@ -11,14 +11,32 @@
     <div class="events-container">
       <h2>Events Calendar</h2>
 
-      <input type="text" bsDatepicker [(ngModel)]="selectedDate" (bsValueChange)="onDateChange($event)"/>
+      <div class="date-picker-container">
+        <input type="date" [(ngModel)]="selectedDate" />
+        <button (click)="filterEvents()" class="btn search-btn">Search</button>
+        <button class="btn add-event-btn">Add</button>
+      </div>
 
-      <h3>Reminders</h3>
-      <ul>
-        <li *ngFor="let event of events">
-          <strong>{{ event.date | date }}:</strong> {{ event.name }}
-        </li>
-      </ul>
+      <table *ngIf="filteredEvents.length > 0; else noEvents" class="events-table">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Event Description</th>
+            <th>Event Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let event of filteredEvents">
+            <td>{{ event.name }}</td>
+            <td>{{ event.description }}</td>
+            <td>{{ event.date }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noEvents>
+        <p>No events were found for that date</p>
+      </ng-template>
     </div>
   </div>
 </body>
