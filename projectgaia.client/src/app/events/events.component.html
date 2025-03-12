@@ -26,6 +26,7 @@
               <th>Event Name</th>
               <th>Event Description</th>
               <th>Event Date</th>
+              <th>Event Type</th>
             </tr>
           </thead>
           <tbody>
@@ -37,6 +38,7 @@
                 <span *ngIf="isOverdue(event.date)" class="overdue-label">(Overdue)</span>
                 {{ event.date }}
               </td>
+              <td>{{ event.type }}</td>
             </tr>
           </tbody>
         </table>

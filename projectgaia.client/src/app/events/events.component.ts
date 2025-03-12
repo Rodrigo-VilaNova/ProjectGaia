@@ -17,16 +17,16 @@ import { AuthService } from '../interceptors/auth.service';
 export class EventsComponent {
 
   selectedDate: string = '';
-  filteredEvents: { id: number;  date: string; description: string; name: string }[] = [];
+  filteredEvents: { id: number;  date: string; description: string; name: string, type: EventType }[] = [];
   selectedEvents: number[] = [];
 
   events = [
-    { id: 1, date: '2025-01-10', description: "Tarefa muito atrasada", name: "Tarefa esquecida" },
-    { id: 2, date: '2025-03-09', description: "Dia 9 de Março", name: "Dia 9/3" },
-    { id: 3, date: '2025-03-10', description: "Reunião da DevTeam", name: "Reunião de Equipa" },
-    { id: 4, date: '2025-03-10', description: "Apresentação de Project Gaia", name: "Apresentação de Projeto" },
-    { id: 5, date: '2025-03-15', description: "Entrega do Projeto", name: "Entrega de Relatório" },
-    { id: 6, date: '2025-03-20', description: "Check-in com o Cliente às 16h00", name: "Check-in com o Cliente" },
+    { id: 1, date: '2025-01-10', description: "Tarefa muito atrasada", name: "Tarefa esquecida", type: EventType.Miscellaneous, },
+    { id: 2, date: '2025-03-09', description: "Dia 9 de Março", name: "Dia 9/3", type: EventType.Miscellaneous, },
+    { id: 3, date: '2025-03-10', description: "Tarifa Aumenta 3%", name: "Aumento Tarifa Eletricidade", type: EventType.Price, },
+    { id: 4, date: '2025-03-10', description: "Pagar conta da eletricidade", name: "Conta Eletricidade", type: EventType.Payment, },
+    { id: 5, date: '2025-03-15', description: "Possível redução de tarifa de 1%", name: "Redução Tarifa Eletricidade", type: EventType.Price, },
+    { id: 6, date: '2025-03-20', description: "Pagar mensalidade do carro elétrico", name: "Mensalidade Carro Elétrico", type: EventType.Payment, },
   ];
   constructor(private router: Router) {
     this.filterEvents();
@@ -85,4 +85,10 @@ export class EventsComponent {
   goToSimulation() {
     this.router.navigate(['/simulation']);
   }
+}
+
+export enum EventType {
+  Payment = 'Payment',
+  Price = 'Price',
+  Miscellaneous = 'Miscellaneous',
 }
