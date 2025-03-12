@@ -55,30 +55,30 @@
         </div>
       </div>
 
-
-      <table *ngIf="filteredInvoices.length > 0; else noInvoices" class="invoice-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Price (€)</th>
-            <th>Consumption (kWh)</th>
-            <th>Emission Date</th>
-            <th>Upload Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let invoice of filteredInvoices">
-            <td><input type="checkbox" (change)="toggleInvoiceSelection(invoice.id, $event)" /></td>
-            <td>{{ invoice.id }}</td>
-            <td>{{ invoice.price }}€</td>
-            <td>{{ invoice.consumption }}kWh</td>
-            <td>{{ invoice.emissionDate | date }}</td>
-            <td>{{ invoice.uploadDate | date }}</td>
-          </tr>
-        </tbody>
-      </table>
-
+      <div class="table-container">
+        <table *ngIf="filteredInvoices.length > 0; else noInvoices" class="invoice-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>ID</th>
+              <th>Price (€)</th>
+              <th>Consumption (kWh)</th>
+              <th>Emission Date</th>
+              <th>Upload Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of filteredInvoices">
+              <td><input type="checkbox" (change)="toggleInvoiceSelection(invoice.id, $event)" /></td>
+              <td>{{ invoice.id }}</td>
+              <td>{{ invoice.price }}€</td>
+              <td>{{ invoice.consumption }}kWh</td>
+              <td>{{ invoice.emissionDate | date }}</td>
+              <td>{{ invoice.uploadDate | date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <ng-template #noInvoices>
         <p>No invoices available.</p>
       </ng-template>

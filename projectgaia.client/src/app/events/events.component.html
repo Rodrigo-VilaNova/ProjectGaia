@@ -15,31 +15,35 @@
         <input type="date" [(ngModel)]="selectedDate" />
         <button (click)="filterEvents()" class="btn search-btn">Search</button>
         <button class="btn add-event-btn">Add</button>
+        <button (click)="deleteSelectedEvents()" class="btn delete-btn" [disabled]="selectedEvents.length === 0">Delete Selected</button>
       </div>
 
-      <table *ngIf="filteredEvents.length > 0; else noEvents" class="events-table">
-        <thead>
-          <tr>
-            <th>Event Name</th>
-            <th>Event Description</th>
-            <th>Event Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let event of filteredEvents">
-            <td>{{ event.name }}</td>
-            <td>{{ event.description }}</td>
-            <td>
-              <span *ngIf="isOverdue(event.date)" class="overdue-label">(Overdue)</span>
-              {{ event.date }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-
-      <ng-template #noEvents>
-        <p>No events were found for that date</p>
-      </ng-template>
+      <div class="table-container">
+        <table *ngIf="filteredEvents.length > 0; else noEvents" class="events-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Event Name</th>
+              <th>Event Description</th>
+              <th>Event Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of filteredEvents">
+              <td><input type="checkbox" (change)="toggleEventSelection(event.id, $event)" /></td>
+              <td>{{ event.name }}</td>
+              <td>{{ event.description }}</td>
+              <td>
+                <span *ngIf="isOverdue(event.date)" class="overdue-label">(Overdue)</span>
+                {{ event.date }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+        <ng-template #noEvents>
+          <p>No events were found for that date</p>
+        </ng-template>
+      </div>
     </div>
-  </div>
 </body>

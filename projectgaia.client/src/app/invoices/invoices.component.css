@@ -51,6 +51,15 @@ html, body {
   background-color: #5a8f2b;
 }
 
+.table-container {
+  display: flex;
+  justify-content: center;
+  max-height: 50vh;
+  overflow-y: auto;
+  width: 100vw;
+  padding-bottom: 5px;
+}
+
 .invoice-table {
   width: 80%;
   border-collapse: collapse;

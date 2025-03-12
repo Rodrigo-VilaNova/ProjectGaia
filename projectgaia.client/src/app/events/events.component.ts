@@ -16,27 +16,33 @@ import { AuthService } from '../interceptors/auth.service';
 
 export class EventsComponent {
 
-  placeholderDate = new Date();
   selectedDate: string = '';
-  filteredEvents: { date: string; description: string; name: string }[] = [];
+  filteredEvents: { id: number;  date: string; description: string; name: string }[] = [];
+  selectedEvents: number[] = [];
 
   events = [
-    { date: '2025-01-10', description: "Tarefa muito atrasada", name: "Tarefa esquecida" },
-    { date: '2025-03-09', description: "Dia 9 de Março", name: "Dia 9/3" },
-    { date: '2025-03-10', description: "Reunião da DevTeam", name: "Reunião de Equipa" },
-    { date: '2025-03-10', description: "Apresentação de Project Gaia", name: "Apresentação de Projeto" },
-    { date: '2025-03-15', description: "Entrega do Projeto", name: "Entrega de Relatório" },
-    { date: '2025-03-20', description: "Check-in com o Cliente às 16h00", name: "Check-in com o Cliente" }
+    { id: 1, date: '2025-01-10', description: "Tarefa muito atrasada", name: "Tarefa esquecida" },
+    { id: 2, date: '2025-03-09', description: "Dia 9 de Março", name: "Dia 9/3" },
+    { id: 3, date: '2025-03-10', description: "Reunião da DevTeam", name: "Reunião de Equipa" },
+    { id: 4, date: '2025-03-10', description: "Apresentação de Project Gaia", name: "Apresentação de Projeto" },
+    { id: 5, date: '2025-03-15', description: "Entrega do Projeto", name: "Entrega de Relatório" },
+    { id: 6, date: '2025-03-20', description: "Check-in com o Cliente às 16h00", name: "Check-in com o Cliente" },
   ];
-
   constructor(private router: Router) {
-    this.setTodayAsDefault();
+    this.filterEvents();
   }
 
-  setTodayAsDefault() {
-    const today = new Date();
-    this.selectedDate = today.toISOString().split('T')[0];
+  onDateChange(event: any) {
+    this.selectedDate = event.target.value;
     this.filterEvents();
+  }
+
+  filterEvents() {
+    if (!this.selectedDate) {
+      this.filteredEvents = [...this.events];
+      return;
+    }
+    this.filteredEvents = this.events.filter(event => event.date === this.selectedDate);
   }
 
   isOverdue(eventDate: string): boolean {
@@ -47,12 +53,21 @@ export class EventsComponent {
     return eventDateObj < today;
   }
 
-  filterEvents() {
-    if (!this.selectedDate) {
-      this.filteredEvents = [];
-      return;
+  toggleEventSelection(eventId: number, event: Event) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    if (isChecked) {
+      this.selectedEvents.push(eventId);
+    } else {
+      this.selectedEvents = this.selectedEvents.filter(id => id !== eventId);
     }
-    this.filteredEvents = this.events.filter(event => event.date === this.selectedDate);
+  }
+
+  deleteSelectedEvents() {
+    if (this.selectedEvents.length === 0) return;
+    if (!confirm("Are you sure you wish to delete selected events?")) return;
+    this.events = this.events.filter(event => !this.selectedEvents.includes(event.id));
+    this.filterEvents();
+    this.selectedEvents = [];
   }
 
   goToDashboard() {
