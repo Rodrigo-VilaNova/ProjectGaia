@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Humanizer.Bytes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -18,6 +19,7 @@ namespace ProjectGaia.Server.Data
         public DbSet<Recovery> Recoveries { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Event> Events { get; set; }
         public DbSet<AccessLog> AccessLogs { get; set; }
         public DbSet<ErrorLog> ErrorLogs { get; set; }
 
@@ -38,12 +40,14 @@ namespace ProjectGaia.Server.Data
 
             modelBuilder.Entity<Recovery>().ToTable("Recoveries");
             modelBuilder.Entity<Recovery>().Property(c => c.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Recovery>().HasIndex(c => c.AccountID);
             modelBuilder.Entity<Recovery>().HasIndex(c => c.Token).IsUnique();
             modelBuilder.Entity<Recovery>().HasIndex(c => c.Expiration);
             modelBuilder.Entity<Recovery>().HasIndex(c => c.AccountID).IsUnique();
 
             modelBuilder.Entity<Session>().ToTable("Sessions");
             modelBuilder.Entity<Session>().Property(s => s.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Session>().HasIndex(s => s.AccountID);
             modelBuilder.Entity<Session>().HasIndex(s => s.Token).IsUnique();
             modelBuilder.Entity<Session>().HasIndex(s => s.Expiration);
             modelBuilder.Entity<Session>().HasOne(s => s.Account).WithMany(a => a.Sessions);
@@ -55,12 +59,20 @@ namespace ProjectGaia.Server.Data
             modelBuilder.Entity<Invoice>().Property(i => i.Price).HasColumnType("decimal(18,2)");
             modelBuilder.Entity<Invoice>().Property(i => i.Consumption).HasColumnType("decimal(18,2)");
 
+            modelBuilder.Entity<Event>().ToTable("Events");
+            modelBuilder.Entity<Event>().Property(e => e.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Event>().HasIndex(e => e.AccountID);
+            modelBuilder.Entity<Event>().HasOne(e => e.Account).WithMany(a => a.Events);
+            modelBuilder.Entity<Event>().HasIndex(e => new { e.AccountID, e.Date });
+
             modelBuilder.Entity<AccessLog>().ToTable("AccessLogs");
             modelBuilder.Entity<AccessLog>().Property(a => a.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<AccessLog>().HasIndex(a => a.AccountID);
             modelBuilder.Entity<AccessLog>().HasOne(a => a.Account).WithMany(a => a.AccessLogs);
 
             modelBuilder.Entity<ErrorLog>().ToTable("ErrorLogs");
             modelBuilder.Entity<ErrorLog>().Property(e => e.ID).ValueGeneratedOnAdd();
+            modelBuilder.Entity<ErrorLog>().HasIndex(e => e.AccountID);
             modelBuilder.Entity<ErrorLog>().HasOne(e => e.Account).WithMany(a => a.ErrorLogs);
 
             PasswordService passwordService = new PasswordService();

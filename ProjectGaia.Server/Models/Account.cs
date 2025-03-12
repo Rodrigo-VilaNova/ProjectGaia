@@ -27,6 +27,7 @@ namespace ProjectGaia.Server.Models
         //Navigation properties
         public ICollection<Session>? Sessions { get; set; }
         public ICollection<Invoice>? Invoices { get; set; }
+        public ICollection<Event>? Events { get; set; }
         public ICollection<AccessLog>? AccessLogs { get; set; }
         public ICollection<ErrorLog>? ErrorLogs { get; set; }
     }
