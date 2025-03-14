@@ -19,24 +19,20 @@ export class InvoicesComponent implements OnInit {
   selectedInvoices: number[] = [];
   showFilterOverlay = false;
 
-  filterOptions = {
-    price: { min: null, max: null, order: null },
-    consumption: { min: null, max: null, order: null },
-    emissionDate: { order: null },
-    uploadDate: { order: null }
+  currentSortColumn: string | null = null;
+  currentSortOrder: 'asc' | 'desc' | null = null;
+
+  static readonly FILTERS_DEFAULT = {
+    id: { min: null as number | null, max: null as number | null },
+    price: { min: null as number | null, max: null as number | null },
+    consumption: { min: null as number | null, max: null as number | null },
+    emissionDate: { min: null as Date | null, max: null as Date | null },
+    uploadDate: { min: null as Date | null, max: null as Date | null }
   };
 
-  filters = {
-    idOrder: '', // 'asc' or 'desc'
-    priceMin: null,
-    priceMax: null,
-    consumptionMin: null,
-    consumptionMax: null,
-    emissionDateMin: '',
-    emissionDateMax: '',
-    uploadDateMin: '',
-    uploadDateMax: ''
-  };
+  filters = structuredClone(InvoicesComponent.FILTERS_DEFAULT);
+
+  hasFiltersApplied = this.isFilterModified();
 
   constructor(private router: Router, private http: HttpClient, private invoiceService: InvoiceService) { }
 
@@ -64,37 +60,45 @@ export class InvoicesComponent implements OnInit {
     );
   }
 
+  isFilterModified(): boolean {
+  // Loop through each key in the filters object
+  for (let key in this.filters) {
+    const filter = this.filters[key as keyof typeof this.filters];
+    const default_filter = InvoicesComponent.FILTERS_DEFAULT[key as keyof typeof InvoicesComponent.FILTERS_DEFAULT];
+
+    // Check if the current filter's min/max value differs from the default (which is null)
+    if (filter.min !== default_filter.min ||
+      filter.max !== default_filter.max) {
+      return true;
+    }
+  }
+
+  // If no filter is modified, return false
+  return false;
+}
+
   applyFilters() {
+    this.hasFiltersApplied = this.isFilterModified();
+
     this.filteredInvoices = [...this.invoices];
 
     // Apply min/max filters
     this.filteredInvoices = this.filteredInvoices.filter(invoice =>
-      (this.filterOptions.price.min == null || invoice.price >= this.filterOptions.price.min) &&
-      (this.filterOptions.price.max == null || invoice.price <= this.filterOptions.price.max) &&
-      (this.filterOptions.consumption.min == null || invoice.consumption >= this.filterOptions.consumption.min) &&
-      (this.filterOptions.consumption.max == null || invoice.consumption <= this.filterOptions.consumption.max)
+      (this.filters.id.min == null || invoice.id >= this.filters.id.min) &&
+      (this.filters.id.max == null || invoice.id <= this.filters.id.max) &&
+      (this.filters.price.min == null || invoice.price >= this.filters.price.min) &&
+      (this.filters.price.max == null || invoice.price <= this.filters.price.max) &&
+      (this.filters.consumption.min == null || invoice.consumption >= this.filters.consumption.min) &&
+      (this.filters.consumption.max == null || invoice.consumption <= this.filters.consumption.max) &&
+      (this.filters.emissionDate.min == null || invoice.emissionDate >= this.filters.emissionDate.min) &&
+      (this.filters.emissionDate.max == null || invoice.emissionDate <= this.filters.emissionDate.max) &&
+      (this.filters.uploadDate.min == null || invoice.emissionDate >= this.filters.uploadDate.min) &&
+      (this.filters.uploadDate.max == null || invoice.emissionDate <= this.filters.uploadDate.max)
     );
-
-    // Apply sorting
-    Object.keys(this.filterOptions).forEach(key => {
-      const typedKey = key as keyof Invoice; // Explicitly cast key
-      const { order } = this.filterOptions[typedKey as keyof typeof this.filterOptions];
-
-      if (order) {
-        this.filteredInvoices.sort((a, b) =>
-          order === 'asc' ? (a[typedKey] > b[typedKey] ? 1 : -1) : (a[typedKey] < b[typedKey] ? 1 : -1)
-        );
-      }
-    });
   }
 
   resetFilters() {
-    this.filterOptions = {
-      price: { min: null, max: null, order: null },
-      consumption: { min: null, max: null, order: null },
-      emissionDate: { order: null },
-      uploadDate: { order: null }
-    };
+    this.filters = structuredClone(InvoicesComponent.FILTERS_DEFAULT);
     this.applyFilters();
   }
 
@@ -105,6 +109,7 @@ export class InvoicesComponent implements OnInit {
     } else {
       this.selectedInvoices = this.selectedInvoices.filter(id => id !== invoiceId);
     }
+    this.applyFilters(); // Update table to show only selected invoices
   }
 
   deleteSelectedInvoices() {
@@ -124,6 +129,21 @@ export class InvoicesComponent implements OnInit {
         console.error("Error deleting invoices:", error);
       })
       .finally(() => { window.location.reload(); });
+  }
+
+  sortBy(column: keyof Invoice) {
+    if (this.currentSortColumn === column) {
+      this.currentSortOrder = this.currentSortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.currentSortColumn = column;
+      this.currentSortOrder = 'asc';
+    }
+
+    this.filteredInvoices.sort((a, b) => {
+      if (a[column] < b[column]) return this.currentSortOrder === 'asc' ? -1 : 1;
+      if (a[column] > b[column]) return this.currentSortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
   }
 
   goToAddInvoice() {

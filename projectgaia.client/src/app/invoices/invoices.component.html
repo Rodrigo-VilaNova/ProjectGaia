@@ -16,35 +16,34 @@
       <div *ngIf="showFilterOverlay" class="filter-overlay">
         <div class="filter-box">
           <h3>Filter Invoices</h3>
-          <label>ID Order:</label>
-          <select [(ngModel)]="filters.idOrder">
-            <option value="">None</option>
-            <option value="asc">Ascending</option>
-            <option value="desc">Descending</option>
-          </select>
+          <label>ID Range:</label>
+          <div class="range-container">
+            <input type="number" [(ngModel)]="filters.id.min" placeholder="Min" />
+            <input type="number" [(ngModel)]="filters.id.max" placeholder="Max" />
+          </div>
 
           <label>Price (€) Range:</label>
           <div class="range-container">
-            <input type="number" [(ngModel)]="filters.priceMin" placeholder="Min" />
-            <input type="number" [(ngModel)]="filters.priceMax" placeholder="Max" />
+            <input type="number" [(ngModel)]="filters.price.min" placeholder="Min" />
+            <input type="number" [(ngModel)]="filters.price.max" placeholder="Max" />
           </div>
 
           <label>Consumption (kWh) Range:</label>
           <div class="range-container">
-            <input type="number" [(ngModel)]="filters.consumptionMin" placeholder="Min" />
-            <input type="number" [(ngModel)]="filters.consumptionMax" placeholder="Max" />
+            <input type="number" [(ngModel)]="filters.consumption.min" placeholder="Min" />
+            <input type="number" [(ngModel)]="filters.consumption.max" placeholder="Max" />
           </div>
 
           <label>Emission Date:</label>
           <div class="range-container">
-            <input type="date" [(ngModel)]="filters.emissionDateMin" />
-            <input type="date" [(ngModel)]="filters.emissionDateMax" />
+            <input type="date" [(ngModel)]="filters.emissionDate.min" />
+            <input type="date" [(ngModel)]="filters.emissionDate.max" />
           </div>
 
           <label>Upload Date:</label>
           <div class="range-container">
-            <input type="date" [(ngModel)]="filters.uploadDateMin" />
-            <input type="date" [(ngModel)]="filters.uploadDateMax" />
+            <input type="date" [(ngModel)]="filters.uploadDate.min" />
+            <input type="date" [(ngModel)]="filters.uploadDate.max" />
           </div>
 
           <button (click)="applyFilters()" class="btn apply-filters-btn">Apply</button>
@@ -53,33 +52,46 @@
         </div>
       </div>
 
-
-      <table *ngIf="filteredInvoices.length > 0; else noInvoices" class="invoice-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Price (€)</th>
-            <th>Consumption (kWh)</th>
-            <th>Emission Date</th>
-            <th>Upload Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let invoice of filteredInvoices">
-            <td><input type="checkbox" (change)="toggleInvoiceSelection(invoice.id, $event)" /></td>
-            <td>{{ invoice.id }}</td>
-            <td>{{ invoice.price }}€</td>
-            <td>{{ invoice.consumption }}kWh</td>
-            <td>{{ invoice.emissionDate | date }}</td>
-            <td>{{ invoice.uploadDate | date }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table *ngIf="filteredInvoices.length > 0; else noInvoices" class="invoice-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th (click)="sortBy('id')">
+                ID<span *ngIf="currentSortColumn === 'id' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('price')">
+                Price (€)<span *ngIf="currentSortColumn === 'price' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('consumption')">
+                Consumption (kWh)<span *ngIf="currentSortColumn === 'consumption' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('emissionDate')">
+                Emission Date<span *ngIf="currentSortColumn === 'emissionDate' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('uploadDate')">
+                Upload Date<span *ngIf="currentSortColumn === 'uploadDate' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of filteredInvoices">
+              <td><input type="checkbox" class="checkbox-cell" (change)="toggleInvoiceSelection(invoice.id, $event)" /></td>
+              <td>{{ invoice.id }}</td>
+              <td>{{ invoice.price }}€</td>
+              <td>{{ invoice.consumption }}kWh</td>
+              <td>{{ invoice.emissionDate | date }}</td>
+              <td>{{ invoice.uploadDate | date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <ng-template #noInvoices>
         <p>No invoices available.</p>
       </ng-template>
+
+      <div *ngIf="hasFiltersApplied" class="filters-applied-label">Filters have been applied, currently showing {{ filteredInvoices.length }} out of {{ invoices.length }} invoices.</div>
     </div>
   </div>
 </body>

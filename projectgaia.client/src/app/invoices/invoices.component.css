@@ -8,7 +8,7 @@
 
 html, body {
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -52,12 +52,11 @@ html, body {
 }
 
 .invoice-table {
-  width: 80%;
+  width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
   background: white;
   border-radius: 10px;
-  overflow: hidden;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -170,6 +169,21 @@ h3 {
 }
 
 
+
+.filters-applied-label {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #73a634;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  width: 80%;
+}
 
 .button-group {
   display: flex;

@@ -8,8 +8,8 @@ export interface Invoice {
   id: number;
   price: number;
   consumption: number;
-  emissionDate: string;
-  uploadDate: string;
+  emissionDate: Date;
+  uploadDate: Date;
   accountID: number;
 }
 
