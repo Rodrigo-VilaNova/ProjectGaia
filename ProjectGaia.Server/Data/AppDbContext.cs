@@ -220,6 +220,18 @@ namespace ProjectGaia.Server.Data
                     AccountID = 3
                 }
             );
+
+            modelBuilder.Entity<Event>().HasData(
+                new Event
+                {
+                    ID = 1,
+                    Name = "Pagamento 1",
+                    Description = "Descrição do evento",
+                    Date = new DateTime(2025, 3, 15),
+                    Type = EventType.Payment,
+                    AccountID = 3
+                }
+            );
         }
     }
 }
