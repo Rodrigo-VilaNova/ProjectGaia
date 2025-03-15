@@ -50,7 +50,7 @@
                 <span *ngIf="isOverdue(event.date)" class="overdue-label">(Overdue)</span>
                 {{ event.date }}
               </td>
-              <td>{{ event.type }}</td>
+              <td>{{ getEventTypeName(event.type) }}</td>
             </tr>
           </tbody>
         </table>

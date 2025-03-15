@@ -11,9 +11,9 @@ export interface Event {
   type: EventType;
 }
 export enum EventType {
-  Payment = 'Payment',
-  Price = 'Price',
-  Miscellaneous = 'Miscellaneous',
+  Payment = 0,
+  Price = 1,
+  Miscellaneous = 2,
 }
 
 @Injectable({
