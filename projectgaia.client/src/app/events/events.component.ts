@@ -1,36 +1,56 @@
 import { Component } from '@angular/core';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../interceptors/auth.service';
-import { EventService } from '../services/event.service';
+import { EventService, Event, EventType } from '../services/event.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, BsDatepickerModule, FormsModule],
+  imports: [RouterModule, CommonModule, FormsModule]
 })
 
 export class EventsComponent {
 
-  selectedDate: string = '';
-  filteredEvents: { id: number;  date: string; description: string; name: string, type: EventType }[] = [];
+  selectedDate: Date | null = null;
+  filteredEvents: Event[] = [];
   selectedEvents: number[] = [];
 
-  events = [
+  events: Event[] = [];
+
+  /*events = [
     { id: 1, date: '2025-01-10', description: "Tarefa muito atrasada", name: "Tarefa esquecida", type: EventType.Miscellaneous, },
     { id: 2, date: '2025-03-09', description: "Dia 9 de Março", name: "Dia 9/3", type: EventType.Miscellaneous, },
     { id: 3, date: '2025-03-10', description: "Tarifa Aumenta 3%", name: "Aumento Tarifa Eletricidade", type: EventType.Price, },
     { id: 4, date: '2025-03-10', description: "Pagar conta da eletricidade", name: "Conta Eletricidade", type: EventType.Payment, },
     { id: 5, date: '2025-03-15', description: "Possível redução de tarifa de 1%", name: "Redução Tarifa Eletricidade", type: EventType.Price, },
     { id: 6, date: '2025-03-20', description: "Pagar mensalidade do carro elétrico", name: "Mensalidade Carro Elétrico", type: EventType.Payment, },
-  ];
-  constructor(private router: Router) {
+  ];*/
+
+  constructor(private router: Router, private http: HttpClient, private eventService: EventService) {
     this.filterEvents();
+  }
+
+  ngOnInit() {
+    this.loadEvents();
+  }
+
+  loadEvents() {
+    this.eventService.getUserEvents().subscribe(
+      (data) => {
+        this.events = data;
+        this.filterEvents();
+      },
+      (error) => {
+        console.error('Error fetching invoices:', error);
+      }
+    );
   }
 
   onDateChange(event: any) {
@@ -46,15 +66,14 @@ export class EventsComponent {
     this.filteredEvents = this.events.filter(event => event.date === this.selectedDate);
   }
 
-  isOverdue(eventDate: string): boolean {
-    const eventDateObj = new Date(eventDate);
+  isOverdue(eventDate: Date): boolean {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return eventDateObj < today;
+    return eventDate < today;
   }
 
-  toggleEventSelection(eventId: number, event: Event) {
+  toggleEventSelection(eventId: number, event: globalThis.Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
       this.selectedEvents.push(eventId);
@@ -66,9 +85,21 @@ export class EventsComponent {
   deleteSelectedEvents() {
     if (this.selectedEvents.length === 0) return;
     if (!confirm("Are you sure you wish to delete selected events?")) return;
-    this.events = this.events.filter(event => !this.selectedEvents.includes(event.id));
-    this.filterEvents();
-    this.selectedEvents = [];
+
+    const deleteRequests = this.selectedEvents.map(id =>
+      this.http.delete(`${environment.apiUrl}/events/${id}`).toPromise()
+    );
+
+    Promise.all(deleteRequests)
+      .then(() => {
+        this.events = this.events.filter(event => !this.selectedEvents.includes(event.id));
+        this.filterEvents();
+        this.selectedEvents = [];
+      })
+      .catch(error => {
+        console.error("Error deleting invoices:", error);
+      })
+      .finally(() => { window.location.reload(); });
   }
 
   goToDashboard() {
@@ -86,10 +117,4 @@ export class EventsComponent {
   goToSimulation() {
     this.router.navigate(['/simulation']);
   }
-}
-
-export enum EventType {
-  Payment = 'Payment',
-  Price = 'Price',
-  Miscellaneous = 'Miscellaneous',
 }

@@ -98,7 +98,7 @@ export class InvoicesComponent implements OnInit {
     this.applyFilters();
   }
 
-  toggleInvoiceSelection(invoiceId: number, event: Event) {
+  toggleInvoiceSelection(invoiceId: number, event: globalThis.Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
       this.selectedInvoices.push(invoiceId);
