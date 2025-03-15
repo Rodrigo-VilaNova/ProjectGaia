@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { InvoiceService, Invoice } from '../invoice.service';
+import { InvoiceService, Invoice } from '../services/invoice.service';
 import { environment } from '../../environments/environment';
 import { FormsModule } from '@angular/forms';
 
