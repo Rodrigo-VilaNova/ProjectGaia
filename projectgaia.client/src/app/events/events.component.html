@@ -23,15 +23,27 @@
           <thead>
             <tr>
               <th></th>
-              <th>Event Name</th>
-              <th>Event Description</th>
-              <th>Event Date</th>
-              <th>Event Type</th>
+              <th (click)="sortBy('id')">
+                ID<span *ngIf="currentSortColumn === 'id' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('name')">
+                Name<span *ngIf="currentSortColumn === 'name' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('description')">
+                Description<span *ngIf="currentSortColumn === 'description' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('date')">
+                Date<span *ngIf="currentSortColumn === 'date' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
+              <th (click)="sortBy('type')">
+                Type<span *ngIf="currentSortColumn === 'type' && currentSortOrder"> {{ currentSortOrder === 'asc' ? '▲' : '▼' }}</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let event of filteredEvents">
               <td><input type="checkbox" (change)="toggleEventSelection(event.id, $event)" /></td>
+              <td>{{ event.id }}</td>
               <td>{{ event.name }}</td>
               <td>{{ event.description }}</td>
               <td>

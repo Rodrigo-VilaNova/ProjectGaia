@@ -24,6 +24,9 @@ export class EventsComponent {
 
   events: Event[] = [];
 
+  currentSortColumn: string | null = null;
+  currentSortOrder: 'asc' | 'desc' | null = null;
+
   /*events = [
     { id: 1, date: '2025-01-10', description: "Tarefa muito atrasada", name: "Tarefa esquecida", type: EventType.Miscellaneous, },
     { id: 2, date: '2025-03-09', description: "Dia 9 de Março", name: "Dia 9/3", type: EventType.Miscellaneous, },
@@ -100,6 +103,21 @@ export class EventsComponent {
         console.error("Error deleting invoices:", error);
       })
       .finally(() => { window.location.reload(); });
+  }
+
+  sortBy(column: keyof Event) {
+    if (this.currentSortColumn === column) {
+      this.currentSortOrder = this.currentSortOrder === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.currentSortColumn = column;
+      this.currentSortOrder = 'asc';
+    }
+
+    this.filteredEvents.sort((a, b) => {
+      if (a[column] < b[column]) return this.currentSortOrder === 'asc' ? -1 : 1;
+      if (a[column] > b[column]) return this.currentSortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
   }
 
   goToDashboard() {
