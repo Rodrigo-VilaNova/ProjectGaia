@@ -53,7 +53,7 @@ html, body {
   background-color: #5a8f2b;
 }
 
-.auth-container, .dashboard-container {
+.dashboard-container {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -67,6 +67,50 @@ html, body {
   font-family: Arial, sans-serif;
 }
 
+.table-container {
+  display: flex;
+  justify-content: center;
+  max-height: 50vh;
+  overflow-y: auto;
+  width: 100vw;
+  padding-bottom: 5px;
+}
+
+.events-table {
+  width: 80%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.events-table th, .events-table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.events-table th {
+  background-color: #73a634;
+  color: white;
+  font-weight: bold;
+}
+
+.events-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.events-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+h1 {
+  font-size: 2.35rem !important;
+  font-weight: bolder;  
+}
+
 h2 {
   font-size: 2.5rem;
   margin-bottom: 2rem;
@@ -75,8 +119,11 @@ h2 {
 }
 
 h3 {
-  font-size: 2.2rem;
+  font-size: 2rem !important;
   font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
 
 .description {

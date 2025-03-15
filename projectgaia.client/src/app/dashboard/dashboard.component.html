@@ -1,15 +1,38 @@
 <body>
   <div class="page-container">
     <div class="navbar">
-      <h3>Project Gaia</h3>
+      <h1>Project Gaia</h1>
       <button (click)="goToInvoices()" class="btn invoices-btn">Invoices</button>
       <button (click)="goToEvents()" class="btn events-btn">Events</button>
       <button class="btn simulation-btn">Teste2</button>
       <div class="profile-circle" (click)="goToProfile()"></div>
     </div>
     <div class="dashboard-container">
-      <h2>Welcome to Your Dashboard</h2>
-      <p class="description">Manage your account, settings, and more.</p>
+      <h2>Welcome to your Dashboard</h2>
+
+      <h3>Upcoming Events - One Week</h3>
+      <p>Check the Events page for further details</p>
+
+      <div class="table-container">
+        <table *ngIf="dashboardEvents.length > 0; else noEvents" class="events-table">
+          <thead>
+            <tr>
+              <th>Event Name</th>
+              <th>Event Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let event of dashboardEvents">
+              <td>{{ event.name }}</td>
+              <td>{{ event.date | date:'dd-MM-yyyy' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ng-template #noEvents>
+        <p>No upcoming events.</p>
+      </ng-template>
     </div>
   </div>
 </body>

@@ -121,7 +121,7 @@ export class EventsComponent {
   }
 
   getEventTypeName(type: EventType): string {
-    return EventType[type]; // Converts enum number to string
+    return EventType[type];
   }
 
   goToDashboard() {

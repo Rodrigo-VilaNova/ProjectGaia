@@ -207,6 +207,10 @@ button.add-event-btn:hover {
   background-color: rgba(167, 255, 32, 0.1)
 }
 
+.invoices-btn {
+  background-color: rgba(167, 255, 32, 0.1);
+}
+
 .events-btn {
   background-color: rgba(167, 255, 32, 0.1);
 }
