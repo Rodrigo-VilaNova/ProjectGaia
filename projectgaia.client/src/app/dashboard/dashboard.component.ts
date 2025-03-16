@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../interceptors/auth.service';
 import { EventService, Event } from '../services/event.service';
+import { Invoice, InvoiceService } from '../services/invoice.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,13 +14,20 @@ import { EventService, Event } from '../services/event.service';
   imports: [RouterModule, CommonModule]
 })
 export class DashboardComponent {
-  constructor(private router: Router, private eventService: EventService) { }
+  constructor(private router: Router, private eventService: EventService, private invoiceService: InvoiceService) { }
 
   dashboardEvents: Event[] = [];
+  invoices: Invoice[] = [];
+
+  averagePrice: number = 0;
+  averageConsumption: number = 0;
 
   ngOnInit() {
     this.loadUpcomingEvents();
+    this.loadInvoices();
   }
+
+
 
   //Carrega eventos que occorrem dentro de uma semana
   loadUpcomingEvents() {
@@ -43,6 +51,20 @@ export class DashboardComponent {
       }
     );
   }
+
+  loadInvoices() {
+    this.invoiceService.getUserInvoices().subscribe(
+      (data) => {
+        this.invoices = data;
+        this.averagePrice = this.invoices.reduce((sum, invoice) => sum + invoice.price, 0) / this.invoices.length;
+        this.averageConsumption = this.invoices.reduce((sum, invoice) => sum + invoice.consumption, 0) / this.invoices.length;
+      },
+      (error) => {
+        console.error('Error fetching invoices:', error);
+      }
+    );
+  }
+
 
   //Funções de routing
   goToInvoices() {

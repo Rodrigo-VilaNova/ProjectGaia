@@ -86,6 +86,48 @@ html, body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+.consumption-container {
+  width: 80%;
+  margin: 20px auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  text-align: center;
+  font-size: 1.1em;
+  line-height: 1.6;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+  .consumption-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+  }
+
+  .consumption-container p {
+    margin: 10px 0;
+  }
+
+  .consumption-container hr {
+    border: none;
+    height: 1px;
+    background: #f9f9f9;
+    margin: 15px 0;
+  }
+
+
+.consumption-box {
+  display: inline-block;
+  background: #73a634;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin: 10px 20px;
+  min-width: 150px;
+}
+
+
 .events-table th, .events-table td {
   padding: 12px;
   border: 1px solid #ddd;
