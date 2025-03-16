@@ -50,7 +50,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         [Fact]
-        public async Task CreateEvent_ValidInvoice_ReturnsCreated()
+        public async Task CreateEvent_ValidEvent_ReturnsCreated()
         {
             string token = "UserZeroToken";
             string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
@@ -110,7 +110,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         [Fact]
-        public async Task GetEvents_ValidToken_ReturnsInvoices()
+        public async Task GetEvents_ValidToken_ReturnsEvents()
         {
             string token = "UserZeroToken";
             string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
@@ -123,10 +123,10 @@ namespace ProjectGaia.ServerTests.Tests
 
             var resultObject = AssertStatusCode(200, result);
 
-            var invoiceIDs = Assert.IsType<List<int>>(resultObject.Value);
+            var eventIDs = Assert.IsType<List<int>>(resultObject.Value);
 
-            Assert.Single(invoiceIDs);
-            Assert.Contains(1, invoiceIDs);
+            Assert.Single(eventIDs);
+            Assert.Contains(1, eventIDs);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         [Fact]
-        public async Task GetEvent_InvoiceExists_ReturnsInvoice()
+        public async Task GetEvent_EventExists_ReturnsEvent()
         {
             string token = "UserZeroToken";
             string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
@@ -171,7 +171,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         [Fact]
-        public async Task GetEvent_InvoiceDoesNotExist_ReturnsNotFound()
+        public async Task GetEvent_EventDoesNotExist_ReturnsNotFound()
         {
             string token = "UserZeroToken";
             string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));

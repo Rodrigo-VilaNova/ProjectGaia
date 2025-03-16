@@ -14,7 +14,7 @@
       <div class="date-picker-container">
         <input type="date" [(ngModel)]="selectedDate" />
         <button (click)="filterEvents()" class="btn search-btn">Search</button>
-        <button class="btn add-event-btn">Add</button>
+        <button (click)="goToAddEvent()" class="btn add-event-btn">Add</button>
         <button (click)="deleteSelectedEvents()" class="btn delete-btn" [disabled]="selectedEvents.length === 0">Delete Selected</button>
       </div>
 

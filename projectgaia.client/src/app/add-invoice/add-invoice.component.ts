@@ -24,7 +24,12 @@ export class AddInvoiceComponent {
   errorMessage: string = '';
   successMessage: string = '';
 
+  today: string = '';
+
   constructor(private http: HttpClient, private router: Router, private fb: FormBuilder) {
+    const todayDate = new Date();
+    this.today = todayDate.toISOString().split('T')[0];
+
     this.invoiceForm = this.fb.group({
       price: [''],
       consumption: [''],
@@ -38,6 +43,15 @@ export class AddInvoiceComponent {
     // Verifica se todos os campos estão preenchidos
     if (!this.invoice.price || !this.invoice.consumption || !this.invoice.emissionDate) {
       this.errorMessage = 'Please fill in all fields before submitting.';
+      return;
+    }
+
+    const selectedDate = new Date(this.invoiceForm.value.date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate >= today) {
+      this.errorMessage = 'The event date must be today or sooner.';
       return;
     }
 

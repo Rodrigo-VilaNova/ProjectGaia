@@ -1,0 +1,39 @@
+<body>
+  <div class="page-container">
+    <div class="navbar">
+      <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
+      <div class="profile-circle"></div>
+    </div>
+
+    <div class="form-container">
+      <h2>Add New Event</h2>
+      <form class="form-group" [formGroup]="eventForm" (ngSubmit)="submitEvent()">
+        <label for="name">Event Name:</label>
+        <input type="text" id="name" formControlName="name" required />
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" formControlName="description" required/>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" formControlName="date" [min]="today" required />
+
+        <label for="type">Event Type:</label>
+        <select id="type" formControlName="type">
+          <option [value]="0">Payment</option>
+          <option [value]="1">Price</option>
+          <option [value]="2">Miscellaneous</option>
+        </select>
+
+        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+        <div class="button-container">
+          <button type="submit" class="btn submit-btn" [disabled]="isSubmitting">Add Event</button>
+          <button type="button" class="btn cancel-btn" (click)="goToEvents()">Cancel</button>
+        </div>
+      </form>
+
+      <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+    </div>
+  </div>
+</body>
+

@@ -132,6 +132,10 @@ export class EventsComponent {
     this.router.navigate(['/invoices']);
   }
 
+  goToAddEvent() {
+    this.router.navigate(['/add-event']);
+  }
+
   goToProfile() {
     this.router.navigate(['/account']);
   }
