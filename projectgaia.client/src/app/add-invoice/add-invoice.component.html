@@ -15,7 +15,7 @@
         <input type="number" id="consumption" formControlName="consumption" [(ngModel)]="invoice.consumption" required />
 
         <label for="emissionDate">Emission Date:</label>
-        <input type="date" id="emissionDate" formControlName="emissionDate" [(ngModel)]="invoice.emissionDate" [min]="today" required />
+        <input type="date" id="emissionDate" formControlName="emissionDate" [(ngModel)]="invoice.emissionDate" [max]="today" required />
 
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
