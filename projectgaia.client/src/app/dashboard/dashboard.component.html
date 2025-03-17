@@ -33,6 +33,28 @@
       <ng-template #noEvents>
         <p>No upcoming events.</p>
       </ng-template>
+
+      <div class="consumption-container">
+
+        <div *ngIf="invoices.length > 0; else noInvoices">
+          <p class="consumption-box">Average consumption: {{ averageConsumption }}kWh</p>
+          <p class="consumption-box">Average price: {{ averagePrice }}€</p>
+        </div>
+
+        <div *ngIf="averageConsumption < 21; else noConsumption">
+          <p>Based on the fact that the average consumption should be 21kWh, you are not making a enviroment impact that is relevant</p>
+        </div>
+
+        <ng-template #noConsumption>
+          <p>Based on the fact that the average consumption should be 21kWh, </p>
+        </ng-template>
+
+        <ng-template #noInvoices>
+          <p>No invoices available to calculate consumption.</p>
+        </ng-template>
+
+      </div>
+
     </div>
   </div>
 </body>
