@@ -36,17 +36,29 @@
 
       <div class="consumption-container">
 
-        <div *ngIf="invoices.length > 0; else noInvoices">
-          <p class="consumption-box">Average consumption: {{ averageConsumption }}kWh</p>
-          <p class="consumption-box">Average price: {{ averagePrice }}€</p>
+        <div class="consumption-boxes" *ngIf="invoices.length > 0; else noInvoices">
+          <p class="consumption-box" [ngClass]="getBoxClass(averageConsumption, 21)">Average consumption: {{ averageConsumption }}kWh</p>
+          <p class="consumption-box" [ngClass]="getBoxClass(averagePrice, 50)">Average price: {{ averagePrice }}€</p>
         </div>
 
         <div *ngIf="averageConsumption < 21; else noConsumption">
-          <p>Based on the fact that the average consumption should be 21kWh, you are not making a enviroment impact that is relevant</p>
+          <p>Based on the fact that the average consumption should be 21kWh, you are </p>
         </div>
 
         <ng-template #noConsumption>
-          <p>Based on the fact that the average consumption should be 21kWh, </p>
+          <div class="bg-green-100 border-l-4 border-green-500 p-4 rounded-lg shadow-md">
+            <p class="text-lg font-semibold text-green-800">
+              Based on the fact that the average consumption should be 21kWh, you are making a enviroment impact that is relevant so
+              consider the following measures:
+            </p>
+            <ul class="mt-3 space-y-2 text-green-700">
+              <li>✅ Turn off your AC when the room temperature is comfortable</li>
+              <li>💡 Don't leave the lights on when leaving a room</li>
+              <li>📺 Avoid leaving the tv on when not in use</li>
+              <li>🔋 Get efficient and sustainable devices</li>
+              <li>☀️ Consider getting solar panels</li>
+            </ul>
+          </div>
         </ng-template>
 
         <ng-template #noInvoices>
