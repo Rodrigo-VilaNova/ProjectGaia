@@ -188,6 +188,15 @@ input[type="date"] {
   transition: background-color 0.3s ease;
 }
 
+.delete-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.delete-btn:hover {
+  background-color: #c9302c;
+}
+
 button.add-event-btn {
   background-color: #ffa726;
 }
