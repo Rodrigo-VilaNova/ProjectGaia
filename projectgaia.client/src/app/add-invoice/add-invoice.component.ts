@@ -31,9 +31,9 @@ export class AddInvoiceComponent {
     this.today = todayDate.toISOString().split('T')[0];
 
     this.invoiceForm = this.fb.group({
-      price: [''],
-      consumption: [''],
-      emissionDate: [''],
+      price: ['', Validators.required],
+      consumption: ['', Validators.required],
+      emissionDate: ['', Validators.required],
     });
   }
 
@@ -41,16 +41,18 @@ export class AddInvoiceComponent {
 
   submitInvoice() {
     // Verifica se todos os campos estão preenchidos
-    if (!this.invoice.price || !this.invoice.consumption || !this.invoice.emissionDate) {
+    if (this.invoiceForm.invalid) {
       this.errorMessage = 'Please fill in all fields before submitting.';
       return;
     }
 
-    const selectedDate = new Date(this.invoiceForm.value.date);
+    const selectedDateString: string = this.invoiceForm.value.emissionDate;
+    const selectedDate = new Date(selectedDateString);
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    if (selectedDate >= today) {
+    if (selectedDate > today) {
       this.errorMessage = 'The event date must be today or sooner.';
       return;
     }
@@ -59,15 +61,21 @@ export class AddInvoiceComponent {
     this.isSubmitting = true;
 
     const invoiceDTO = {
-      price: this.invoice.price,
-      consumption: this.invoice.consumption,
-      emissionDate: this.invoice.emissionDate
+      price: this.invoiceForm.value.price,
+      consumption: this.invoiceForm.value.consumption,
+      emissionDate: this.invoiceForm.value.emissionDate,
     };
+
+    if (this.invoiceForm.value.emissionDate > today) {
+      this.errorMessage = 'The event date must be today or sooner.';
+      this.isSubmitting = false;
+      return;
+    }
 
     this.http.post(`${environment.apiUrl}/invoices`, invoiceDTO).subscribe(
       (response) => {
         this.successMessage = 'Invoice added successfully!';
-
+        this.errorMessage = '';
         this.router.navigate(['/invoices']);
       },
       (error) => {

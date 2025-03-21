@@ -24,7 +24,6 @@ export class AddEventComponent {
   eventForm: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
-  isSubmitting = false;
   today: string = '';
 
   constructor(private http: HttpClient, private router: Router, private fb: FormBuilder) {
@@ -38,6 +37,8 @@ export class AddEventComponent {
       type: [0, Validators.required],
     });
   }
+
+  isSubmitting = false;
 
   submitEvent() {
     if (this.eventForm.invalid) {
