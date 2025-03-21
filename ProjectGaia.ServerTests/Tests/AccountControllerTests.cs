@@ -1,24 +1,12 @@
-﻿using Azure;
+﻿using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Validations;
-using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-using Moq;
-using Newtonsoft.Json.Linq;
-using NuGet.Protocol;
 using ProjectGaia.Server.Controllers;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace ProjectGaia.ServerTests.Tests
 {

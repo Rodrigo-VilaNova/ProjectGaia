@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -222,6 +218,82 @@ namespace ProjectGaia.ServerTests.Tests
             _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
 
             var result = await _controller.GetEvent(1);
+
+            AssertStatusCode(401, result);
+        }
+
+        [Fact]
+        public async Task EditEvent_ValidEvent_ReturnsNoContent()
+        {
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var eventDTO = new EventDTO { Name = "Pagamento 2", Description = "Descrição do evento", Date = new DateTime(2025, 3, 16), Type = EventType.Payment };
+            var result = await _controller.EditEvent(1, eventDTO);
+
+            AssertStatusCode(204, result);
+        }
+
+        [Fact]
+        public async Task EditEvent_InvalidModel_ReturnsBadRequest()
+        {
+            string token = "UserZeroToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var eventDTO = new EventDTO { Name = "Pagamento 2", Date = new DateTime(2025, 3, 16), Type = EventType.Payment };
+            var result = await _controller.EditEvent(1, eventDTO);
+
+            AssertStatusCode(400, result);
+        }
+
+        [Fact]
+        public async Task EditEvent_InvalidToken_ReturnsUnauthorized()
+        {
+            string token = "UserZeroToken-Invalid";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var eventDTO = new EventDTO { Name = "Pagamento 2", Description = "Descrição do evento", Date = new DateTime(2025, 3, 16), Type = EventType.Payment };
+            var result = await _controller.EditEvent(1, eventDTO);
+
+            AssertStatusCode(401, result);
+        }
+
+        [Fact]
+        public async Task EditEvent_WrongAccountToken_ReturnsForbidden()
+        {
+            string token = "UserOneToken";
+            string base64Token = Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
+
+            var mockHttpContext = new DefaultHttpContext();
+            mockHttpContext.Request.Headers["Authorization"] = $"Bearer {base64Token}";
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var eventDTO = new EventDTO { Name = "Pagamento 2", Description = "Descrição do evento", Date = new DateTime(2025, 3, 16), Type = EventType.Payment };
+            var result = await _controller.EditEvent(1, eventDTO);
+
+            AssertStatusCode(403, result);
+        }
+
+        [Fact]
+        public async Task EditEvent_NoToken_ReturnsUnauthorized()
+        {
+            var mockHttpContext = new DefaultHttpContext();
+            _controller.ControllerContext = new ControllerContext { HttpContext = mockHttpContext };
+
+            var eventDTO = new EventDTO { Name = "Pagamento 2", Description = "Descrição do evento", Date = new DateTime(2025, 3, 16), Type = EventType.Payment };
+            var result = await _controller.EditEvent(1, eventDTO);
 
             AssertStatusCode(401, result);
         }

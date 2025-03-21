@@ -1,8 +1,4 @@
 ﻿using System.Security.Cryptography;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using ProjectGaia.Server.Data;
-using ProjectGaia.Server.Models;
 
 namespace ProjectGaia.Server.Services
 {

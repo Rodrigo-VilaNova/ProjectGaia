@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -82,10 +83,47 @@ namespace ProjectGaia.Server.Controllers
             {
                 return StatusCode(500, "Internal server error. Try again");
             }
-            
+
             await _context.SaveChangesAsync();
 
             return StatusCode(201, invoice);
+        }
+
+        // PUT: Edit Invoice
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditInvoice(int id, [FromBody] InvoiceDTO invoiceDTO)
+        {
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var result = await _tokenService.GetAccount(_context, Request);
+                Account? account = result.account;
+
+                if (account == null) return StatusCodeResult(result.status);
+
+                if (!ModelState.IsValid || invoiceDTO.Price == null || invoiceDTO.Consumption == null || invoiceDTO.EmissionDate == null) return StatusCode(400, ModelState);
+
+                Invoice? invoice = await _context.Invoices.Where(i => i.ID == id).FirstOrDefaultAsync();
+
+                if (invoice == null) return StatusCode(404, "Invoice not found");
+
+                if (invoice.AccountID != account.ID) return StatusCode(403, "Invoice belongs to another user");
+
+                invoice.Price = invoiceDTO.Price.Value;
+                invoice.Consumption = invoiceDTO.Consumption.Value;
+                invoice.EmissionDate = invoiceDTO.EmissionDate.Value;
+
+                _context.Invoices.Update(invoice);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return StatusCode(204, null);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error. Try again");
+            }
         }
 
         // DELETE: Delete Invoice

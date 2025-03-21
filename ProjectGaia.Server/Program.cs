@@ -124,7 +124,7 @@ namespace ProjectGaia.Server
                 {
                     string json = File.ReadAllText(filePath);
                     credentials = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
-                    
+
                     if (credentials != null)
                     {
                         if (credentials.Count == 2 && credentials.ContainsKey("email") && credentials.ContainsKey("password"))

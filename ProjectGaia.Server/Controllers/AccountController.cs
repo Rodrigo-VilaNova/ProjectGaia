@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Identity.Client;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -103,7 +102,7 @@ namespace ProjectGaia.Server.Controllers
                 {
                     var scheme = Request.Scheme;
                     var host = Request.Host;
-                    var parameters = new { token = hexToken};
+                    var parameters = new { token = hexToken };
                     var path = Url.Action("ConfirmAccount", "Account", parameters);
 
                     string fullUrl = $"{scheme}://{host}{path}".Replace("/api/account/", "/");
@@ -130,7 +129,7 @@ namespace ProjectGaia.Server.Controllers
             {
                 await transaction.RollbackAsync();
                 return StatusCode(500, "Internal server error creating account");
-            }   
+            }
         }
 
         // GET: Confirm account
@@ -144,7 +143,7 @@ namespace ProjectGaia.Server.Controllers
                 {
                     await transaction.RollbackAsync();
                     return StatusCode(400, "Token parameter missing");
-                }    
+                }
 
                 string hexHashedToken = Convert.ToHexString(_confirmationService.HashToken(token));
                 Confirmation? confirmation = await _context.Confirmations.FirstOrDefaultAsync(c => c.Token == hexHashedToken);
@@ -154,7 +153,7 @@ namespace ProjectGaia.Server.Controllers
                     await transaction.RollbackAsync();
                     return StatusCode(404, "Invalid token");
                 }
-                
+
                 if (confirmation.Expiration <= DateTime.UtcNow)
                 {
                     _context.Confirmations.Remove(confirmation);
@@ -420,7 +419,7 @@ namespace ProjectGaia.Server.Controllers
                 {
                     await transaction.RollbackAsync();
                     return StatusCode(401, "Invalid session token");
-                }       
+                }
 
                 _context.Sessions.Remove(session);
                 await _context.SaveChangesAsync();
@@ -450,7 +449,7 @@ namespace ProjectGaia.Server.Controllers
                     await transaction.RollbackAsync();
                     return StatusCodeResult(result.status);
                 }
-                    
+
                 if (account.Status == AccountStatus.Blocked)
                 {
                     await transaction.RollbackAsync();
@@ -486,7 +485,7 @@ namespace ProjectGaia.Server.Controllers
                 {
                     await transaction.RollbackAsync();
                     return BadRequest(ModelState);
-                }   
+                }
 
                 var result = await _tokenService.GetAccount(_context, Request);
                 Account? account = result.account;
@@ -496,12 +495,12 @@ namespace ProjectGaia.Server.Controllers
                     await transaction.RollbackAsync();
                     return StatusCodeResult(result.status);
                 }
-                    
+
                 if (account.Status == AccountStatus.Blocked)
                 {
                     await transaction.RollbackAsync();
                     return StatusCode(403, "Account is blocked and can't change password");
-                }               
+                }
 
                 if (!_passwordService.IsCorrectPassword(passwordDTO.OldPassword, account.Password ?? []))
                 {
@@ -543,6 +542,6 @@ namespace ProjectGaia.Server.Controllers
         private ObjectResult StatusCodeResult((int code, string? message)? status)
         {
             return StatusCode(status?.code ?? 0, status?.message);
-        } 
+        }
     }
 }

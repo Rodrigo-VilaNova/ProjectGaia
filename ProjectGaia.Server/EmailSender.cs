@@ -1,6 +1,4 @@
-﻿using System.Net;
-using MailKit.Net.Smtp;
-using MailKit.Security;
+﻿using MailKit.Net.Smtp;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using MimeKit;
 

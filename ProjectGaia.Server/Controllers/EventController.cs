@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -78,10 +79,48 @@ namespace ProjectGaia.Server.Controllers
             {
                 return StatusCode(500, "Internal server error. Try again");
             }
-            
+
             await _context.SaveChangesAsync();
 
             return StatusCode(201, newEvent);
+        }
+
+        // PUT: Edit Event
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditEvent(int id, [FromBody] EventDTO eventDTO)
+        {
+            using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var result = await _tokenService.GetAccount(_context, Request);
+                Account? account = result.account;
+
+                if (account == null) return StatusCodeResult(result.status);
+
+                if (!ModelState.IsValid || eventDTO.Name == null || eventDTO.Description == null) return StatusCode(400, ModelState);
+
+                Event? currentEvent = await _context.Events.Where(e => e.ID == id).FirstOrDefaultAsync();
+
+                if (currentEvent == null) return StatusCode(404, "Event not found");
+
+                if (currentEvent.AccountID != account.ID) return StatusCode(403, "Event belongs to another user");
+
+                currentEvent.Name = eventDTO.Name;
+                currentEvent.Description = eventDTO.Description;
+                currentEvent.Date = eventDTO.Date;
+                currentEvent.Type = eventDTO.Type;
+
+                _context.Events.Update(currentEvent);
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return StatusCode(204, null);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, "Internal server error. Try again");
+            }
         }
 
         // DELETE: Delete Event
