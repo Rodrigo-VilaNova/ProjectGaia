@@ -52,17 +52,27 @@ export class DashboardComponent {
     );
   }
 
-  loadInvoices() {
-    this.invoiceService.getUserInvoices().subscribe(
-      (data) => {
-        this.invoices = data;
-        this.averagePrice = this.invoices.reduce((sum, invoice) => sum + invoice.price, 0) / this.invoices.length;
-        this.averageConsumption = this.invoices.reduce((sum, invoice) => sum + invoice.consumption, 0) / this.invoices.length;
-      },
-      (error) => {
-        console.error('Error fetching invoices:', error);
-      }
-    );
+    loadInvoices() {
+      this.invoiceService.getUserInvoices().subscribe(
+        (data) => {
+          this.invoices = data;
+          this.averagePrice = parseFloat((this.invoices.reduce((sum, invoice) => sum + invoice.price, 0) / this.invoices.length).toFixed(2));
+          this.averageConsumption = parseFloat((this.invoices.reduce((sum, invoice) => sum + invoice.consumption, 0) / this.invoices.length).toFixed(2));
+        },
+        (error) => {
+          console.error('Error fetching invoices:', error);
+        }
+      );
+  }
+
+  getBoxClass(value: number, limit: number): string {
+    if (value > limit) {
+      return 'high-consumption'; 
+    } else if (value >= limit * 0.8) {
+      return 'warning-consumption'; 
+    } else {
+      return 'normal-consumption'; 
+    }
   }
 
 
