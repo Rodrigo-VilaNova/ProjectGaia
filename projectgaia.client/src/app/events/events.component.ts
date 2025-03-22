@@ -124,6 +124,16 @@ export class EventsComponent {
     return EventType[type];
   }
 
+  editSelectedEvent() {
+    if (this.selectedEvents.length !== 1) {
+      alert("Please select exactly one event to edit.");
+      return;
+    }
+
+    const eventId = this.selectedEvents[0];
+    this.router.navigate([`/edit-event/${eventId}`]);
+  }
+
   goToDashboard() {
     this.router.navigate(['/dashboard']);
   }

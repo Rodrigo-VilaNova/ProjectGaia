@@ -21,6 +21,8 @@ import { EventsComponent } from './events/events.component';
 import { AddEventComponent } from './add-event/add-event.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './navbar/navbar.component';
+import { EditEventComponent } from './edit-event/edit-event.component';
+import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,8 @@ import { NavbarComponent } from './navbar/navbar.component';
     EventsComponent,
     AddEventComponent,
     NavbarComponent,
+    EditEventComponent,
+    EditInvoiceComponent,
     BrowserAnimationsModule,
   ],
   providers: [

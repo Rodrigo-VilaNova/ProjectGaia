@@ -94,5 +94,9 @@ export class AddInvoiceComponent {
   goToInvoices() {
     this.router.navigate(['/invoices']);
   }
+
+  goToProfile() {
+    this.router.navigate(['/account']);
+  }
 }
 

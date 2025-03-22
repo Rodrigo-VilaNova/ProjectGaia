@@ -14,6 +14,7 @@
         <button (click)="toggleFilterOverlay()" class="btn filter-btn">Filter</button>
         <button (click)="goToAddInvoice()" class="btn add-invoice-btn">+ Add Invoice</button>
         <button (click)="deleteSelectedInvoices()" class="btn delete-btn" [disabled]="selectedInvoices.length === 0"> Delete Selected </button>
+        <button (click)="editSelectedInvoice()" class="btn edit-btn" [disabled]="selectedInvoices.length > 1 || selectedInvoices.length === 0">Edit</button>
       </div>
       <div *ngIf="showFilterOverlay" class="filter-overlay">
         <div class="filter-box">
