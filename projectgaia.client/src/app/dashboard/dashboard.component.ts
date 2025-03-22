@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../interceptors/auth.service';
 import { EventService, Event } from '../services/event.service';
 import { Invoice, InvoiceService } from '../services/invoice.service';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule]
+  imports: [RouterModule, CommonModule, NavbarComponent]
 })
 export class DashboardComponent {
   constructor(private router: Router, private eventService: EventService, private invoiceService: InvoiceService) { }
@@ -73,23 +74,5 @@ export class DashboardComponent {
     } else {
       return 'normal-consumption'; 
     }
-  }
-
-
-  //Funções de routing
-  goToInvoices() {
-    this.router.navigate(['/invoices']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/account']);
-  }
-
-  goToEvents() {
-    this.router.navigate(['/events']);
-  }
-
-  goToSimulation() {
-    this.router.navigate(['/simulation']);
   }
 }

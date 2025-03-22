@@ -1,0 +1,69 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host {
+  position: sticky;
+  top: 0;
+  height: 75px;
+  width: 100%;
+  padding: 0 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(167, 255, 32, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.profile-circle {
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #73a634;
+  transition: background-color 0.3s ease;
+}
+
+.profile-circle:hover {
+  background-color: #5a8f2b;
+}
+
+.events-btn {
+  background-color: transparent;
+}
+
+.invoices-btn {
+  background-color: transparent;
+}
+
+.simulation-btn {
+  background-color: transparent;
+}
+
+.btn {
+  font-size: 1.25rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+h1 {
+  font-size: 2.35rem !important;
+  font-weight: bolder;
+}
+
+.dashboard-btn {
+  font-size: 2.2rem;
+  font-weight: bold;
+  background-color: transparent;
+  /*background-color: rgba(167, 255, 32, 0)*/
+}
+
+.page-selected-btn {
+  font-weight: bold;
+}

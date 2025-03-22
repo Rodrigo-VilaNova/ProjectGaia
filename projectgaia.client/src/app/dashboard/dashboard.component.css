@@ -16,33 +16,6 @@ body {
   flex-direction: column;
 }
 
-.navbar {
-  position: sticky;
-  top: 0;
-  height: 75px;
-  width: 100%;
-  padding: 0 15px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(167, 255, 32, 0.5);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
-}
-
-.profile-circle {
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-  border-radius: 50%;
-  background-color: #73a634;
-  transition: background-color 0.3s ease;
-}
-
-.profile-circle:hover {
-  background-color: #5a8f2b;
-}
-
 .dashboard-container {
   flex: 1;
   display: flex;
@@ -112,18 +85,6 @@ h3 {
 
 .events-table tr:hover {
   background-color: #f1f1f1;
-}
-
-.events-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-}
-
-.invoices-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-}
-
-.simulation-btn {
-  background-color: rgba(167, 255, 32, 0.1);
 }
 
 .consumption-container {
