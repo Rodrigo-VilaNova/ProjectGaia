@@ -16,7 +16,7 @@
         <input type="text" id="description" formControlName="description" required />
 
         <label for="date">Date:</label>
-        <input type="date" id="date" formControlName="date" required />
+        <input type="date" id="date" formControlName="date" [min]="today" required />
 
         <label for="type">Event Type:</label>
         <select id="type" formControlName="type">
