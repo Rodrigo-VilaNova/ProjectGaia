@@ -3,13 +3,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-edit-event',
   templateUrl: './edit-event.component.html',
   styleUrls: ['./edit-event.component.css'],
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, NavbarComponent]
 })
 export class EditEventComponent implements OnInit {
   eventForm: FormGroup;
@@ -91,13 +93,5 @@ export class EditEventComponent implements OnInit {
 
   cancelEdit() {
     this.router.navigate(['/events']);
-  }
-
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/account']);
   }
 }

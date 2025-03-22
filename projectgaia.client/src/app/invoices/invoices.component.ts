@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { InvoiceService, Invoice } from '../services/invoice.service';
 import { environment } from '../../environments/environment';
 import { FormsModule } from '@angular/forms';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-invoices',
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule]
+  imports: [RouterModule, CommonModule, FormsModule, NavbarComponent]
 })
 export class InvoicesComponent implements OnInit {
   invoices: Invoice[] = [];
@@ -154,21 +155,5 @@ export class InvoicesComponent implements OnInit {
 
   goToAddInvoice() {
     this.router.navigate(['/add-invoice']);
-  }
-
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
-  goToEvents() {
-    this.router.navigate(['/events']);
-  }
-
-  goToSimulation() {
-    this.router.navigate(['/simulation']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/account']);
   }
 }

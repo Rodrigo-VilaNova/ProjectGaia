@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 export interface EventDTO {
   name: string;
@@ -17,7 +18,7 @@ export interface EventDTO {
   templateUrl: './add-event.component.html',
   styleUrl: './add-event.component.css',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent]
 })
 export class AddEventComponent {
 
@@ -78,10 +79,6 @@ export class AddEventComponent {
     ).add(() => {
       this.isSubmitting = false;
     });
-  }
-
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
   }
 
   goToEvents() {

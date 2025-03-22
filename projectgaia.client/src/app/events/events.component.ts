@@ -1,19 +1,18 @@
 import { Component } from '@angular/core';
-
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../interceptors/auth.service';
 import { EventService, Event, EventType } from '../services/event.service';
 import { environment } from '../../environments/environment';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule]
+  imports: [RouterModule, CommonModule, FormsModule, NavbarComponent]
 })
 
 export class EventsComponent {
@@ -134,23 +133,7 @@ export class EventsComponent {
     this.router.navigate([`/edit-event/${eventId}`]);
   }
 
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
-  goToInvoices() {
-    this.router.navigate(['/invoices']);
-  }
-
   goToAddEvent() {
     this.router.navigate(['/add-event']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/account']);
-  }
-
-  goToSimulation() {
-    this.router.navigate(['/simulation']);
   }
 }

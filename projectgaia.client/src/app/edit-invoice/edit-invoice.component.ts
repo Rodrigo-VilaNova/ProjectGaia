@@ -3,13 +3,15 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
+import { CommonModule } from '@angular/common';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-edit-invoice',
   templateUrl: './edit-invoice.component.html',
   styleUrl: './edit-invoice.component.css',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, NavbarComponent]
 })
 export class EditInvoiceComponent implements OnInit {
   invoiceForm: FormGroup;
@@ -89,13 +91,5 @@ export class EditInvoiceComponent implements OnInit {
 
   cancelEdit() {
     this.router.navigate(['/invoices']);
-  }
-
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/account']);
   }
 }

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../interceptors/auth.service';
 import { EventService, Event } from '../services/event.service';
 import { Invoice, InvoiceService } from '../services/invoice.service';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -28,8 +26,6 @@ export class DashboardComponent {
     this.loadInvoices();
   }
 
-
-
   //Carrega eventos que occorrem dentro de uma semana
   loadUpcomingEvents() {
     const today = new Date();
@@ -53,17 +49,17 @@ export class DashboardComponent {
     );
   }
 
-    loadInvoices() {
-      this.invoiceService.getUserInvoices().subscribe(
-        (data) => {
-          this.invoices = data;
-          this.averagePrice = parseFloat((this.invoices.reduce((sum, invoice) => sum + invoice.price, 0) / this.invoices.length).toFixed(2));
-          this.averageConsumption = parseFloat((this.invoices.reduce((sum, invoice) => sum + invoice.consumption, 0) / this.invoices.length).toFixed(2));
-        },
-        (error) => {
-          console.error('Error fetching invoices:', error);
-        }
-      );
+  loadInvoices() {
+    this.invoiceService.getUserInvoices().subscribe(
+      (data) => {
+        this.invoices = data;
+        this.averagePrice = parseFloat((this.invoices.reduce((sum, invoice) => sum + invoice.price, 0) / this.invoices.length).toFixed(2));
+        this.averageConsumption = parseFloat((this.invoices.reduce((sum, invoice) => sum + invoice.consumption, 0) / this.invoices.length).toFixed(2));
+      },
+      (error) => {
+        console.error('Error fetching invoices:', error);
+      }
+    );
   }
 
   getBoxClass(value: number, limit: number): string {

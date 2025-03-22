@@ -4,13 +4,14 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { environment } from '../../environments/environment';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 @Component({
   selector: 'app-add-invoice',
   templateUrl: './add-invoice.component.html',
   styleUrls: ['./add-invoice.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent],
 })
 export class AddInvoiceComponent {
   invoiceForm: FormGroup;
@@ -87,16 +88,8 @@ export class AddInvoiceComponent {
     });
   }
 
-  goToDashboard() {
-    this.router.navigate(['/dashboard']);
-  }
-
   goToInvoices() {
     this.router.navigate(['/invoices']);
-  }
-
-  goToProfile() {
-    this.router.navigate(['/account']);
   }
 }
 

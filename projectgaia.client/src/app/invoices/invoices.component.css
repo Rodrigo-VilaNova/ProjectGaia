@@ -1,50 +1,18 @@
-/* Shared styles for all pages */
 * {
   margin: 0;
   padding: 0;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100vh;
-  overflow: auto;
+body {
+  width: 100%;
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
 }
 
 .page-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  top: 0;
-  left: 0;
-}
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 10vh;
-  width: 100%;
-  background: rgba(167, 255, 32, 0.5);
-  padding: 0 20px;
-  position: sticky;
-  top: 0;
-  left: 0;
-}
-
-.profile-circle {
-  width: 50px;
-  height: 50px;
-  background-color: #73a634;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .profile-circle:hover {
@@ -99,7 +67,7 @@ html, body {
   justify-content: center;
   align-items: center;
   background: linear-gradient(120deg, #fff9ce, #fff98b);
-  height: 100vh;
+  flex: 1;
 }
 
 hr {
@@ -125,29 +93,6 @@ h3 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.page-selected-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-  font-weight: bold;
-}
-
-.dashboard-btn {
-  font-size: 2.2rem;
-  font-weight: bold;
-  background-color: rgba(167, 255, 32, 0.1)
-}
-
-.events-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-}
-
-.invoices-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-}
-
-.simulation-btn {
-  background-color: rgba(167, 255, 32, 0.1);
 }
 
 .add-invoice-btn {

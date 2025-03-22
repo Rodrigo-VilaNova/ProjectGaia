@@ -1,10 +1,6 @@
 <body>
   <div class="page-container">
-    <div class="navbar">
-      <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
-      <div class="profile-circle"></div>
-    </div>
-
+    <app-navbar></app-navbar>
     <div class="form-container">
       <h2>Add New Event</h2>
       <form class="form-group" [formGroup]="eventForm" (ngSubmit)="submitEvent()">
