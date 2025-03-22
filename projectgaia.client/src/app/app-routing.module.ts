@@ -16,6 +16,8 @@ import { RecoveryComponent } from './recovery/recovery.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { EventsComponent } from './events/events.component';
 import { AddEventComponent } from './add-event/add-event.component';
+import { EditEventComponent } from './edit-event/edit-event.component';
+import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
@@ -32,6 +34,8 @@ const routes: Routes = [
   { path: 'add-invoice', component: AddInvoiceComponent, canActivate: [AuthGuard] },
   { path: 'events', component: EventsComponent, canActivate: [AuthGuard] },
   { path: 'add-event', component: AddEventComponent, canActivate: [AuthGuard] },
+  { path: 'edit-event/:id', component: EditEventComponent, canActivate: [AuthGuard] },
+  { path: 'edit-invoice/:id', component: EditInvoiceComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 ];
 

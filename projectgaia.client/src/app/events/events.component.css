@@ -197,6 +197,25 @@ input[type="date"] {
   background-color: #c9302c;
 }
 
+.edit-btn {
+  padding: 10px 15px;
+  background-color: #5e9cff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.edit-btn:hover {
+  background-color: #2b5fb3;
+}
+
 button.add-event-btn {
   background-color: #ffa726;
 }

@@ -40,10 +40,6 @@ export class InvoicesComponent implements OnInit {
     this.loadInvoices();
   }
 
-  goToProfile() {
-    this.router.navigate(['/account']);
-  }
-
   toggleFilterOverlay() {
     this.showFilterOverlay = !this.showFilterOverlay;
   }
@@ -146,6 +142,16 @@ export class InvoicesComponent implements OnInit {
     });
   }
 
+  editSelectedInvoice() {
+    if (this.selectedInvoices.length !== 1) {
+      alert("Please select exactly one invoice to edit.");
+      return;
+    }
+
+    const invoiceId = this.selectedInvoices[0];
+    this.router.navigate([`/edit-invoice/${invoiceId}`]);
+  }
+
   goToAddInvoice() {
     this.router.navigate(['/add-invoice']);
   }
@@ -160,5 +166,9 @@ export class InvoicesComponent implements OnInit {
 
   goToSimulation() {
     this.router.navigate(['/simulation']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/account']);
   }
 }

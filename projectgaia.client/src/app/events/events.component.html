@@ -16,6 +16,7 @@
         <button (click)="filterEvents()" class="btn search-btn">Search</button>
         <button (click)="goToAddEvent()" class="btn add-event-btn">Add</button>
         <button (click)="deleteSelectedEvents()" class="btn delete-btn" [disabled]="selectedEvents.length === 0">Delete Selected</button>
+        <button (click)="editSelectedEvent()" class="btn edit-btn" [disabled]="selectedEvents.length > 1 || selectedEvents.length === 0">Edit</button>
       </div>
 
       <div class="table-container">

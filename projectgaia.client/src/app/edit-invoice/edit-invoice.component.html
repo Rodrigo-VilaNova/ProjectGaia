@@ -5,9 +5,10 @@
       <div class="profile-circle" (click)="goToProfile()"></div>
     </div>
 
-    <div class="form-container">
-      <h2>Add New Invoice</h2>
-      <form class="form-group" [formGroup]="invoiceForm" (ngSubmit)="submitInvoice()">
+    <div class="edit-invoice-container">
+      <h2>Edit Invoice</h2>
+
+      <form [formGroup]="invoiceForm" (ngSubmit)="submitEdit()">
         <label for="price">Price (€):</label>
         <input type="number" id="price" formControlName="price" required />
 
@@ -17,16 +18,12 @@
         <label for="emissionDate">Emission Date:</label>
         <input type="date" id="emissionDate" formControlName="emissionDate" [max]="today" required />
 
-        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-        <div class="button-container">
-          <button (click)="submitInvoice()" [disabled]="isSubmitting" class="btn submit-btn">Add Invoice</button>
-          <button (click)="goToInvoices()" class="btn cancel-btn">Cancel</button>
-        </div>
+        <button type="submit" class="btn submit-btn">Save</button>
+        <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
       </form>
 
-      <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+      <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
     </div>
   </div>
 </body>
-

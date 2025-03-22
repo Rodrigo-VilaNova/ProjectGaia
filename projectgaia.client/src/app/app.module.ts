@@ -20,6 +20,8 @@ import { ProfileComponent } from './profile/profile.component';
 import { EventsComponent } from './events/events.component';
 import { AddEventComponent } from './add-event/add-event.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { EditEventComponent } from './edit-event/edit-event.component';
+import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AddInvoiceComponent,
     EventsComponent,
     AddEventComponent,
+    EditEventComponent,
+    EditInvoiceComponent,
     BrowserAnimationsModule,
   ],
   providers: [

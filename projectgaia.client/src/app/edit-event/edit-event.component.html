@@ -1,0 +1,37 @@
+<body>
+  <div class="page-container">
+    <div class="navbar">
+      <button (click)="goToDashboard()" class="btn dashboard-btn">Project Gaia</button>
+      <div class="profile-circle" (click)="goToProfile()"></div>
+    </div>
+
+    <div class="edit-event-container">
+      <h2>Edit Event</h2>
+
+      <form [formGroup]="eventForm" (ngSubmit)="submitEdit()">
+        <label for="name">Event Name:</label>
+        <input type="text" id="name" formControlName="name" required />
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" formControlName="description" required />
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" formControlName="date" required />
+
+        <label for="type">Event Type:</label>
+        <select id="type" formControlName="type">
+          <option [value]="0">Payment</option>
+          <option [value]="1">Price</option>
+          <option [value]="2">Miscellaneous</option>
+        </select>
+
+        <button type="submit" class="btn submit-btn">Save</button>
+        <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
+      </form>
+
+      <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+      <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
+    </div>
+
+  </div>
+</body>
