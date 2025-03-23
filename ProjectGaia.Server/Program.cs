@@ -42,6 +42,10 @@ namespace ProjectGaia.Server
                 });
             });
 
+            string? db_user = Environment.GetEnvironmentVariable("DB_USER");
+            string? db_password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+            builder.Configuration["ConnectionStrings:DefaultConnection"] = builder.Configuration.GetConnectionString("DefaultConnection")?.Replace("{DB_USER}", db_user).Replace("{DB_PASSWORD}", db_password);
+
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
             builder.Services.AddDbContext<AppDbContext>(options => options
                     .UseSqlServer(connectionString)
