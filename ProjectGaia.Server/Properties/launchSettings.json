@@ -44,9 +44,19 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": false,
-            "applicationUrl": "https://gaia.pombos.net:443",
+            "applicationUrl": "https://projectgaia.azurewebsites.net",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Production",
+                "DOTNET_PRINT_TELEMETRY_MESSAGE": "false"
+            }
+        },
+        "Dedicated": {
+            "commandName": "Project",
+            "dotnetRunMessages": true,
+            "launchBrowser": false,
+            "applicationUrl": "https://gaia.pombos.net:443",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "DEDICATED",
                 "DOTNET_PRINT_TELEMETRY_MESSAGE": "false"
             }
         }

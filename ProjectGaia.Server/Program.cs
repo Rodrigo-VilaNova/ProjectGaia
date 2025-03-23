@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Services;
-using static System.Net.WebRequestMethods;
 
 namespace ProjectGaia.Server
 {
@@ -16,6 +15,7 @@ namespace ProjectGaia.Server
         {
             string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             Console.WriteLine($"Environment: {environment}");
+            bool isDedicated = environment == "DEDICATED";
 
             bool isRunningInAzure = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
 
@@ -24,7 +24,7 @@ namespace ProjectGaia.Server
 
             var builder = WebApplication.CreateBuilder(args);
 
-            if (builder.Environment.IsProduction() && !isRunningInAzure)
+            if (isDedicated)
             {
                 builder.Configuration["Kestrel:Certificates:Default:Path"] = "./Certificates/domain.cert.pem";
                 builder.Configuration["Kestrel:Certificates:Default:KeyPath"] = "./Certificates/private.key.pem";
@@ -38,7 +38,8 @@ namespace ProjectGaia.Server
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    if (builder.Environment.IsProduction()) policy.WithOrigins([$"{(isRunningInAzure ? "https://projectgaia.azurewebsites.net" : "https://gaia.pombos.net:443")}"]);
+                    if (builder.Environment.IsProduction()) policy.WithOrigins(["https://projectgaia.azurewebsites.net"]);
+                    else if (isDedicated) policy.WithOrigins(["https://gaia.pombos.net:443"]); 
                     else policy.WithOrigins(["http://127.0.0.1:5002", "http://localhost:5002"]);
 
                     policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
