@@ -3,13 +3,15 @@ import { Router } from '@angular/router';
 import { AuthService } from '../interceptors/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { NavbarComponent } from '../navbar/navbar.component';
 
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
-  standalone: true
+  standalone: true,
+  imports: [NavbarComponent]
 })
 export class ProfileComponent {
   constructor(private router: Router, private http: HttpClient, private authService: AuthService) { }
