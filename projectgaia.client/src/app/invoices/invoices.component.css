@@ -24,16 +24,16 @@ body {
   justify-content: center;
   max-height: 50vh;
   overflow-y: auto;
-  width: 100vw;
-  padding-bottom: 5px;
+  width: fit-content;
+  margin-top: 20px;
+  border: 5px solid red;
 }
 
 .invoice-table {
-  width: 100%;
   border-collapse: collapse;
-  margin-top: 20px;
   background: white;
   border-radius: 10px;
+  overflow: hidden;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -140,7 +140,6 @@ h3 {
 .table-container {
   max-height: 400px;
   overflow-y: auto;
-  width: 80%;
 }
 
 .button-group {

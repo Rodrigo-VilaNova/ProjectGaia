@@ -89,14 +89,11 @@ input[type="date"] {
   justify-content: center;
   max-height: 50vh;
   overflow-y: auto;
-  width: 100vw;
-  padding-bottom: 5px;
+  width: fit-content;
 }
 
 .events-table {
-  width: 80%;
   border-collapse: collapse;
-  margin-top: 20px;
   background: white;
   border-radius: 10px;
   overflow: hidden;

@@ -1,57 +1,19 @@
-/* Shared styles for all pages */
 * {
   margin: 0;
   padding: 0;
-  overflow: hidden;
   box-sizing: border-box;
 }
 
-html, body {
-  height: 100vh;
-  overflow: hidden;
+body {
+  width: 100%;
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  top: 0;
-  left: 0;
 }
 
 .page-container {
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
-  top: 0;
-  left: 0;
 }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 10vh;
-  width: 100%;
-  background: rgba(167, 255, 32, 0.5);
-  padding: 0 20px;
-  position: sticky;
-  top: 0;
-  left: 0;
-}
-
-.profile-circle {
-  width: 50px;
-  height: 50px;
-  background-color: #73a634;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-  .profile-circle:hover {
-    background-color: #5a8f2b;
-  }
 
 .auth-container, .dashboard-container {
   flex: 1;
@@ -105,9 +67,9 @@ input {
   border: 1px solid #ccc;
 }
 
-  input:focus {
-    border-color: #f5d001;
-  }
+input:focus {
+  border-color: #f5d001;
+}
 
 .text-danger {
   font-size: 0.875rem;
@@ -141,18 +103,6 @@ input {
 .password-btn {
   background-color: #ff9800;
   color: white;
-}
-
-.events-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-}
-
-.invoices-btn {
-  background-color: rgba(167, 255, 32, 0.1);
-}
-
-.simulation-btn {
-  background-color: rgba(167, 255, 32, 0.1);
 }
 
 .btn:hover {
