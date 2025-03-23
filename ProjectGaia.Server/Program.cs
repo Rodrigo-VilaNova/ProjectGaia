@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using ProjectGaia.Server.Data;
 using ProjectGaia.Server.Services;
+using static System.Net.WebRequestMethods;
 
 namespace ProjectGaia.Server
 {
@@ -16,12 +17,14 @@ namespace ProjectGaia.Server
             string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             Console.WriteLine($"Environment: {environment}");
 
+            bool isRunningInAzure = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
+
             SetupCredentials();
             Console.WriteLine($"Using email: {Environment.GetEnvironmentVariable("email")}");
 
             var builder = WebApplication.CreateBuilder(args);
 
-            if (builder.Environment.IsProduction())
+            if (builder.Environment.IsProduction() && !isRunningInAzure)
             {
                 builder.Configuration["Kestrel:Certificates:Default:Path"] = "./Certificates/domain.cert.pem";
                 builder.Configuration["Kestrel:Certificates:Default:KeyPath"] = "./Certificates/private.key.pem";
@@ -35,16 +38,19 @@ namespace ProjectGaia.Server
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    if (builder.Environment.IsProduction()) policy.WithOrigins(["https://projectgaia.azurewebsites.net", "https://gaia.pombos.net:443"]);
+                    if (builder.Environment.IsProduction()) policy.WithOrigins([$"{(isRunningInAzure ? "https://projectgaia.azurewebsites.net" : "https://gaia.pombos.net:443")}"]);
                     else policy.WithOrigins(["http://127.0.0.1:5002", "http://localhost:5002"]);
 
                     policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
                 });
             });
 
-            string? db_user = Environment.GetEnvironmentVariable("DB_USER");
-            string? db_password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-            builder.Configuration["ConnectionStrings:DefaultConnection"] = builder.Configuration.GetConnectionString("DefaultConnection")?.Replace("{DB_USER}", db_user).Replace("{DB_PASSWORD}", db_password);
+            if (isRunningInAzure)
+            {
+                string? db_user = Environment.GetEnvironmentVariable("DB_USER");
+                string? db_password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+                builder.Configuration["ConnectionStrings:DefaultConnection"] = builder.Configuration.GetConnectionString("DefaultConnection")?.Replace("{DB_USER}", db_user).Replace("{DB_PASSWORD}", db_password);
+            }
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found");
             builder.Services.AddDbContext<AppDbContext>(options => options
