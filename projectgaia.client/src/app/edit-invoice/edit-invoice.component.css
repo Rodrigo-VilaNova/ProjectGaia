@@ -120,3 +120,6 @@ h3 {
   margin-bottom: 10px;
 }
 
+.error-message {
+  color: #bf1717;
+}

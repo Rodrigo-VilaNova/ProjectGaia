@@ -65,16 +65,19 @@ export class EventsComponent {
       this.filteredEvents = [...this.events];
       return;
     }
-    this.filteredEvents = this.events.filter(event => event.date === this.selectedDate);
+    const selectedDateFormatted = new Date(this.selectedDate).toISOString().split('T')[0];
+
+    this.filteredEvents = this.events.filter(event => {
+      const eventDateFormatted = new Date(event.date).toISOString().split('T')[0];
+      return eventDateFormatted === selectedDateFormatted;
+    });
   }
 
   isOverdue(eventDate: Date): boolean {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    return eventDate < today;
+    const formattedDate = new Date(eventDate).toISOString().split('T')[0];
+    return formattedDate < new Date().toISOString().split('T')[0];
   }
-
+    
   toggleEventSelection(eventId: number, event: globalThis.Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
