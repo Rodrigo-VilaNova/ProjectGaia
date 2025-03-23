@@ -23,8 +23,8 @@ export class EditInvoiceComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private fb: FormBuilder) {
     this.invoiceForm = this.fb.group({
-      price: ['', Validators.required],
-      consumption: ['', Validators.required],
+      price: ['', [Validators.required, Validators.min(0.01)]],
+      consumption: ['', [Validators.required, Validators.min(0.01)]],
       emissionDate: ['', Validators.required]
     });
 

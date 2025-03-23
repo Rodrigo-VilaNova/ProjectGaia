@@ -32,8 +32,8 @@ export class AddInvoiceComponent {
     this.today = todayDate.toISOString().split('T')[0];
 
     this.invoiceForm = this.fb.group({
-      price: ['', Validators.required],
-      consumption: ['', Validators.required],
+      price: ['', [Validators.required, Validators.min(0.01)]],
+      consumption: ['', [Validators.required, Validators.min(0.01)]],
       emissionDate: ['', Validators.required],
     });
   }
@@ -41,7 +41,6 @@ export class AddInvoiceComponent {
   isSubmitting = false;
 
   submitInvoice() {
-    // Verifica se todos os campos estão preenchidos
     if (this.invoiceForm.invalid) {
       this.errorMessage = 'Please fill in all fields before submitting.';
       return;
