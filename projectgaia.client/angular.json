@@ -75,11 +75,11 @@
                 }
               ]
             },
-            "production-pombos": {
+            "dedicated": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod-pombos.ts"
+                  "with": "src/environments/environment.dedicated.ts"
                 }
               ],
               "optimization": {

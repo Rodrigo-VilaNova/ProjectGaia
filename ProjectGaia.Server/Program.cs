@@ -17,12 +17,17 @@ namespace ProjectGaia.Server
             Console.WriteLine($"Environment: {environment}");
             bool isDedicated = environment == "DEDICATED";
 
+            //if (isDedicated) Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "PRODUCTION");
+
             bool isRunningInAzure = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
 
             SetupCredentials();
             Console.WriteLine($"Using email: {Environment.GetEnvironmentVariable("email")}");
 
             var builder = WebApplication.CreateBuilder(args);
+
+            Console.WriteLine($"Production: {builder.Environment.IsProduction()}");
+
 
             if (isDedicated)
             {
@@ -38,7 +43,7 @@ namespace ProjectGaia.Server
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    if (builder.Environment.IsProduction()) policy.WithOrigins(["https://projectgaia.azurewebsites.net"]);
+                    if (builder.Environment.IsProduction() && isRunningInAzure) policy.WithOrigins(["https://projectgaia.azurewebsites.net"]);
                     else if (isDedicated) policy.WithOrigins(["https://gaia.pombos.net:443"]); 
                     else policy.WithOrigins(["http://127.0.0.1:5002", "http://localhost:5002"]);
 
