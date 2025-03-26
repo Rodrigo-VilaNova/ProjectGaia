@@ -16,7 +16,7 @@
         <label for="emissionDate">Emission Date:</label>
         <input type="date" id="emissionDate" formControlName="emissionDate" [max]="today" required />
 
-        <button type="submit" class="btn submit-btn">Save</button>
+        <button type="submit" [disabled]="invoiceForm.invalid" class="btn submit-btn">Save</button>
         <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
       </form>
 
