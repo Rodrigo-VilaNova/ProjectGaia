@@ -15,7 +15,7 @@ namespace ProjectGaia.Server
         {
             string? environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             Console.WriteLine($"Environment: {environment}");
-            bool isDedicated = environment == "DEDICATED";
+            bool isDedicated = environment == "Dedicated";
 
             //if (isDedicated) Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "PRODUCTION");
 
