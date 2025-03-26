@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -23,9 +23,9 @@ export class EditInvoiceComponent implements OnInit {
 
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private fb: FormBuilder) {
     this.invoiceForm = this.fb.group({
-      price: ['', [Validators.required, Validators.min(0.01)]],
-      consumption: ['', [Validators.required, Validators.min(0.01)]],
-      emissionDate: ['', Validators.required]
+      price: ['', [Validators.required, this.noWhiteSpaceValidator()]],
+      consumption: ['', [Validators.required, this.noWhiteSpaceValidator()]],
+      emissionDate: ['', Validators.required],
     });
 
     const todayDate = new Date();
@@ -87,6 +87,15 @@ export class EditInvoiceComponent implements OnInit {
         this.errorMessage = 'Error updating invoice. Please try again.';
       }
     );
+  }
+
+  noWhiteSpaceValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (typeof control.value !== 'string') return null; 
+
+      const isWhitespace = control.value.trim().length === 0;
+      return isWhitespace ? { whitespace: true } : null;
+    };
   }
 
   cancelEdit() {

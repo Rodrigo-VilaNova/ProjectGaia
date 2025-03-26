@@ -5,12 +5,16 @@
       <h2>Add New Invoice</h2>
       <form class="form-group" [formGroup]="invoiceForm" (ngSubmit)="submitInvoice()">
         <label for="price">Price (€):</label>
-        <input type="number" id="price" formControlName="price" [min]="0" required />
-        <p class="error-message" *ngIf="invoiceForm.controls['price'].errors?.['min']">Price must be greater than 0.</p>
+        <input type="number" id="price" formControlName="price" required />
+        <p class="error-message" *ngIf="invoiceForm.controls['price'].invalid && invoiceForm.controls['price'].touched">
+          Price cannot be empty or contain only spaces.
+        </p>
 
         <label for="consumption">Consumption (kWh):</label>
-        <input type="number" id="consumption" formControlName="consumption" [min]="0" required />
-        <p class="error-message" *ngIf="invoiceForm.controls['consumption'].errors?.['min']">Consumption must be greater than 0.</p>
+        <input type="number" id="consumption" formControlName="consumption" required />
+        <p class="error-message" *ngIf="invoiceForm.controls['consumption'].invalid && invoiceForm.controls['consumption'].touched">
+          Consumption cannot be empty or contain only spaces.
+        </p>
 
         <label for="emissionDate">Emission Date:</label>
         <input type="date" id="emissionDate" formControlName="emissionDate" [max]="today" required />

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../navbar/navbar.component';
 
@@ -32,8 +32,8 @@ export class AddEventComponent {
     this.today = todayDate.toISOString().split('T')[0]; 
 
     this.eventForm = this.fb.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required],
+      name: ['', [Validators.required, this.noWhiteSpaceValidator()]],
+      description: ['', [Validators.required, this.noWhiteSpaceValidator()]],
       date: ['', Validators.required],
       type: [0, Validators.required],
     });
@@ -83,5 +83,14 @@ export class AddEventComponent {
 
   goToEvents() {
     this.router.navigate(['/events']);
+  }
+
+  noWhiteSpaceValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (typeof control.value !== 'string') return null;
+
+      const isWhitespace = control.value.trim().length === 0;
+      return isWhitespace ? { whitespace: true } : null;
+    };
   }
 }
