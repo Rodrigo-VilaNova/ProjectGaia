@@ -13,9 +13,9 @@ namespace ProjectGaia.Server.Models
         public string? Description { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime? Date { get; set; }
 
         [Required]
-        public EventType Type { get; set; }
+        public EventType? Type { get; set; }
     }
 }

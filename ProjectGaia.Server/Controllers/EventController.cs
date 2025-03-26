@@ -60,14 +60,14 @@ namespace ProjectGaia.Server.Controllers
 
             if (account == null) return StatusCodeResult(result.status);
 
-            if (!ModelState.IsValid || eventDTO.Name == null || eventDTO.Description == null) return StatusCode(400, ModelState);
+            if (!ModelState.IsValid || eventDTO.Name == null || eventDTO.Description == null || eventDTO.Date == null || eventDTO.Type == null) return StatusCode(400, ModelState);
 
             Event newEvent = new Event
             {
                 Name = eventDTO.Name,
                 Description = eventDTO.Description,
-                Date = eventDTO.Date,
-                Type = eventDTO.Type,
+                Date = eventDTO.Date.Value,
+                Type = eventDTO.Type.Value,
                 AccountID = account.ID
             };
 
@@ -97,7 +97,7 @@ namespace ProjectGaia.Server.Controllers
 
                 if (account == null) return StatusCodeResult(result.status);
 
-                if (!ModelState.IsValid || eventDTO.Name == null || eventDTO.Description == null) return StatusCode(400, ModelState);
+                if (!ModelState.IsValid || eventDTO.Name == null || eventDTO.Description == null || eventDTO.Date == null || eventDTO.Type == null) return StatusCode(400, ModelState);
 
                 Event? currentEvent = await _context.Events.Where(e => e.ID == id).FirstOrDefaultAsync();
 
@@ -107,8 +107,8 @@ namespace ProjectGaia.Server.Controllers
 
                 currentEvent.Name = eventDTO.Name;
                 currentEvent.Description = eventDTO.Description;
-                currentEvent.Date = eventDTO.Date;
-                currentEvent.Type = eventDTO.Type;
+                currentEvent.Date = eventDTO.Date.Value;
+                currentEvent.Type = eventDTO.Type.Value;
 
                 _context.Events.Update(currentEvent);
 

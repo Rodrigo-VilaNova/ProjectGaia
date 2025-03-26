@@ -9,6 +9,5 @@ namespace ProjectGaia.Server.Models
 
         [Required]
         public string? Password { get; set; }
-
     }
 }

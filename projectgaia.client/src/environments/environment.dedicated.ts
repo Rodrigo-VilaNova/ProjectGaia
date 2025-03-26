@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://gaia.pombos.net/api'
+  apiUrl: 'https://project.gaia.pombos.net/api'
 };

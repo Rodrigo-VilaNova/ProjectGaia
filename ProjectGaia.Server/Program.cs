@@ -43,8 +43,8 @@ namespace ProjectGaia.Server
             {
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
-                    if (builder.Environment.IsProduction() && isRunningInAzure) policy.WithOrigins(["https://projectgaia.azurewebsites.net"]);
-                    else if (isDedicated) policy.WithOrigins(["https://gaia.pombos.net:443"]); 
+                    if (builder.Environment.IsProduction() && isRunningInAzure) policy.WithOrigins(["https://projectgaia.azurewebsites.net", "https://gaia.pombos.net"]);
+                    else if (isDedicated) policy.WithOrigins(["https://project.gaia.pombos.net"]);
                     else policy.WithOrigins(["http://127.0.0.1:5002", "http://localhost:5002"]);
 
                     policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
