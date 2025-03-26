@@ -20,6 +20,8 @@
           </div>
         </div>
 
+        <p class="forgot-password" (click)="navigateToForgotPassword()">Forgot your password?</p>
+
         <div *ngIf="errorMessage" class="alert alert-danger">
           {{ errorMessage }}
         </div>
@@ -27,6 +29,7 @@
         <button type="submit" class="btn submit-btn" [disabled]="loginForm.invalid || loading">
           {{ loading ? 'Logging in...' : 'Login' }}
         </button>
+        <button class="btn return-btn" (click)="goToLandingPage()">Back</button>
       </form>
     </div>
     <div class="image-container">

@@ -4,9 +4,9 @@
     <div class="simulation-container">
       <h2>Energy Provider Simulation</h2>
 
-      <h3>Average Price of all Invoices: {{ averagePrice }}</h3>
+      <h3>Average Price of all Invoices: {{ averagePrice }}€</h3>
 
-      <h3>Average Consumption of all Invoices: {{ averageConsumption }}</h3>
+      <h3>Average Consumption of all Invoices: {{ averageConsumption }}KWh</h3>
 
       <form [formGroup]="simulationForm" (ngSubmit)="simulateComparison()">
         <div class="input-group">

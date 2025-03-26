@@ -55,6 +55,15 @@ export class LoginComponent {
         }
       });
   }
+
+  goToLandingPage() {
+    this.router.navigate(['']);
+  }
+
+  navigateToForgotPassword() {
+    console.log("Navigating to forgot password...")
+    this.router.navigate(['recovery']);
+  }
 }
 
 interface LoginResponse {

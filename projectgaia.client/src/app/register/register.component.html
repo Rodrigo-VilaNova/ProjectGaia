@@ -62,6 +62,7 @@
         <button type="submit" class="btn submit-btn" [disabled]="registerForm.invalid || loading">
           {{ loading ? 'Registering...' : 'Register' }}
         </button>
+        <button class="btn return-btn" (click)="goToLandingPage()">Back</button>
       </form>
     </div>
     <div class="image-container">
