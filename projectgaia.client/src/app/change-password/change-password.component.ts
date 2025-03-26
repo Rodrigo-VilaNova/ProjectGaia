@@ -79,4 +79,8 @@ export class ChangePasswordComponent {
         }
       });
   }
+
+  goToAccount() {
+    this.router.navigate(['/account']);
+  }
 }

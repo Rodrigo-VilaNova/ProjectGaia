@@ -76,6 +76,7 @@ input {
 
 .submit-btn:disabled {
   background-color: #ccc;
+  cursor: not-allowed;
 }
 
 .cancel-btn {

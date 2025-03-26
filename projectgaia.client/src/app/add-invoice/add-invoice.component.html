@@ -22,7 +22,7 @@
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
         <div class="button-container">
-          <button (click)="submitInvoice()" [disabled]="isSubmitting" class="btn submit-btn">Add Invoice</button>
+          <button (click)="submitInvoice()" [disabled]="invoiceForm.invalid || isSubmitting" class="btn submit-btn">Add Invoice</button>
           <button (click)="goToInvoices()" class="btn cancel-btn">Cancel</button>
         </div>
       </form>

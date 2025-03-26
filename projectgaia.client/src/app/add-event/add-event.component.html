@@ -29,7 +29,7 @@
         <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
 
         <div class="button-container">
-          <button type="submit" class="btn submit-btn" [disabled]="isSubmitting">Add Event</button>
+          <button type="submit" class="btn submit-btn" [disabled]="eventForm.invalid || isSubmitting">Add Event</button>
           <button type="button" class="btn cancel-btn" (click)="goToEvents()">Cancel</button>
         </div>
       </form>
