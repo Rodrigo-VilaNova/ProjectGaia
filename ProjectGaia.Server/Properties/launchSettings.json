@@ -44,7 +44,7 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": false,
-            "applicationUrl": "gaia.pombos.net", //"https://projectgaia.azurewebsites.net"
+            "applicationUrl": "https://gaia.pombos.net", //"https://projectgaia.azurewebsites.net"
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Production",
                 "DOTNET_PRINT_TELEMETRY_MESSAGE": "false"
@@ -54,7 +54,7 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "launchBrowser": false,
-            "applicationUrl": "https://project.gaia.pombos.net",
+            "applicationUrl": "https://project.pombos.net",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Dedicated",
                 "DOTNET_PRINT_TELEMETRY_MESSAGE": "false"

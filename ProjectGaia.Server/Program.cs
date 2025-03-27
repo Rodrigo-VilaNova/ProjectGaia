@@ -27,6 +27,7 @@ namespace ProjectGaia.Server
             var builder = WebApplication.CreateBuilder(args);
 
             Console.WriteLine($"Production: {builder.Environment.IsProduction()}");
+            Console.WriteLine($"Dedicated: {isDedicated}");
 
 
             if (isDedicated)
@@ -44,7 +45,7 @@ namespace ProjectGaia.Server
                 options.AddPolicy("AllowSpecificOrigin", policy =>
                 {
                     if (builder.Environment.IsProduction() && isRunningInAzure) policy.WithOrigins(["https://projectgaia.azurewebsites.net", "https://gaia.pombos.net"]);
-                    else if (isDedicated) policy.WithOrigins(["https://project.gaia.pombos.net"]);
+                    else if (isDedicated) policy.WithOrigins(["https://project.pombos.net"]);
                     else policy.WithOrigins(["http://127.0.0.1:5002", "http://localhost:5002"]);
 
                     policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
