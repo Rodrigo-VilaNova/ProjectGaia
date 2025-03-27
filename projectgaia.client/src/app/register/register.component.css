@@ -96,18 +96,19 @@ input:focus {
   color: white;
 }
 
-.logout-btn {
-  background-color: #f5d001;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #73a634;
-  color: white;
-}
-
-.btn:hover {
+.submit-btn:hover {
   opacity: 0.9;
+}
+
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.return-btn {
+  background-color: #f44336;
+  color: white;
+  margin-left: 1rem;
 }
 
 .action-buttons {
@@ -135,4 +136,18 @@ input:focus {
   max-width: 100%;
   height: auto;
   object-fit: cover;
+}
+
+.forgot-password {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #555;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: underline !important;
+  margin-bottom: 1rem;
+}
+
+.forgot-password:hover {
+  color: #333;
 }

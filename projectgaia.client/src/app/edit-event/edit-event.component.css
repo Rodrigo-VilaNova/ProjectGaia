@@ -74,6 +74,11 @@ input {
   background-color: #5a8f2b;
 }
 
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .cancel-btn {
   background-color: #f44336;
   color: white;
@@ -86,6 +91,10 @@ input {
 
 .cancel-btn:hover {
   background-color: #d32f2f;
+}
+
+.error-message {
+  color: #bf1717;
 }
 
 .error {

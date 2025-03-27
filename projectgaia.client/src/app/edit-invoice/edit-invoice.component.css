@@ -74,6 +74,11 @@ input {
   background-color: #5a8f2b;
 }
 
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 .cancel-btn {
   background-color: #f44336;
   color: white;

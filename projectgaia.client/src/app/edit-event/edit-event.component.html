@@ -7,9 +7,15 @@
       <form [formGroup]="eventForm" (ngSubmit)="submitEdit()">
         <label for="name">Event Name:</label>
         <input type="text" id="name" formControlName="name" required />
+        <p class="error-message" *ngIf="eventForm.controls['name'].invalid && eventForm.controls['name'].touched">
+          Name cannot be empty or contain only spaces.
+        </p>
 
         <label for="description">Description:</label>
         <input type="text" id="description" formControlName="description" required />
+        <p class="error-message" *ngIf="eventForm.controls['description'].invalid && eventForm.controls['description'].touched">
+          Description cannot be empty or contain only spaces.
+        </p>
 
         <label for="date">Date:</label>
         <input type="date" id="date" formControlName="date" [min]="today" required />
@@ -21,7 +27,7 @@
           <option [value]="2">Miscellaneous</option>
         </select>
 
-        <button type="submit" class="btn submit-btn">Save</button>
+        <button type="submit" [disabled]="eventForm.invalid" class="btn submit-btn">Save</button>
         <button type="button" class="btn cancel-btn" (click)="cancelEdit()">Cancel</button>
       </form>
 

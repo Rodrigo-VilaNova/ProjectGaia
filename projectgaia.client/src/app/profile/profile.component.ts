@@ -30,16 +30,18 @@ export class ProfileComponent {
   }
 
   logoutAccount() {
-    this.http.delete(`${environment.apiUrl}/account/logout`, { responseType: 'text' })
-      .subscribe(
-        () => {
-          this.clearToken();
-        },
-        (error) => {
-          console.error('Error logging out:', error);
-          alert('Failed to logout. Please try again.');
-        }
-      );
+    if (confirm("Are you sure you wish to logout?")) {
+      this.http.delete(`${environment.apiUrl}/account/logout`, { responseType: 'text' })
+        .subscribe(
+          () => {
+            this.clearToken();
+          },
+          (error) => {
+            console.error('Error logging out:', error);
+            alert('Failed to logout. Please try again.');
+          }
+        );
+    }
   }
 
   deleteAccount() {

@@ -73,4 +73,13 @@ export class RegisterComponent {
         }
       });
   }
+
+  goToLandingPage() {
+    this.router.navigate(['']);
+  }
+
+  navigateToForgotPassword() {
+    console.log("Navigating to forgot password...")
+    this.router.navigate(['recovery']);
+  }
 }

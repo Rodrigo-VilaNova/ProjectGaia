@@ -23,6 +23,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NavbarComponent } from './navbar/navbar.component';
 import { EditEventComponent } from './edit-event/edit-event.component';
 import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
+import { SimulationComponent } from './simulation/simulation.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
     EditEventComponent,
     EditInvoiceComponent,
     BrowserAnimationsModule,
+    SimulationComponent,
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
