@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection.Emit;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using ProjectGaia.Server.Models;
 using ProjectGaia.Server.Services;
@@ -72,71 +73,31 @@ namespace ProjectGaia.Server.Data
             modelBuilder.Entity<ErrorLog>().HasIndex(e => e.AccountID);
             modelBuilder.Entity<ErrorLog>().HasOne(e => e.Account).WithMany(a => a.ErrorLogs);
 
+            SetInitialData(modelBuilder);
+        }
+
+        protected virtual void SetInitialData(ModelBuilder modelBuilder)
+        {
             PasswordService passwordService = new PasswordService();
 
             modelBuilder.Entity<Account>().HasData(
                 new Account
                 {
                     ID = 1,
-                    Name = "Admin Zero",
-                    Email = "Admin0@gmail.com",
-                    Password = passwordService.HashPassword("Admin0@gmail.com"),
-                    Type = AccountType.Admin,
+                    Name = "DemoUser0@example.com",
+                    Email = "DemoUser0@example.com",
+                    Password = passwordService.HashPassword("DemoUser0@example.com"),
+                    Type = AccountType.User,
                     Status = AccountStatus.Active
                 },
                 new Account
                 {
                     ID = 2,
-                    Name = "Admin One",
-                    Email = "Admin1@gmail.com",
-                    Password = passwordService.HashPassword("Admin1@gmail.com"),
-                    Type = AccountType.Admin,
-                    Status = AccountStatus.Active,
-                },
-                new Account
-                {
-                    ID = 3,
-                    Name = "User Zero",
-                    Email = "User0@gmail.com",
-                    Password = passwordService.HashPassword("User0@gmail.com"),
+                    Name = "DemoUser1@example.com",
+                    Email = "DemoUser1@example.com",
+                    Password = passwordService.HashPassword("DemoUser1@example.com"),
                     Type = AccountType.User,
                     Status = AccountStatus.Active
-                },
-                new Account
-                {
-                    ID = 4,
-                    Name = "User One",
-                    Email = "User1@gmail.com",
-                    Password = passwordService.HashPassword("User1@gmail.com"),
-                    Type = AccountType.User,
-                    Status = AccountStatus.Active
-                },
-                new Account
-                {
-                    ID = 5,
-                    Name = "User Two",
-                    Email = "User2@gmail.com",
-                    Password = passwordService.HashPassword("User2@gmail.com"),
-                    Type = AccountType.User,
-                    Status = AccountStatus.Active
-                },
-                new Account
-                {
-                    ID = 6,
-                    Name = "User Three",
-                    Email = "User3@gmail.com",
-                    Password = passwordService.HashPassword("User3@gmail.com"),
-                    Type = AccountType.User,
-                    Status = AccountStatus.Blocked
-                },
-                new Account
-                {
-                    ID = 7,
-                    Name = "User Four",
-                    Email = "User4@gmail.com",
-                    Password = passwordService.HashPassword("User4@gmail.com"),
-                    Type = AccountType.User,
-                    Status = AccountStatus.Blocked
                 }
             );
 
@@ -146,20 +107,20 @@ namespace ProjectGaia.Server.Data
                 new Confirmation
                 {
                     ID = 1,
-                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserFiveToken"))),
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("DemoUser2Token"))),
                     Expiration = new DateTime(3025, 2, 2),
-                    Name = "User Five",
-                    Email = "User5@gmail.com",
-                    Password = passwordService.HashPassword("User5@gmail.com")
+                    Name = "DemoUser2@example.com",
+                    Email = "DemoUser2@example.com",
+                    Password = passwordService.HashPassword("DemoUser2@example.com")
                 },
                 new Confirmation
                 {
                     ID = 2,
-                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserSixToken"))),
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("DemoUser3Token"))),
                     Expiration = new DateTime(1025, 2, 2),
-                    Name = "User Six",
-                    Email = "User6@gmail.com",
-                    Password = passwordService.HashPassword("User6@gmail.com")
+                    Name = "DemoUser3@example.com",
+                    Email = "DemoUser3@example.com",
+                    Password = passwordService.HashPassword("DemoUser3@example.com")
                 }
             );
 
@@ -167,16 +128,16 @@ namespace ProjectGaia.Server.Data
                 new Recovery
                 {
                     ID = 1,
-                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserZeroToken"))),
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("DemoUser0Token"))),
                     Expiration = new DateTime(3025, 2, 2),
-                    AccountID = 3
+                    AccountID = 1
                 },
                 new Recovery
                 {
                     ID = 2,
-                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("UserOneToken"))),
+                    Token = Convert.ToHexString(confirmationService.HashToken(Encoding.UTF8.GetBytes("DemoUser1Token"))),
                     Expiration = new DateTime(1025, 2, 2),
-                    AccountID = 4
+                    AccountID = 2
                 }
             );
 
@@ -186,23 +147,9 @@ namespace ProjectGaia.Server.Data
                 new Session
                 {
                     ID = 1,
-                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserZeroToken"))),
+                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("DemoUser0Token"))),
                     Expiration = new DateTime(3025, 2, 28),
-                    AccountID = 3
-                },
-                new Session
-                {
-                    ID = 2,
-                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserOneToken"))),
-                    Expiration = new DateTime(3025, 2, 28),
-                    AccountID = 4
-                },
-                new Session
-                {
-                    ID = 3,
-                    Token = Convert.ToBase64String(tokenService.HashToken(Encoding.UTF8.GetBytes("UserTwoToken"))),
-                    Expiration = new DateTime(3025, 2, 28),
-                    AccountID = 5
+                    AccountID = 1
                 }
             );
 
@@ -210,11 +157,11 @@ namespace ProjectGaia.Server.Data
                 new Invoice
                 {
                     ID = 1,
-                    Price = 3,
-                    Consumption = 2,
+                    Price = 7,
+                    Consumption = 50,
                     EmissionDate = new DateTime(2025, 1, 16),
                     UploadDate = new DateTime(2025, 1, 18),
-                    AccountID = 3
+                    AccountID = 1
                 }
             );
 
@@ -222,11 +169,11 @@ namespace ProjectGaia.Server.Data
                 new Event
                 {
                     ID = 1,
-                    Name = "Pagamento 1",
-                    Description = "Descrição do evento",
-                    Date = new DateTime(2025, 3, 15),
+                    Name = "Payment 1",
+                    Description = "Payment to the energy provider",
+                    Date = new DateTime(2025, 4, 15),
                     Type = EventType.Payment,
-                    AccountID = 3
+                    AccountID = 1
                 }
             );
         }
