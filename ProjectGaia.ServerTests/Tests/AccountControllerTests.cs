@@ -28,7 +28,7 @@ namespace ProjectGaia.ServerTests.Tests
             bool isGitHubActions = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
 
             string connectionString = isGitHubActions ?
-                $"Server=localhost,1433;Database=ProjectGaiaDBAccountTests;User Id=sa;Password={Environment.GetEnvironmentVariable("SA_PASSWORD")};MultipleActiveResultSets=true" :
+                $"Server=localhost,1433;Database=ProjectGaiaDBAccountTests;User Id=sa;Password={Environment.GetEnvironmentVariable("SA_PASSWORD")};MultipleActiveResultSets=true;TrustServerCertificate=True;Encrypt=False;" :
                 "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBAccountTests;Trusted_Connection=True;MultipleActiveResultSets=true";
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
