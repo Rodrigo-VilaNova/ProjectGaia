@@ -23,13 +23,17 @@ namespace ProjectGaia.ServerTests.Tests
 
             _testOutputHelper = testOutputHelper;
 
-            string connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBEventTests;Trusted_Connection=True;MultipleActiveResultSets=true";
+            bool isGitHubActions = Environment.GetEnvironmentVariable("GITHUB_ACTIONS") == "true";
+
+            string connectionString = isGitHubActions ?
+                $"Server=localhost,1433;Database=ProjectGaiaDBAccountTests;User Id=sa;Password={Environment.GetEnvironmentVariable("SA_PASSWORD")};MultipleActiveResultSets=true" :
+                "Server=(localdb)\\MSSQLLocalDB;Database=ProjectGaiaDBEventTests;Trusted_Connection=True;MultipleActiveResultSets=true";
 
             var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseSqlServer(connectionString)
             .Options;
 
-            _context = new AppDbContext(options);
+            _context = new TestDbContext(options);
 
             _context.Database.EnsureDeleted();
             _context.Database.EnsureCreated();
