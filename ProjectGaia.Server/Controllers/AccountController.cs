@@ -456,6 +456,9 @@ namespace ProjectGaia.Server.Controllers
                     return StatusCode(403, "Account is blocked and cannot be deleted");
                 }
 
+                await _context.Events.Where(e => e.AccountID == account.ID).ExecuteDeleteAsync();
+                await _context.Invoices.Where(i => i.AccountID == account.ID).ExecuteDeleteAsync();
+                await _context.Recoveries.Where(r => r.AccountID == account.ID).ExecuteDeleteAsync();
                 await _context.Sessions.Where(s => s.AccountID == account.ID).ExecuteDeleteAsync();
                 await _context.AccessLogs.Where(al => al.AccountID == account.ID).ExecuteDeleteAsync();
                 await _context.ErrorLogs.Where(el => el.AccountID == account.ID).ExecuteDeleteAsync();
