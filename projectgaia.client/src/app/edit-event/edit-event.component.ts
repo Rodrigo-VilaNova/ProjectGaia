@@ -13,26 +13,52 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, CommonModule, NavbarComponent]
 })
+
+/**
+ * Componente responsável pela edição de um evento
+ */
 export class EditEventComponent implements OnInit {
+
+  /** Formulário de edição do evento */
   eventForm: FormGroup;
+
+  /** ID do evento a alterar */
   eventId: number = 0;
+
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string = '';
+
+  /** Mensagem de sucesso exibida ao utilizador */
   successMessage: string = '';
 
+  /** Data atual formatada como 'YYYY-MM-DD' */
   today: string = '';
 
+  /**
+   * Construtor do componente.
+   * @param route Serviço para acessar parâmetros da rota ativa
+   * @param router Serviço de routing para navegação
+   * @param http Cliente HTTP para comunicação com a API
+   * @param fb FormBuilder para criação e validação do formulário
+   */
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private fb: FormBuilder) {
+    // Define a data de hoje e formata para validação no formulário
+    const todayDate = new Date();
+    this.today = todayDate.toISOString().split('T')[0];
+
+    // Criação do formulário com validações
     this.eventForm = this.fb.group({
       name: ['', [Validators.required, this.noWhiteSpaceValidator()]],
       description: ['', [Validators.required, this.noWhiteSpaceValidator()]],
       date: ['', Validators.required],
       type: [0, Validators.required]
     });
-
-    const todayDate = new Date();
-    this.today = todayDate.toISOString().split('T')[0];
   }
 
+  /**
+   * Método do ciclo de vida do Angular chamado quando o componente é inicializado.
+   * Obtém o ID do evento da rota e carrega os seus dados.
+   */
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.eventId = params['id'];
@@ -40,6 +66,9 @@ export class EditEventComponent implements OnInit {
     });
   }
 
+  /**
+   * Obtém os detalhes do evento a partir da API e preenche o formulário.
+   */
   loadEvent() {
     this.http.get<any>(`${environment.apiUrl}/events/${this.eventId}`).subscribe(
       (event) => {
@@ -61,6 +90,10 @@ export class EditEventComponent implements OnInit {
     );
   }
 
+  /**
+   * Submete as alterações feitas ao evento, enviando-as para a API.
+   * Antes do envio, verifica se o formulário é válido e se a data selecionada não é anterior ao dia atual.
+   */
   submitEdit() {
     if (this.eventForm.invalid) {
       this.errorMessage = 'Please fill in all required fields.';
@@ -83,7 +116,7 @@ export class EditEventComponent implements OnInit {
     this.http.put(`${environment.apiUrl}/events/${this.eventId}`, updateData).subscribe(
       () => {
         this.successMessage = 'Event updated successfully!';
-        setTimeout(() => this.router.navigate(['/events']), 2000);
+        this.router.navigate(['/events']);
       },
       (error) => {
         this.errorMessage = 'Error updating event. Please try again.';
@@ -91,10 +124,17 @@ export class EditEventComponent implements OnInit {
     );
   }
 
+  /**
+   * Cancela a edição e redireciona o utilizador para a lista de eventos.
+   */
   cancelEdit() {
     this.router.navigate(['/events']);
   }
 
+  /**
+   * Validação personalizada para impedir que o usuário insira apenas espaços em branco
+   * @returns Um erro de validação se o campo contiver apenas espaços em branco
+   */
   noWhiteSpaceValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       if (typeof control.value !== 'string') return null;
