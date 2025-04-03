@@ -13,22 +13,45 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [NavbarComponent]
 })
+
+/**
+ * Componente responsável pela conta do utilizador
+ */
 export class ProfileComponent {
+
+  /**
+   * Construtor do componente
+   * @param router Serviço de routing para navegação
+   * @param http Cliente HTTP para comunicação com a API
+   * @param authService Serviço de autenticação
+   */
   constructor(private router: Router, private http: HttpClient, private authService: AuthService) { }
 
+  /**
+   * Navega para a página de dashboard
+   */
   goBack() {
     this.router.navigate(['/dashboard']);
   }
 
+  /**
+   * Limpa o token de autenticação do utilizador
+   */
   clearToken() {
     this.authService.removeToken();
     this.router.navigate(['']);
   }
 
+  /**
+   * Navega para a página de alterar password
+   */
   changePassword() {
     this.router.navigate(['/change-password']);
   }
 
+  /**
+   * Dá logout da conta do utilizador
+   */
   logoutAccount() {
     if (confirm("Are you sure you wish to logout?")) {
       this.http.delete(`${environment.apiUrl}/account/logout`, { responseType: 'text' })
@@ -44,6 +67,9 @@ export class ProfileComponent {
     }
   }
 
+  /**
+   * Apaga a conta do utilizador da base de dados
+   */
   deleteAccount() {
     if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       this.http.delete(`${environment.apiUrl}/account/delete`, { responseType: 'text' })

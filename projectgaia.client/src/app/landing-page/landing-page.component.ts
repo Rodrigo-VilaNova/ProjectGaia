@@ -9,6 +9,10 @@ import { Router, RouterModule } from '@angular/router';
   imports: [RouterModule]
 })
 
+/**
+ * Componente da Landing Page
+ * Contém apenas métodos de navegação
+ */
 export class LandingPageComponent {
   constructor(private router: Router) {}
 

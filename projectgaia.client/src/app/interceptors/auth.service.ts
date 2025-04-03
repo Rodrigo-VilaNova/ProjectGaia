@@ -3,6 +3,11 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
+
+/**
+ * Serviço de autenticação
+ * Responsável por gerir os tokens de autenticação dos utilizadores
+ */
 export class AuthService {
   private tokenKey = 'auth_token';
 
