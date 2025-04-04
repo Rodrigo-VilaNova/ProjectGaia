@@ -17,11 +17,9 @@ namespace ProjectGaia.Server
             Console.WriteLine($"Environment: {environment}");
             bool isDedicated = environment == "Dedicated";
 
-            //if (isDedicated) Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "PRODUCTION");
-
             bool isRunningInAzure = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBSITE_SITE_NAME"));
 
-            SetupCredentials();
+            if (!isRunningInAzure) SetupCredentials();
             Console.WriteLine($"Using email: {Environment.GetEnvironmentVariable("email")}");
 
             var builder = WebApplication.CreateBuilder(args);
