@@ -124,6 +124,10 @@ namespace ProjectGaia.Server
             app.Run();
         }
 
+        /// <summary>
+        /// Lê ou solicita as credenciais do email da aplicação em modo de desenvolvimento e define as variáveis de ambiente respetivas.
+        /// (Esta função destina-se exclusivamente a ambientes de desenvolvimento/debug).
+        /// </summary>
         private static void SetupCredentials()
         {
             string filePath = "./credentials.json";
@@ -204,6 +208,12 @@ namespace ProjectGaia.Server
             Environment.SetEnvironmentVariable("password", credentials["password"]);
         }
 
+        /// <summary>
+        /// Verifica as credenciais de email e palavra-passe fornecidas.
+        /// </summary>
+        /// <param name="email">Endereço de email a ser autenticado.</param>
+        /// <param name="password">Palavra passe associada ao endereço de email.</param>
+        /// <returns>Retorna verdadeiro se a autenticação for bem-sucedida, ou falso caso contrário.</returns>
         private static bool CheckCredentials(string email, string password)
         {
             try

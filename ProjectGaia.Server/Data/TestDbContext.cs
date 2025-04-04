@@ -5,12 +5,24 @@ using ProjectGaia.Server.Services;
 
 namespace ProjectGaia.Server.Data
 {
+    /// <summary>
+    /// Representa o contexto da base de dados para testes, derivado de <see cref="AppDbContext"/>.
+    /// Este contexto é utilizado para popular a base de dados com valores iniciais para fins de teste.
+    /// </summary>
     public class TestDbContext : AppDbContext
     {
+        /// <summary>
+        /// Inicializa uma nova instância de <see cref="TestDbContext"/> com as opções especificadas.
+        /// </summary>
+        /// <param name="options">Configurações de contexto da base de dados para <see cref="AppDbContext"/>.</param>
         public TestDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
+        /// <summary>
+        /// Configura os dados iniciais presentes na base de dados a serem utilizados nos testes.
+        /// </summary>
+        /// <param name="modelBuilder">Objeto para configurar os dados iniciais.</param>
         protected override void SetInitialData(ModelBuilder modelBuilder)
         {
             PasswordService passwordService = new PasswordService();

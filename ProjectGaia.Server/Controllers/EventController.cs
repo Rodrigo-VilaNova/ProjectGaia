@@ -7,20 +7,39 @@ using ProjectGaia.Server.Services;
 
 namespace ProjectGaia.Server.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão dos eventos associados a uma conta de utilizador.
+    /// Permite operações de leitura, criação, edição e exclusão de eventos.
+    /// </summary>
     [ApiController]
     [Route("api/events")]
     public class EventController : ControllerBase
     {
+        /// <summary>
+        /// Contexto da base de dados utilizado para interagir com o banco de dados da aplicação.
+        /// </summary>
         private readonly AppDbContext _context;
+
+        /// <summary>
+        /// Serviço de autenticação e verificação de token responsável por validar e obter informações sobre a conta do utilizador a partir do token do request.
+        /// </summary>
         private readonly TokenService _tokenService;
 
+        /// <summary>
+        /// Construtor da classe. Injeta o contexto da base de dados e o serviço de tokens.
+        /// </summary>
+        /// <param name="context">O contexto da base de dados, utilizado para realizar operações de acesso e manipulação de dados.</param>
+        /// <param name="tokenService">O serviço de autenticação, responsável por validar tokens e recuperar informações da conta associada ao utilizador autenticado.</param>
         public EventController(AppDbContext context, TokenService tokenService)
         {
             _context = context;
             _tokenService = tokenService;
         }
 
-        // GET: Get All Account Events
+        /// <summary>
+        /// Obtém os IDs de todos os eventos associados à conta do utilizador autenticado.
+        /// </summary>
+        /// <returns>Uma lista de IDs de eventos associados à conta do utilizador autenticado.</returns>
         [HttpGet("")]
         public async Task<IActionResult> GetEvents()
         {
@@ -34,7 +53,11 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(200, eventIDs);
         }
 
-        // GET: Get Event
+        /// <summary>
+        /// Obtém um evento específico da conta do utilizador autenticado, com base no ID do evento.
+        /// </summary>
+        /// <param name="id">ID do evento a ser recuperado.</param>
+        /// <returns>O evento correspondente ao ID, caso exista e pertença à conta do utilizador autenticado.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEvent(int id)
         {
@@ -51,7 +74,11 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(200, selectedEvent);
         }
 
-        // POST: Create Event
+        /// <summary>
+        /// Cria um novo evento associado à conta do utilizador autenticado.
+        /// </summary>
+        /// <param name="eventDTO">Objeto contendo as informações do evento a ser criado.</param>
+        /// <returns>O evento criado, caso a operação seja bem-sucedida.</returns>
         [HttpPost("")]
         public async Task<IActionResult> CreateEvent([FromBody] EventDTO eventDTO)
         {
@@ -85,7 +112,12 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(201, newEvent);
         }
 
-        // PUT: Edit Event
+        /// <summary>
+        /// Edita um evento existente associado à conta do utilizador autenticado, com base no ID do evento.
+        /// </summary>
+        /// <param name="id">ID do evento a ser editado.</param>
+        /// <param name="eventDTO">Objeto contendo as informações atualizadas do evento.</param>
+        /// <returns>Um código de status indicando o sucesso ou falha da operação.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> EditEvent(int id, [FromBody] EventDTO eventDTO)
         {
@@ -123,7 +155,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // DELETE: Delete Event
+        /// <summary>
+        /// Exclui um evento existente associado à conta do utilizador autenticado, com base no ID do evento.
+        /// </summary>
+        /// <param name="id">ID do evento a ser excluído.</param>
+        /// <returns>Um código de status indicando o sucesso ou falha da operação.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEvent(int id)
         {
@@ -152,6 +188,9 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(200, "Event deleted successfully");
         }
 
+        /// <summary>
+        /// Retorna o código de status da resposta, com base no tuple de status fornecido.
+        /// </summary>
         private ObjectResult StatusCodeResult((int code, string? message)? status)
         {
             return StatusCode(status?.code ?? 0, status?.message);

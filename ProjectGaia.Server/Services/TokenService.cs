@@ -5,8 +5,17 @@ using ProjectGaia.Server.Models;
 
 namespace ProjectGaia.Server.Services
 {
+    /// <summary>
+    /// Serviço responsável pela geração, hashing e gestão de tokens de sessão.
+    /// </summary>
+
     public class TokenService
     {
+        /// <summary>
+        /// Gera um token aleatório de tamanho especificado.
+        /// </summary>
+        /// <param name="length">O comprimento do token a ser gerado (por defeito, 32 bytes).</param>
+        /// <returns>Retorna um array de bytes contendo o token gerado.</returns>
         public byte[] GenerateRandomToken(int length = 32)
         {
             using (var rng = RandomNumberGenerator.Create())
@@ -17,6 +26,11 @@ namespace ProjectGaia.Server.Services
             }
         }
 
+        /// <summary>
+        /// Calcula o hash SHA-256 de um token fornecido.
+        /// </summary>
+        /// <param name="token">O token a ser encriptado.</param>
+        /// <returns>Retorna um array de bytes contendo o hash do token.</returns>
         public byte[] HashToken(byte[] token)
         {
             using (SHA256 sha256 = SHA256.Create())
@@ -26,6 +40,11 @@ namespace ProjectGaia.Server.Services
             }
         }
 
+        /// <summary>
+        /// Calcula o hash SHA-256 de um token representado como string base64.
+        /// </summary>
+        /// <param name="token">O token em formato base64 a ser encriptado.</param>
+        /// <returns>Retorna um array de bytes contendo o hash do token.</returns>
         public byte[] HashToken(string token)
         {
             try
@@ -38,6 +57,12 @@ namespace ProjectGaia.Server.Services
             }
         }
 
+        /// <summary>
+        /// Gera um token de sessão único e armazena-o na base de dados.
+        /// </summary>
+        /// <param name="context">O contexto da base de dados utilizado para verificar a unicidade do token.</param>
+        /// <param name="accountID">O ID da conta associada à sessão.</param>
+        /// <returns>Retorna um token de sessão em formato base64.</returns>
         public async Task<string> GenerateSessionToken(AppDbContext context, int accountID)
         {
             byte[] token;
@@ -66,6 +91,12 @@ namespace ProjectGaia.Server.Services
             return Convert.ToBase64String(token);
         }
 
+        /// <summary>
+        /// Obtém a conta associada a um token de sessão válido.
+        /// </summary>
+        /// <param name="context">O contexto da base de dados utilizado para buscar a sessão e a conta.</param>
+        /// <param name="token">O token de sessão fornecido.</param>
+        /// <returns>Retorna a conta associada ao token, ou um código de erro se o token for inválido ou expirado.</returns>
         public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, string token)
         {
             Session? session = await GetSession(context, token);
@@ -89,6 +120,12 @@ namespace ProjectGaia.Server.Services
             return (account, null);
         }
 
+        /// <summary>
+        /// Recupera a conta associada a um token de sessão extraído do cabeçalho de autorização de um pedido HTTP.
+        /// </summary>
+        /// <param name="context">O contexto da base de dados utilizado para buscar a sessão e a conta.</param>
+        /// <param name="request">O pedido HTTP que contém o cabeçalho de autorização com o token.</param>
+        /// <returns>Retorna a conta associada ao token, ou um código de erro se o token for inválido ou expirado.</returns>
         public async Task<(Account? account, (int code, string? message)? status)> GetAccount(AppDbContext context, HttpRequest request)
         {
             var result = GetToken(request);
@@ -99,6 +136,11 @@ namespace ProjectGaia.Server.Services
             return await GetAccount(context, token);
         }
 
+        /// <summary>
+        /// Extrai o token de sessão do cabeçalho de autorização de um pedido HTTP.
+        /// </summary>
+        /// <param name="request">O pedido HTTP que contém o cabeçalho de autorização.</param>
+        /// <returns>Retorna o token extraído ou um código de erro caso o cabeçalho esteja ausente ou mal formatado.</returns>
         public (string? token, (int code, string? message)? status) GetToken(HttpRequest request)
         {
             if (!request.Headers.ContainsKey("Authorization")) return (null, (401, "Authorization header is missing"));
@@ -109,6 +151,12 @@ namespace ProjectGaia.Server.Services
             return (token, null);
         }
 
+        /// <summary>
+        /// Obtém a sessão associada a um token de sessão.
+        /// </summary>
+        /// <param name="context">O contexto da base de dados utilizado para buscar a sessão.</param>
+        /// <param name="token">O token de sessão fornecido.</param>
+        /// <returns>Retorna a sessão associada ao token, ou <c>null</c> se a sessão não for encontrada.</returns>
         public async Task<Session?> GetSession(AppDbContext context, string token)
         {
             byte[] hashedToken = HashToken(token);

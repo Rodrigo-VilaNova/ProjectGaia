@@ -11,11 +11,33 @@ namespace ProjectGaia.Server.Controllers
     [Route("api/account")]
     public class AccountController : ControllerBase
     {
+        /// <summary>
+        /// Contexto da base de dados utilizado para interagir com o banco de dados da aplicação.
+        /// </summary>
         private readonly AppDbContext _context;
+
+        /// <summary>
+        /// Serviço responsável por gerar e validar tokens de confirmação de conta.
+        /// </summary>
         private readonly ConfirmationService _confirmationService;
+
+        /// <summary>
+        /// Serviço utilizado para validação e hash de palavras-passe, garantindo segurança no armazenamento.
+        /// </summary>
         private readonly PasswordService _passwordService;
+
+        /// <summary>
+        /// Serviço de autenticação e verificação de token responsável por validar e obter informações sobre a conta do utilizador a partir do token do request.
+        /// </summary>
         private readonly TokenService _tokenService;
 
+        /// <summary>
+        /// Inicializa uma nova instância de <see cref="AccountController"/> com os serviços necessários injetados.
+        /// </summary>
+        /// <param name="context">Contexto da base de dados para operações com a base de dados.</param>
+        /// <param name="confirmationService">Serviço para geração e validação de tokens de confirmação.</param>
+        /// <param name="passwordService">Serviço de hash e verificação de senhas.</param>
+        /// <param name="tokenService">Serviço de autenticação e extração de conta com base em token.</param>
         public AccountController(AppDbContext context, ConfirmationService confirmationService, PasswordService passwordService, TokenService tokenService)
         {
             _context = context;
@@ -24,7 +46,11 @@ namespace ProjectGaia.Server.Controllers
             _tokenService = tokenService;
         }
 
-        // POST: Register account
+        /// <summary>
+        /// Inicia o registo de uma nova conta e envia um email de confirmação.
+        /// </summary>
+        /// <param name="accountDTO">Objeto contendo o nome, e-mail e password do utilizador a registar.</param>
+        /// <returns>Retorna 202 se o email de confirmação foi enviado com sucesso, ou um código de erro apropriado caso contrário.</returns>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAccount([FromBody] AccountDTO accountDTO)
         {
@@ -132,7 +158,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // GET: Confirm account
+        /// <summary>
+        /// Confirma uma conta através do token enviado por email.
+        /// </summary>
+        /// <param name="token">Token de confirmação da conta.</param>
+        /// <returns>Retorna 201 se a conta foi criada com sucesso, ou um código de erro apropriado caso contrário.</returns>
         [HttpGet("confirm")]
         public async Task<IActionResult> ConfirmAccount([FromQuery] string? token)
         {
@@ -184,7 +214,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // POST: Login into account
+        /// <summary>
+        /// Inicia sessão na conta do utilizador através de email e palavra-passe.
+        /// </summary>
+        /// <param name="loginDTO">DTO com as credenciais de início de sessão.</param>
+        /// <returns>Retorna 200 e um token de sessão se for bem-sucedido, ou um código de erro apropriado caso contrário.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> LoginAccount([FromBody] LoginDTO loginDTO)
         {
@@ -249,7 +283,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // POST: Send password reset email
+        /// <summary>
+        /// Envia um email de recuperação de palavra-passe para o endereço de email registado.
+        /// </summary>
+        /// <param name="recoveryDTO">DTO com o endereço de email do utilizador.</param>
+        /// <returns>Retorna 202 se o email for enviado com sucesso, ou um código de erro apropriado caso contrário.</returns>
         [HttpPost("recovery")]
         public async Task<IActionResult> SendRecoveryEmail([FromBody] RecoveryDTO recoveryDTO)
         {
@@ -343,7 +381,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // Put: Reset account password
+        /// <summary>
+        /// Redefine a palavra-passe do utilizador usando um token de recuperação válido.
+        /// </summary>
+        /// <param name="resetDTO">DTO com o token de recuperação e a nova palavra-passe.</param>
+        /// <returns>Retorna 200 se a palavra-passe for redefinida com sucesso, ou um código de erro apropriado caso contrário.</returns>
         [HttpPut("reset")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetDTO resetDTO)
         {
@@ -400,7 +442,10 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // DELETE: Logout from account
+        /// <summary>
+        /// Termina a sessão atual do utilizador, removendo o token ativo.
+        /// </summary>
+        /// <returns>Retorna 200 se a sessão for terminada com sucesso, ou um código de erro apropriado caso contrário.</returns>
         [HttpDelete("logout")]
         public async Task<IActionResult> LogoutAccount()
         {
@@ -434,7 +479,10 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // DELETE: Delete account
+        /// <summary>
+        /// Elimina permanentemente a conta do utilizador e todos os dados associados.
+        /// </summary>
+        /// <returns>Retorna 200 se a conta for eliminada com sucesso, ou um código de erro apropriado caso contrário.</returns>
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteAccount()
         {
@@ -476,7 +524,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // PUT: Change password
+        /// <summary>
+        /// Altera a palavra-passe da conta após validar a palavra-passe atual.
+        /// </summary>
+        /// <param name="passwordDTO">DTO com a palavra-passe atual e a nova palavra-passe.</param>
+        /// <returns>Retorna 200 se a alteração for bem-sucedida, ou um código de erro apropriado caso contrário.</returns>
         [HttpPut("password")]
         public async Task<IActionResult> ChangePassword([FromBody] PasswordDTO passwordDTO)
         {
@@ -542,6 +594,9 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
+        /// <summary>
+        /// Retorna o código de status da resposta, com base no tuple de status fornecido.
+        /// </summary>
         private ObjectResult StatusCodeResult((int code, string? message)? status)
         {
             return StatusCode(status?.code ?? 0, status?.message);

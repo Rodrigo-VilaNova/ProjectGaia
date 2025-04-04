@@ -6,22 +6,65 @@ using ProjectGaia.Server.Services;
 
 namespace ProjectGaia.Server.Data
 {
+    /// <summary>
+    /// Representa o contexto da base de dados da aplicação, contendo as entidades e respetivas configurações.
+    /// Esta classe é usada para interagir com a base de dados, realizando operações de CRUD (Create, Read, Update, Delete) 
+    /// e definindo o modelo de dados através do Entity Framework.
+    /// </summary>
     public class AppDbContext : DbContext
     {
+        /// <summary>
+        /// Construtor que inicializa o contexto com as configurações fornecidas.
+        /// </summary>
+        /// <param name="options">Configurações do contexto da base de dados.</param>
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
+        /// <summary>
+        /// Conjunto de contas na base de dados.
+        /// </summary>
         public DbSet<Account> Accounts { get; set; }
+
+        /// <summary>
+        /// Conjunto de confirmações de conta na base de dados.
+        /// </summary>
         public DbSet<Confirmation> Confirmations { get; set; }
+
+        /// <summary>
+        /// Conjunto de recuperações de conta na base de dados.
+        /// </summary>
         public DbSet<Recovery> Recoveries { get; set; }
+
+        /// <summary>
+        /// Conjunto de sessões na base de dados.
+        /// </summary>
         public DbSet<Session> Sessions { get; set; }
+
+        /// <summary>
+        /// Conjunto de faturas na base de dados.
+        /// </summary>
         public DbSet<Invoice> Invoices { get; set; }
+
+        /// <summary>
+        /// Conjunto de eventos na base de dados.
+        /// </summary>
         public DbSet<Event> Events { get; set; }
+
+        /// <summary>
+        /// Conjunto de logs de acesso na base de dados.
+        /// </summary>
         public DbSet<AccessLog> AccessLogs { get; set; }
+
+        /// <summary>
+        /// Conjunto de logs de erro na base de dados.
+        /// </summary>
         public DbSet<ErrorLog> ErrorLogs { get; set; }
 
-
+        /// <summary>
+        /// Configura o modelo de dados e as regras de mapeamento entre as entidades e as tabelas da base de dados.
+        /// </summary>
+        /// <param name="modelBuilder">Objeto para configurar o modelo de dados.</param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -76,6 +119,10 @@ namespace ProjectGaia.Server.Data
             SetInitialData(modelBuilder);
         }
 
+        /// <summary>
+        /// Configura os dados iniciais presentes na base de dados.
+        /// </summary>
+        /// <param name="modelBuilder">Objeto para configurar os dados iniciais.</param>
         protected virtual void SetInitialData(ModelBuilder modelBuilder)
         {
             PasswordService passwordService = new PasswordService();

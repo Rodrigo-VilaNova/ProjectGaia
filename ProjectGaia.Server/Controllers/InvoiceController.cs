@@ -7,20 +7,39 @@ using ProjectGaia.Server.Services;
 
 namespace ProjectGaia.Server.Controllers
 {
+    /// <summary>
+    /// Controlador responsável pela gestão das faturas de um utilizador.
+    /// As operações incluem: obtenção de todas as faturas, obtenção de uma fatura específica, envio de faturas, edição e eliminação.
+    /// </summary>
     [ApiController]
     [Route("api/invoices")]
     public class InvoiceController : ControllerBase
     {
+        /// <summary>
+        /// Contexto da base de dados utilizado para interagir com o banco de dados da aplicação.
+        /// </summary>
         private readonly AppDbContext _context;
+
+        /// <summary>
+        /// Serviço de autenticação e verificação de token responsável por validar e obter informações sobre a conta do utilizador a partir do token do request.
+        /// </summary>
         private readonly TokenService _tokenService;
 
+        /// <summary>
+        /// Construtor da classe InvoiceController. Injeta o contexto da base de dados e o serviço de tokens.
+        /// </summary>
+        /// <param name="context">O contexto da base de dados, utilizado para realizar operações de acesso e manipulação de dados.</param>
+        /// <param name="tokenService">O serviço de autenticação, responsável por validar tokens e recuperar informações da conta associada ao utilizador autenticado.</param>
         public InvoiceController(AppDbContext context, TokenService tokenService)
         {
             _context = context;
             _tokenService = tokenService;
         }
 
-        // GET: Get All Account Invoices
+        /// <summary>
+        /// Obtém todas as faturas associadas à conta do utilizador autenticado.
+        /// </summary>
+        /// <returns>Lista de IDs das faturas ou um código de erro, caso o utilizador não esteja autenticado.</returns>
         [HttpGet("")]
         public async Task<IActionResult> GetInvoices()
         {
@@ -34,7 +53,11 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(200, invoiceIDs);
         }
 
-        // GET: Get Invoice
+        /// <summary>
+        /// Obtém uma fatura específica com base no ID, se pertencer à conta do utilizador autenticado.
+        /// </summary>
+        /// <param name="id">ID da fatura.</param>
+        /// <returns>Fatura ou código de erro, caso não seja encontrada ou não pertença ao utilizador.</returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoice(int id)
         {
@@ -51,7 +74,11 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(200, invoice);
         }
 
-        // POST: Upload Invoice
+        /// <summary>
+        /// Envia uma nova fatura para a base de dados, associando-a à conta do utilizador autenticado.
+        /// </summary>
+        /// <param name="invoiceDTO">Objeto contendo os dados da fatura a ser criada.</param>
+        /// <returns>Resultado da criação da fatura ou erro caso os dados sejam inválidos ou o utilizador não esteja autenticado.</returns>
         [HttpPost("")]
         public async Task<IActionResult> UploadInvoice([FromBody] InvoiceDTO invoiceDTO)
         {
@@ -89,7 +116,12 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(201, invoice);
         }
 
-        // PUT: Edit Invoice
+        /// <summary>
+        /// Edita uma fatura existente, desde que pertença à conta do utilizador autenticado.
+        /// </summary>
+        /// <param name="id">ID da fatura a ser editada.</param>
+        /// <param name="invoiceDTO">Objeto contendo os dados atualizados da fatura.</param>
+        /// <returns>Resultado da edição da fatura ou erro caso não seja encontrada ou o utilizador não tenha permissão.</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> EditInvoice(int id, [FromBody] InvoiceDTO invoiceDTO)
         {
@@ -126,7 +158,11 @@ namespace ProjectGaia.Server.Controllers
             }
         }
 
-        // DELETE: Delete Invoice
+        /// <summary>
+        /// Elimina uma fatura existente, desde que pertença à conta do utilizador autenticado.
+        /// </summary>
+        /// <param name="id">ID da fatura a ser eliminada.</param>
+        /// <returns>Resultado da eliminação ou erro caso não seja encontrada ou o utilizador não tenha permissão.</returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoice(int id)
         {
@@ -155,6 +191,9 @@ namespace ProjectGaia.Server.Controllers
             return StatusCode(200, "Invoice and related data deleted successfully");
         }
 
+        /// <summary>
+        /// Retorna o código de status da resposta, com base no tuple de status fornecido.
+        /// </summary>
         private ObjectResult StatusCodeResult((int code, string? message)? status)
         {
             return StatusCode(status?.code ?? 0, status?.message);
