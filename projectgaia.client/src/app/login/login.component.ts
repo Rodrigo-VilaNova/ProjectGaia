@@ -62,8 +62,6 @@ export class LoginComponent {
     this.http.post<LoginResponse>(`${environment.apiUrl}/account/login`, credentials)
       .subscribe({
         next: response => {
-          console.log('Login successful. Token:', response.Token);
-
           this.authService.setToken(response.Token);
 
           this.router.navigate(['/dashboard']);
@@ -88,7 +86,6 @@ export class LoginComponent {
    * Navega para a página de recuperação de password
    */
   navigateToForgotPassword() {
-    console.log("Navigating to forgot password...")
     this.router.navigate(['recovery']);
   }
 }

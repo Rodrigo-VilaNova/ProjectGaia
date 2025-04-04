@@ -12,13 +12,33 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule]
 })
+
+/**
+ * Componente responsável pelo reset da password
+ */
 export class ResetPasswordComponent {
+
+  /** Formulário para dar reset à password */
   resetPasswordForm: FormGroup;
+
+  /** Averigua se o processo está a ser processado */
   loading = false;
+
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string | null = null;
+
+  /** Mensagem de sucesso exibida ao utilizador */
   successMessage: string | null = null;
 
+  /**
+   * Contrutor do componente
+   * @param fb FormBuilder para criação e validação do formulário
+   * @param http Cliente HTTP para comunicação com a API
+   * @param router Serviço de routing para navegação
+   * @param activatedRoute A rota onde o token de autenticação vai ser buscado
+   */
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private activatedRoute: ActivatedRoute) {
+    // Criação do formulário com validações
     this.resetPasswordForm = this.fb.group({
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128), this.passwordStrengthValidator]],
       confirmPassword: ['', Validators.required]
@@ -27,12 +47,22 @@ export class ResetPasswordComponent {
     });
   }
 
+  /**
+   * Averigua se a password e a confirmação da password são iguais
+   * @param group O grupo dos inputs respetivos
+   * @returns Um erro de validação caso exista, null caso sejam iguais
+   */
   passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  /**
+   * Averigua se a password é segura
+   * @param control O input da password
+   * @returns Um erro de validação caso exista, ou null se for segura
+   */
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
@@ -44,6 +74,9 @@ export class ResetPasswordComponent {
     return valid ? null : { passwordStrength: true };
   }
 
+  /**
+   * Função de submit após inserção das passwords
+   */
   onSubmit() {
     if (this.resetPasswordForm.invalid) {
       this.errorMessage = 'Please correct the errors in the form.';

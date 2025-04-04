@@ -4,9 +4,11 @@
     <div class="simulation-container">
       <h2>Energy Provider Simulation</h2>
 
-      <h3>Average Price of all Invoices: {{ averagePrice }}€</h3>
+      <h3 *ngIf="invoices.length > 0">Average Price of all Invoices: {{ averagePrice }}€</h3>
 
-      <h3>Average Consumption of all Invoices: {{ averageConsumption }}KWh</h3>
+      <h3 *ngIf="invoices.length > 0">Average Consumption of all Invoices: {{ averageConsumption }}KWh</h3>
+
+      <h3 *ngIf="invoices.length === 0" style="color: #bf1717">Please add invoice data to access invoice metrics and the simulation functionality</h3>
 
       <form [formGroup]="simulationForm" (ngSubmit)="simulateComparison()">
         <div class="input-group">
@@ -25,7 +27,7 @@
           </p>
         </div>
 
-        <button class="btn simulate-btn" [disabled]="simulationForm.invalid" (click)="simulateComparison()">Simulate</button>
+        <button class="btn simulate-btn" [disabled]="simulationForm.invalid || invoices.length === 0" (click)="simulateComparison()">Simulate</button>
       </form>
 
       <div class="recommendation" *ngIf="recommendation">

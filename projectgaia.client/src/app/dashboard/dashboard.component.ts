@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { EventService, Event } from '../services/event.service';
+import { EventService, Event, EventType } from '../services/event.service';
 import { Invoice, InvoiceService } from '../services/invoice.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 
@@ -71,6 +71,15 @@ export class DashboardComponent {
         console.error('Error fetching events:', error);
       }
     );
+  }
+
+  /**
+ * Retorna uma representação string do tipo do evento
+ * @param type O tipo do evento
+ * @returns A representação string desse tipo de evento
+ */
+  getEventTypeName(type: EventType): string {
+    return EventType[type];
   }
 
   /**

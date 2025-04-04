@@ -11,18 +11,40 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
+
+/**
+ * Componente responsável pela recuperação de password
+ */
 export class RecoveryComponent {
+
+  /** Formulário de recuperaçáo de password */
   emailForm: FormGroup;
+
+  /** Averigua se o formulário está a ser submetido */
   loading = false;
+
+  /** Resposta do servidor */
   serverResponse: string | null = null;
+
+  /** Resposta do servidor em caso de erro */
   serverError: string | null = null;
 
+  /**
+   * Construtor do componente
+   * @param fb FormBuilder para criação e validação do formulário
+   * @param http Cliente HTTP para comunicação com a API
+   * @param router Serviço de routing para navegação
+   */
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+    // Criação do formulário com validações
     this.emailForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
   }
 
+  /**
+   * Função de submit após inserção da nova password
+   */
   onSubmit() {
     if (this.emailForm.invalid) {
       return;
@@ -47,6 +69,9 @@ export class RecoveryComponent {
       });
   }
 
+  /**
+   * Navega para a página principal
+   */
   goToLandingPage() {
     this.router.navigate(['/']);
   }
