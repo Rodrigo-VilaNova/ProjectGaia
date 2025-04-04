@@ -13,24 +13,45 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent],
 })
+
+/**
+  * Componente responsável pela criação de novas faturas.
+  */
 export class AddInvoiceComponent {
+  /** Formulário para adicionar uma nova fatura */
   invoiceForm: FormGroup;
 
+  /** Representação dos dados de uma fatura */
   invoice = {
     price: null,
     consumption: null,
     emissionDate: null,
   };
 
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string = '';
+
+  /** Mensagem de sucesso exibida ao utilizador */
   successMessage: string = '';
 
+  /** Data atual formatada como 'YYYY-MM-DD' */
   today: string = '';
 
+  /** Indica se o formulário está em processo de submissão para evitar múltiplos envios */
+  isSubmitting = false;
+
+  /**
+   * Construtor do componente
+   * @param http Serviço HTTP para comunicação com a API
+   * @param router Serviço de routing para navegação
+   * @param fb FormBuilder para criação e validação do formulário
+   */
   constructor(private http: HttpClient, private router: Router, private fb: FormBuilder) {
+    // Define a data de hoje e formata para validação no formulário
     const todayDate = new Date();
     this.today = todayDate.toISOString().split('T')[0];
 
+    // Criação do formulário com validações
     this.invoiceForm = this.fb.group({
       price: ['', [Validators.required, this.noWhiteSpaceValidator()]],
       consumption: ['', [Validators.required, this.noWhiteSpaceValidator()]],
@@ -38,8 +59,10 @@ export class AddInvoiceComponent {
     });
   }
 
-  isSubmitting = false;
-
+  /**
+   * Submete a fatura para a API após validações
+   * Antes do envio, verifica se o formulário é válido e se a data selecionada não é superior ao dia atual.
+   */
   submitInvoice() {
     if (this.invoiceForm.invalid) {
       this.errorMessage = 'Please fill in all fields before submitting.';
@@ -87,6 +110,10 @@ export class AddInvoiceComponent {
     });
   }
 
+  /**
+   * Validação personalizada para impedir que o usuário insira apenas espaços em branco
+   * @returns Um erro de validação se o campo contiver apenas espaços em branco
+   */
   noWhiteSpaceValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       if (typeof control.value !== 'string') return null;
@@ -96,6 +123,9 @@ export class AddInvoiceComponent {
     };
   }
 
+  /**
+   * Redireciona o utilizador para a página de faturas
+   */
   goToInvoices() {
     this.router.navigate(['/invoices']);
   }

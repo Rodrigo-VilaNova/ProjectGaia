@@ -14,15 +14,30 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [RouterModule, CommonModule, FormsModule, NavbarComponent]
 })
+
+/**
+ * Componente responsável pelas faturas
+ */
 export class InvoicesComponent implements OnInit {
+
+  /** Lista de faturas */
   invoices: Invoice[] = [];
+
+  /** Lista das faturas filtradas*/
   filteredInvoices: Invoice[] = [];
+
+  /** Lista das faturas selecionadas*/
   selectedInvoices: number[] = [];
+
   showFilterOverlay = false;
 
+  /** Coluna a ser filtrada */
   currentSortColumn: string | null = null;
+
+  /** Ordem do filtro */
   currentSortOrder: 'asc' | 'desc' | null = null;
 
+  /** Dicionário dos filtros disponíveis */
   static readonly FILTERS_DEFAULT = {
     id: { min: null as number | null, max: null as number | null },
     price: { min: null as number | null, max: null as number | null },
@@ -31,20 +46,37 @@ export class InvoicesComponent implements OnInit {
     uploadDate: { min: null as Date | null, max: null as Date | null }
   };
 
+  /** Seleciona quais os filtros que serão possíveis de ser aplicados */
   filters = structuredClone(InvoicesComponent.FILTERS_DEFAULT);
 
   hasFiltersApplied = this.isFilterModified();
 
+  /**
+   * Construtor do componente
+   * @param router Serviço de routing para navegação
+   * @param http Cliente HTTP para comunicação com a API
+   * @param invoiceService~Serviço responsável pelas faturas
+   */
   constructor(private router: Router, private http: HttpClient, private invoiceService: InvoiceService) { }
 
+  /**
+   * Método do ciclo de vida do Angular chamado quando o componente é inicializado.
+   * Carrega as faturas na base de dados.
+   */
   ngOnInit() {
     this.loadInvoices();
   }
 
+  /**
+   * Mostra ou esconde o overlay dos filtros
+   */
   toggleFilterOverlay() {
     this.showFilterOverlay = !this.showFilterOverlay;
   }
 
+  /**
+   * Busca todos as faturas associadas ao ID do utilizador respetivo
+   */
   loadInvoices() {
     this.invoiceService.getUserInvoices().subscribe(
       (data) => {
@@ -57,29 +89,32 @@ export class InvoicesComponent implements OnInit {
     );
   }
 
+  /**
+   * Averigua se um filtro foi modificado
+   * @returns True caso algum filtro tenha sido alterado, False caso contrário
+   */
   isFilterModified(): boolean {
-  // Loop through each key in the filters object
   for (let key in this.filters) {
     const filter = this.filters[key as keyof typeof this.filters];
     const default_filter = InvoicesComponent.FILTERS_DEFAULT[key as keyof typeof InvoicesComponent.FILTERS_DEFAULT];
 
-    // Check if the current filter's min/max value differs from the default (which is null)
     if (filter.min !== default_filter.min ||
       filter.max !== default_filter.max) {
       return true;
     }
   }
 
-  // If no filter is modified, return false
-  return false;
-}
+    return false;
+  }
 
+  /**
+   * Aplica os filtros escolhidos
+   */
   applyFilters() {
     this.hasFiltersApplied = this.isFilterModified();
 
     this.filteredInvoices = [...this.invoices];
 
-    // Apply min/max filters
     this.filteredInvoices = this.filteredInvoices.filter(invoice =>
       (this.filters.id.min == null || invoice.id >= this.filters.id.min) &&
       (this.filters.id.max == null || invoice.id <= this.filters.id.max) &&
@@ -94,11 +129,19 @@ export class InvoicesComponent implements OnInit {
     );
   }
 
+  /**
+   * Reset nos filtros selecionados
+   */
   resetFilters() {
     this.filters = structuredClone(InvoicesComponent.FILTERS_DEFAULT);
     this.applyFilters();
   }
 
+  /**
+   * Permite a seleção de uma fatura
+   * @param invoiceId O ID da fatura selecionada
+   * @param event O evento de dar check á checkbox
+   */
   toggleInvoiceSelection(invoiceId: number, event: globalThis.Event) {
     const isChecked = (event.target as HTMLInputElement).checked;
     if (isChecked) {
@@ -109,6 +152,10 @@ export class InvoicesComponent implements OnInit {
     this.applyFilters(); // Update table to show only selected invoices
   }
 
+  /**
+   * Apaga as faturas selecionadas
+   * @returns A lista de faturas sem as faturas selecionadas anteriormente
+   */
   deleteSelectedInvoices() {
     if (this.selectedInvoices.length === 0) return;
     if (!confirm("Are you sure you wish to delete selected invoices?")) return;
@@ -128,6 +175,10 @@ export class InvoicesComponent implements OnInit {
       .finally(() => { window.location.reload(); });
   }
 
+  /**
+   * Filtra os eventos de acordo com o especificado
+   * @param column A coluna a filtrar por ordem crescente ou decrescente
+   */
   sortBy(column: keyof Invoice) {
     if (this.currentSortColumn === column) {
       this.currentSortOrder = this.currentSortOrder === 'asc' ? 'desc' : 'asc';
@@ -143,6 +194,10 @@ export class InvoicesComponent implements OnInit {
     });
   }
 
+  /**
+   * Navega para a página de edição caso apenas 1 fatura seja selecionada
+   * @returns Uma mensagem de erro caso mais de 1 fatura seja selecionada
+   */
   editSelectedInvoice() {
     if (this.selectedInvoices.length !== 1) {
       alert("Please select exactly one invoice to edit.");
@@ -153,6 +208,9 @@ export class InvoicesComponent implements OnInit {
     this.router.navigate([`/edit-invoice/${invoiceId}`]);
   }
 
+  /**
+   * Navega para a página de adicionar uma fatura
+   */
   goToAddInvoice() {
     this.router.navigate(['/add-invoice']);
   }

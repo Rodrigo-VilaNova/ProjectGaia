@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { EventService, Event } from '../services/event.service';
+import { EventService, Event, EventType } from '../services/event.service';
 import { Invoice, InvoiceService } from '../services/invoice.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 
@@ -12,21 +12,44 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [RouterModule, CommonModule, NavbarComponent]
 })
+
+/**
+  * Componente responsável pela dashboard/página principal
+  */
 export class DashboardComponent {
+
+  /**
+   * Construtor do componente
+   * @param router Serviço de routing para navegação
+   * @param eventService Serviço responsável pelos eventos
+   * @param invoiceService Serviço responsável pelas faturas
+   */
   constructor(private router: Router, private eventService: EventService, private invoiceService: InvoiceService) { }
 
+  /** Eventos a mostrar na dashboard */
   dashboardEvents: Event[] = [];
+
+  /** Faturas armazenadas usadas para cálculos */
   invoices: Invoice[] = [];
 
+  /** Custo médio das faturas armazenadas */
   averagePrice: number = 0;
+
+  /** Consumo médio das faturas armazenadas*/
   averageConsumption: number = 0;
 
+  /**
+   * Método do ciclo de vida do Angular chamado quando o componente é inicializado.
+   * Carrega os eventos e faturas necessários
+   */
   ngOnInit() {
     this.loadUpcomingEvents();
     this.loadInvoices();
   }
 
-  //Carrega eventos que occorrem dentro de uma semana
+  /**
+   * Carrega todos os eventos que acontecem dentro de uma semana
+   */
   loadUpcomingEvents() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -34,6 +57,7 @@ export class DashboardComponent {
     const nextWeek = new Date();
     nextWeek.setDate(today.getDate() + 7);
 
+    //Buscar todos os eventos que ocorrem dentro de uma semana
     this.eventService.getUserEvents().subscribe(
       (data) => {
         this.dashboardEvents = data
@@ -49,6 +73,18 @@ export class DashboardComponent {
     );
   }
 
+  /**
+ * Retorna uma representação string do tipo do evento
+ * @param type O tipo do evento
+ * @returns A representação string desse tipo de evento
+ */
+  getEventTypeName(type: EventType): string {
+    return EventType[type];
+  }
+
+  /**
+   * Carrega todas as faturas para calcular o custo e consumo médio
+   */
   loadInvoices() {
     this.invoiceService.getUserInvoices().subscribe(
       (data) => {
@@ -62,6 +98,12 @@ export class DashboardComponent {
     );
   }
 
+  /**
+   * Muda a classe css do elemento html que contém os valores do custo e consumo médio
+   * @param value O custo ou consumo médio
+   * @param limit Um limite para qualquer um dos valores anteriormente declarados
+   * @returns Um representação string da classe do elemento html
+   */
   getBoxClass(value: number, limit: number): string {
     if (value > limit) {
       return 'high-consumption'; 

@@ -13,25 +13,51 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, CommonModule, NavbarComponent]
 })
+
+/**
+  * Componente responsável pela edição de uma fatura
+  */
 export class EditInvoiceComponent implements OnInit {
+
+  /** Formulário para edição de uma fatura */
   invoiceForm: FormGroup;
+
+  /** ID da fatura a alterar */
   invoiceId: number = 0;
+
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string = '';
+
+  /** Mensagem de sucesso exibida ao utilizador */
   successMessage: string = '';
 
+  /** Data atual formatada como 'YYYY-MM-DD' */
   today: string = '';
 
+  /**
+   * Construtor do componente
+   * @param route Serviço para acessar parâmetros da rota ativa
+   * @param router Serviço de routing para navegação
+   * @param http Cliente HTTP para comunicação com a API
+   * @param fb FormBuilder para criação e validação do formulário
+   */
   constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient, private fb: FormBuilder) {
+    // Define a data de hoje e formata para validação no formulário
+    const todayDate = new Date();
+    this.today = todayDate.toISOString().split('T')[0];
+
+    // Criação do formulário com validações
     this.invoiceForm = this.fb.group({
       price: ['', [Validators.required, this.noWhiteSpaceValidator()]],
       consumption: ['', [Validators.required, this.noWhiteSpaceValidator()]],
       emissionDate: ['', Validators.required],
     });
-
-    const todayDate = new Date();
-    this.today = todayDate.toISOString().split('T')[0];
   }
 
+  /**
+   * Método do ciclo de vida do Angular chamado quando o componente é inicializado.
+   * Obtém o ID da fatura da rota e carrega os seus dados.
+   */
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.invoiceId = params['id'];
@@ -39,6 +65,9 @@ export class EditInvoiceComponent implements OnInit {
     });
   }
 
+  /**
+   * Obtém os detalhes da fatura a partir da API e preenche o formulário.
+   */
   loadInvoice() {
     this.http.get<any>(`${environment.apiUrl}/invoices/${this.invoiceId}`).subscribe(
       (invoice) => {
@@ -59,6 +88,10 @@ export class EditInvoiceComponent implements OnInit {
     );
   }
 
+  /**
+   * Submete as alterações feitas à fatura, enviando-as para a API.
+   * Antes do envio, verifica se o formulário é válido e se a data de emissão selecionada não é superior ao dia atual.
+   */
   submitEdit() {
     if (this.invoiceForm.invalid) {
       this.errorMessage = 'Please fill in all required fields.';
@@ -89,6 +122,17 @@ export class EditInvoiceComponent implements OnInit {
     );
   }
 
+  /**
+   * Cancela a edição e redireciona o utilizador para a lista de faturas.
+   */
+  cancelEdit() {
+    this.router.navigate(['/invoices']);
+  }
+
+  /**
+   * Validação personalizada para impedir que o usuário insira apenas espaços em branco
+   * @returns Um erro de validação se o campo contiver apenas espaços em branco
+   */
   noWhiteSpaceValidator() {
     return (control: AbstractControl): ValidationErrors | null => {
       if (typeof control.value !== 'string') return null; 
@@ -96,9 +140,5 @@ export class EditInvoiceComponent implements OnInit {
       const isWhitespace = control.value.trim().length === 0;
       return isWhitespace ? { whitespace: true } : null;
     };
-  }
-
-  cancelEdit() {
-    this.router.navigate(['/invoices']);
   }
 }

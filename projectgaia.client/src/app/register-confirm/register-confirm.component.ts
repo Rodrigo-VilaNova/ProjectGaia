@@ -8,6 +8,11 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './register-confirm.component.css',
   imports: [RouterModule]
 })
+
+/**
+ * Componente responsável pela página de sucesso no registo
+ * Serve apenas para informar ao utilizador que deve consultar o email para aceder à aplicação
+ */
 export class RegisterConfirmComponent {
   constructor(private router: Router) { }
 

@@ -20,6 +20,9 @@ import { EditEventComponent } from './edit-event/edit-event.component';
 import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 import { SimulationComponent } from './simulation/simulation.component';
 
+/**
+ * Declaração de todas as rotas da aplicação
+ */
 const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
   { path: 'login', component: LoginComponent },

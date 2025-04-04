@@ -13,18 +13,39 @@ import { environment } from '../../environments/environment';
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, CommonModule]
 })
+
+/**
+ * Componente responsável pelo login
+ */
 export class LoginComponent {
+
+  /** Formulário de login */
   loginForm: FormGroup;
+
+  /** Averigua se o login está a ser processado */
   loading = false;
+
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string | null = null;
 
+  /**
+   * Construtor do componente
+   * @param fb FormBuilder para criação e validação do formulário
+   * @param http Cliente HTTP para comunicação com a API
+   * @param router Serviço de routing para navegação
+   * @param authService Serviço de autenticação
+   */
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router, private authService: AuthService) {
+    // Criação do formulário com validações
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
   }
 
+  /**
+   * Função de submit após inserção das credenciais de login
+   */
   onSubmit() {
     if (this.loginForm.invalid) {
       return;
@@ -41,8 +62,6 @@ export class LoginComponent {
     this.http.post<LoginResponse>(`${environment.apiUrl}/account/login`, credentials)
       .subscribe({
         next: response => {
-          console.log('Login successful. Token:', response.Token);
-
           this.authService.setToken(response.Token);
 
           this.router.navigate(['/dashboard']);
@@ -56,16 +75,24 @@ export class LoginComponent {
       });
   }
 
+  /**
+   * Navega para a landing page
+   */
   goToLandingPage() {
     this.router.navigate(['']);
   }
 
+  /**
+   * Navega para a página de recuperação de password
+   */
   navigateToForgotPassword() {
-    console.log("Navigating to forgot password...")
     this.router.navigate(['recovery']);
   }
 }
 
+/**
+ * Interface de resposta de login que consiste no token de autenticação do login
+ */
 interface LoginResponse {
   Token: string;
 }

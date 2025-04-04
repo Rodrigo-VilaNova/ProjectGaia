@@ -12,12 +12,29 @@ import { environment } from '../../environments/environment';
   standalone: true,
   imports: [RouterModule, ReactiveFormsModule, CommonModule]
 })
+
+/**
+ * Componente responsável pelo registo de um utilizador
+ */
 export class RegisterComponent {
+
+  /** Formulário de registo */
   registerForm: FormGroup;
+
+  /** Averigua se o registo está a ser processado */
   loading = false;
+
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string | null = null;
 
+  /**
+   * Contrutor do componente
+   * @param fb FormBuilder para criação e validação do formulário
+   * @param http Cliente HTTP para comunicação com a API
+   * @param router Serviço de routing para navegação
+   */
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+    // Criação do formulário com validações
     this.registerForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(64)]],
       email: ['', [Validators.required, Validators.email]],
@@ -28,12 +45,22 @@ export class RegisterComponent {
     });
   }
 
+  /**
+   * Averigua se a password e a confirmação da password são iguais
+   * @param group O grupo dos inputs respetivos
+   * @returns Um erro de validação caso exista, null caso sejam iguais
+   */
   passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  /**
+   * Averigua se a password é segura
+   * @param control O input da password
+   * @returns Um erro de validação caso exista, ou null se for segura
+   */
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
@@ -45,6 +72,9 @@ export class RegisterComponent {
     return valid ? null : { passwordStrength: true };
   }
 
+  /**
+   * Função de submit após inserção das credenciais de registo
+   */
   onSubmit() {
     if (this.registerForm.invalid) {
       this.errorMessage = 'Please correct the errors in the form.';
@@ -74,12 +104,15 @@ export class RegisterComponent {
       });
   }
 
+  /**
+   * Funções de navegação
+   */
+
   goToLandingPage() {
     this.router.navigate(['']);
   }
 
   navigateToForgotPassword() {
-    console.log("Navigating to forgot password...")
     this.router.navigate(['recovery']);
   }
 }

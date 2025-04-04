@@ -25,6 +25,10 @@ import { EditEventComponent } from './edit-event/edit-event.component';
 import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 import { SimulationComponent } from './simulation/simulation.component';
 
+/**
+ * Declaração de todos os componentes utilizados
+ * Todos os componentes estão no imports por serem standalone
+ */
 @NgModule({
   declarations: [
     AppComponent,

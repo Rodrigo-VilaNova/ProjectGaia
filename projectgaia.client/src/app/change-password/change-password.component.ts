@@ -13,13 +13,32 @@ import { NavbarComponent } from '../navbar/navbar.component';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, NavbarComponent]
 })
+
+/**
+  * Componente responsável pela mudança da password do utilizador.
+  */
 export class ChangePasswordComponent {
+
+  /** Formulário para a mudança da password */
   changePasswordForm: FormGroup;
+
+  /** Indica se o formulário está em processo de submissão para evitar múltiplos envios */
   loading = false;
+
+  /** Mensagem de erro exibida ao utilizador */
   errorMessage: string | null = null;
+
+  /** Mensagem de sucesso exibida ao utilizador */
   successMessage: string | null = null;
 
+  /**
+   * Construtor do componente
+   * @param fb FormBuilder para criação e validação do formulário
+   * @param http Serviço HTTP para comunicação com a API
+   * @param router Serviço de routing para navegação
+   */
   constructor(private fb: FormBuilder, private http: HttpClient, private router: Router) {
+    //Criação do formulário com validações
     this.changePasswordForm = this.fb.group({
       currentPassword: ['', [Validators.required]],
       newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128), this.passwordStrengthValidator]],
@@ -29,12 +48,22 @@ export class ChangePasswordComponent {
     });
   }
 
+  /**
+   * Verifica se a password inserida como confirmação coincide com a password inserida anteriormente
+   * @param group Grupo de campos do formulário
+   * @returns Um erro de validação se as passwords não forem iguais
+   */
   passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('newPassword')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
     return password === confirmPassword ? null : { passwordMismatch: true };
   }
 
+  /**
+   * Verifica se a password inserida é segura
+   * @param control O campo associado á password inserida
+   * @returns Um erro de validação caso a password não possua os requisitos
+   */
   passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
     if (!value) return null;
@@ -46,10 +75,10 @@ export class ChangePasswordComponent {
     return valid ? null : { passwordStrength: true };
   }
 
-  goBack() {
-    this.router.navigate(['/account']);
-  }
-
+  /**
+   * Submete o pedido de alteração de password após validações
+   * @returns
+   */
   onSubmit() {
     if (this.changePasswordForm.invalid) {
       this.errorMessage = 'Please correct the errors in the form.';
@@ -80,6 +109,9 @@ export class ChangePasswordComponent {
       });
   }
 
+  /**
+   * Redireciona o utilizador para a página da conta
+   */
   goToAccount() {
     this.router.navigate(['/account']);
   }
