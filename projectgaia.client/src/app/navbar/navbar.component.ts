@@ -33,6 +33,7 @@ export class NavbarComponent {
       'invoices': 'invoices-btn',
       'events': 'events-btn',
       'simulation': 'simulation-btn',
+      'about-us': 'about-us-btn',
     }
 
     const pageURL = this.router.url.split('/')[1]
@@ -63,7 +64,12 @@ export class NavbarComponent {
     this.router.navigate(['/simulation']);
   }
 
+  goToAboutUs() {
+    this.router.navigate(['/about-us']);
+  }
+
   goToProfile() {
     this.router.navigate(['/account']);
   }
+
 }
