@@ -4,13 +4,14 @@ import { CommonModule } from '@angular/common';
 import { EventService, Event, EventType } from '../services/event.service';
 import { Invoice, InvoiceService } from '../services/invoice.service';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { Form, FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, NavbarComponent]
+  imports: [RouterModule, CommonModule, NavbarComponent, FormsModule],
 })
 
 /**
@@ -38,11 +39,19 @@ export class DashboardComponent {
   /** Consumo médio das faturas armazenadas*/
   averageConsumption: number = 0;
 
+  /** Limite de consumo personalizado definido pelo utilizador */
+  customConsumptionLimit: number = 150;
+
   /**
    * Método do ciclo de vida do Angular chamado quando o componente é inicializado.
-   * Carrega os eventos e faturas necessários
+   * Carrega os eventos e faturas necessários e ainda o valor do consumo "máximo" definido pelo utilizador
    */
   ngOnInit() {
+    const savedLimit = localStorage.getItem('customConsumptionLimit');
+    if (savedLimit) {
+      this.customConsumptionLimit = parseInt(savedLimit, 10);
+    }
+
     this.loadUpcomingEvents();
     this.loadInvoices();
   }
@@ -99,18 +108,37 @@ export class DashboardComponent {
   }
 
   /**
+   * Permite que o limite de consumo definido pelo utilizador seja alterado e armazenado no localStorage
+   * @param newLimit O novo limite definido pelo utilizador
+   */
+  onLimitChange(newLimit: string | number) {
+    const parsedLimit = Number(newLimit);
+
+    // Verifica se o valor é um número válido
+    if (!isNaN(parsedLimit)) {
+      this.customConsumptionLimit = parsedLimit;
+      localStorage.setItem('customConsumptionLimit', parsedLimit.toString());
+    } else {
+      this.customConsumptionLimit = 0;
+      localStorage.removeItem('customConsumptionLimit');
+    }
+  }
+
+  /**
    * Muda a classe css do elemento html que contém os valores do custo e consumo médio
    * @param value O custo ou consumo médio
-   * @param limit Um limite para qualquer um dos valores anteriormente declarados
+   * @param limitOverride Um limite para qualquer um dos valores anteriormente declarados
    * @returns Um representação string da classe do elemento html
    */
-  getBoxClass(value: number, limit: number): string {
+  getBoxClass(value: number, limitOverride?: number): string {
+    const limit = limitOverride ?? this.customConsumptionLimit;
+
     if (value > limit) {
-      return 'high-consumption'; 
+      return 'high-consumption';
     } else if (value >= limit * 0.8) {
-      return 'warning-consumption'; 
+      return 'warning-consumption';
     } else {
-      return 'normal-consumption'; 
+      return 'normal-consumption';
     }
   }
 }
