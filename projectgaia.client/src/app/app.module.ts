@@ -24,6 +24,7 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { EditEventComponent } from './edit-event/edit-event.component';
 import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 import { SimulationComponent } from './simulation/simulation.component';
+import { AboutUsComponent } from './about-us/about-us.component';
 
 /**
  * Declaração de todos os componentes utilizados
@@ -32,6 +33,7 @@ import { SimulationComponent } from './simulation/simulation.component';
 @NgModule({
   declarations: [
     AppComponent,
+    AboutUsComponent,
   ], // Only AppComponent should be declared here
   imports: [
     BrowserModule,
