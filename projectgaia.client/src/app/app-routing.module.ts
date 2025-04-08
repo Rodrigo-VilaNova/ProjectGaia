@@ -19,6 +19,7 @@ import { AddEventComponent } from './add-event/add-event.component';
 import { EditEventComponent } from './edit-event/edit-event.component';
 import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 import { SimulationComponent } from './simulation/simulation.component';
+import { AboutUsComponent } from './about-us/about-us.component';
 
 /**
  * Declaração de todas as rotas da aplicação
@@ -41,6 +42,7 @@ const routes: Routes = [
   { path: 'edit-event/:id', component: EditEventComponent, canActivate: [AuthGuard] },
   { path: 'edit-invoice/:id', component: EditInvoiceComponent, canActivate: [AuthGuard] },
   { path: 'simulation', component: SimulationComponent, canActivate: [AuthGuard] },
+  { path: 'about-us', component: AboutUsComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '' },
 ];
 
