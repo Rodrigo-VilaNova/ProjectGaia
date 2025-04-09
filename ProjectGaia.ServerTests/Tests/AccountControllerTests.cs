@@ -46,6 +46,12 @@ namespace ProjectGaia.ServerTests.Tests
             _controller = new AccountController(_context, _confirmationService, _passwordService, _tokenService);
         }
 
+        /// <summary>
+        /// Verifica se a resposta recebida é do tipo <see cref="ObjectResult"/> e se o código de status retornado é o esperado.
+        /// </summary>
+        /// <param name="statusCode">Código de status HTTP esperado (por exemplo, 200, 400, 404).</param>
+        /// <param name="response">Objeto de resposta retornado pelo método do controller.</param>
+        /// <returns>Instância de <see cref="ObjectResult"/> contendo a resposta verificada.</returns>
         private ObjectResult AssertStatusCode(int statusCode, object? response)
         {
             ObjectResult assertResponse = Assert.IsAssignableFrom<ObjectResult>(response);
@@ -53,6 +59,9 @@ namespace ProjectGaia.ServerTests.Tests
             return assertResponse;
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) quando o modelo estiver inválido (ex: email ausente).
+        /// </summary>
         [Fact]
         public async Task RegisterAccount_InvalidModel_ReturnsBadRequest()
         {
@@ -64,6 +73,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) quando a senha não atender aos critérios de validação.
+        /// </summary>
         [Fact]
         public async Task RegisterAccount_InvalidPassword_ReturnsBadRequest()
         {
@@ -74,6 +86,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Conflict (409) ao tentar registrar um e-mail já existente.
+        /// </summary>
         [Fact]
         public async Task RegisterAccount_EmailAlreadyExists_ReturnsConflict()
         {
@@ -85,6 +100,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(409, result);
         }
 
+        /// <summary>
+        /// Deve retornar Accepted (202) quando os dados estiverem válidos.
+        /// </summary>
         [Fact]
         public async Task RegisterAccount_ValidInput_ReturnsAccepted()
         {
@@ -95,6 +113,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(202, result);
         }
 
+        /// <summary>
+        /// Deve retornar Created (201) quando o token for válido.
+        /// </summary>
         [Fact]
         public async Task ConfirmAccount_ValidInput_ReturnsCreated()
         {
@@ -106,6 +127,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(201, result);
         }
 
+        /// <summary>
+        /// Deve retornar Gone (410) quando o token for expirado ou inutilizável.
+        /// </summary>
         [Fact]
         public async Task ConfirmAccount_InvalidInput_ReturnsGone()
         {
@@ -117,6 +141,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(410, result);
         }
 
+        /// <summary>
+        /// Deve retornar NotFound (404) quando o token não corresponder a nenhum usuário.
+        /// </summary>
         [Fact]
         public async Task ConfirmAccount_InvalidInput_ReturnsNotFound()
         {
@@ -128,6 +155,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(404, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) quando o token for nulo ou malformado.
+        /// </summary>
         [Fact]
         public async Task ConfirmAccount_InvalidInput_ReturnsBadRequest()
         {
@@ -136,6 +166,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Accepted (202) ao enviar e-mail de recuperação para um usuário válido.
+        /// </summary>
         [Fact]
         public async Task SendRecoveryEmail_ValidInput_ReturnsAccepted()
         {
@@ -149,6 +182,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(202, result);
         }
 
+        /// <summary>
+        /// Deve retornar NotFound (404) se o e-mail informado não estiver cadastrado.
+        /// </summary>
         [Fact]
         public async Task SendRecoveryEmail_InvalidInput_ReturnsNotFound()
         {
@@ -162,6 +198,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(404, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se o e-mail estiver ausente ou for nulo.
+        /// </summary>
         [Fact]
         public async Task SendRecoveryEmail_BadInput_ReturnsBadRequest()
         {
@@ -175,6 +214,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Conflict (409) se já houver um pedido de recuperação pendente para o e-mail.
+        /// </summary>
         [Fact]
         public async Task SendRecoveryEmail_DuplicateRequest_ReturnsConflict()
         {
@@ -188,6 +230,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(409, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) ao redefinir a senha com token e senha válidos.
+        /// </summary>
         [Fact]
         public async Task ResetPassword_ValidInput_ReturnsOk()
         {
@@ -205,6 +250,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar NotFound (404) se o token informado não for encontrado.
+        /// </summary>
         [Fact]
         public async Task ResetPassword_InvalidToken_ReturnsNotFound()
         {
@@ -222,6 +270,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(404, result);
         }
 
+        /// <summary>
+        /// Deve retornar Gone (410) se o token estiver expirado.
+        /// </summary>
         [Fact]
         public async Task ResetPassword_ExpiredToken_ReturnsGone()
         {
@@ -239,6 +290,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(410, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se a nova senha não atender aos critérios de segurança.
+        /// </summary>
         [Fact]
         public async Task ResetPassword_InvalidPassword_ReturnsBadRequest()
         {
@@ -256,6 +310,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se o modelo estiver inválido (ex: email ausente).
+        /// </summary>
         [Fact]
         public async Task LoginAccount_InvalidModel_ReturnsBadRequest()
         {
@@ -267,6 +324,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se as credenciais estiverem incorretas.
+        /// </summary>
         [Fact]
         public async Task LoginAccount_InvalidCredentials_ReturnsUnauthorized()
         {
@@ -277,6 +337,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se a conta estiver bloqueada.
+        /// </summary>
         [Fact]
         public async Task LoginAccount_AccountBlocked_ReturnsForbidden()
         {
@@ -295,6 +358,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) se as credenciais estiverem corretas e retornar um token.
+        /// </summary>
         [Fact]
         public async Task LoginAccount_ValidCredentials_ReturnsOk()
         {
@@ -307,6 +373,9 @@ namespace ProjectGaia.ServerTests.Tests
             Assert.Contains("Token", assertResult.Value.ToString());
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token fornecido for inválido.
+        /// </summary>
         [Fact]
         public async Task LogoutAccount_InvalidToken_ReturnsUnauthorized()
         {
@@ -320,6 +389,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) se o token for válido e o logout ocorrer com sucesso.
+        /// </summary>
         [Fact]
         public async Task LogoutAccount_ValidToken_ReturnsOk()
         {
@@ -336,6 +408,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido.
+        /// </summary>
         [Fact]
         public async Task DeleteAccount_InvalidToken_ReturnsUnauthorized()
         {
@@ -349,6 +424,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se a conta estiver bloqueada.
+        /// </summary>
         [Fact]
         public async Task DeleteAccount_AccountBlocked_ReturnsForbidden()
         {
@@ -373,6 +451,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) ao excluir a conta com token válido.
+        /// </summary>
         [Fact]
         public async Task DeleteAccount_ValidToken_ReturnsOk()
         {
@@ -389,6 +470,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token na requisição.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_NoToken_ReturnsUnauthorized()
         {
@@ -402,6 +486,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token fornecido for inválido.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_InvalidToken_ReturnsUnauthorized()
         {
@@ -417,6 +504,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se a conta estiver bloqueada.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_AccountBlocked_ReturnsForbidden()
         {
@@ -443,6 +533,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se a senha atual estiver incorreta.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_InvalidOldPassword_ReturnsUnauthorized()
         {
@@ -461,6 +554,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se a nova senha não atender aos requisitos de segurança.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_InvalidNewPassword_ReturnsBadRequest()
         {
@@ -479,6 +575,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) ao trocar a senha com sucesso, e permitir login com a nova senha.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_ValidInput_ReturnsOk()
         {

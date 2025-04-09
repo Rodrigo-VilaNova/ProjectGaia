@@ -184,3 +184,15 @@ ul {
 ul li {
   text-align: left;
 }
+
+.tip-box {
+  background-color: #fff9ce;
+  border: 2px dashed #f5d001;
+  padding: 10px 20px;
+  border-radius: 10px;
+  margin: 10px auto;
+  max-width: 600px;
+  font-weight: bold;
+}
+
+
