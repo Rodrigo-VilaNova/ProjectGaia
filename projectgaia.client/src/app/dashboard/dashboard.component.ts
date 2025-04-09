@@ -49,7 +49,7 @@ export class DashboardComponent {
   /** Lista estática de dicas variadas */
   tips: string[] = [
     'Unplug chargers when not in use',
-    'Use LED light bulbs'
+    'Use LED light bulbs',
     'Air dry your clothes when possible',
     'Keep your thermostat at a stable temperature'
   ];
