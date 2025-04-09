@@ -43,8 +43,10 @@ export class DashboardComponent {
   /** Limite de consumo personalizado definido pelo utilizador */
   customConsumptionLimit: number = 150;
 
+  /** Texto relativo a dica que aparece na dashboard */
   ecoTip: string = '';
 
+  /** Lista estática de dicas variadas */
   tips: string[] = [
     'Unplug chargers when not in use',
     'Use LED light bulbs',
