@@ -25,6 +25,8 @@ import { EditEventComponent } from './edit-event/edit-event.component';
 import { EditInvoiceComponent } from './edit-invoice/edit-invoice.component';
 import { SimulationComponent } from './simulation/simulation.component';
 import { AboutUsComponent } from './about-us/about-us.component';
+import { TermsComponent } from './terms/terms.component';
+import { PrivacyComponent } from './privacy/privacy.component';
 
 /**
  * Declaração de todos os componentes utilizados
@@ -40,6 +42,8 @@ import { AboutUsComponent } from './about-us/about-us.component';
     FormsModule,
     ReactiveFormsModule,
     LandingPageComponent,
+    TermsComponent,
+    PrivacyComponent,
     LoginComponent,
     RegisterComponent,
     RegisterConfirmComponent,
