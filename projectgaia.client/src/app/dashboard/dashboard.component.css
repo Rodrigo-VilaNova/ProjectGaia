@@ -174,3 +174,13 @@ h3 {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+
+ul {
+  margin: 0 auto;
+  text-align: left;
+  width: fit-content;
+}
+
+ul li {
+  text-align: left;
+}
