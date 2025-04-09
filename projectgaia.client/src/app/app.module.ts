@@ -10,7 +10,6 @@ import { RegisterComponent } from './register/register.component';
 import { RegisterConfirmComponent } from './register-confirm/register-confirm.component';
 import { RegisteredComponent } from './registered/registered.component';
 import { InvoicesComponent } from './invoices/invoices.component';
-import { authInterceptor } from './interceptors/auth.interceptor';
 import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
 import { RecoveryComponent } from './recovery/recovery.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
@@ -27,6 +26,9 @@ import { SimulationComponent } from './simulation/simulation.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { TermsComponent } from './terms/terms.component';
 import { PrivacyComponent } from './privacy/privacy.component';
+
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { responseInterceptor } from './interceptors/response.interceptor';
 
 /**
  * Declaração de todos os componentes utilizados
@@ -65,7 +67,7 @@ import { PrivacyComponent } from './privacy/privacy.component';
     AboutUsComponent
   ],
   providers: [
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(withInterceptors([authInterceptor, responseInterceptor])),
   ],
   bootstrap: [AppComponent],
 })

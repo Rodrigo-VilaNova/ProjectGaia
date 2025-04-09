@@ -9,7 +9,6 @@ import { RegisteredComponent } from './registered/registered.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { AddInvoiceComponent } from './add-invoice/add-invoice.component';
-import { AuthGuard } from './auth.guard';
 import { ProfileComponent } from './profile/profile.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { RecoveryComponent } from './recovery/recovery.component';
@@ -22,12 +21,14 @@ import { SimulationComponent } from './simulation/simulation.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { TermsComponent } from './terms/terms.component';
 import { PrivacyComponent } from './privacy/privacy.component';
+import { AuthGuard } from './guards/auth.guard';
+import { LoginGuard } from './guards/login.guard';
 
 /**
  * Declaração de todas as rotas da aplicação
  */
 const routes: Routes = [
-  { path: '', component: LandingPageComponent, pathMatch: 'full' },
+  { path: '', component: LandingPageComponent, canActivate: [LoginGuard], pathMatch: 'full' },
   { path: 'terms', component: TermsComponent },
   { path: 'privacy', component: PrivacyComponent },
   { path: 'login', component: LoginComponent },

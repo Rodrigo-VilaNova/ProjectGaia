@@ -9,6 +9,9 @@ import { NavbarComponent } from '../navbar/navbar.component';
   imports: [NavbarComponent]
 })
 
+/**
+ * Componente responsável pela página de about us
+ */
 export class AboutUsComponent {
 
 }

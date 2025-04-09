@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { AuthService } from './interceptors/auth.service';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,7 @@ import { AuthService } from './interceptors/auth.service';
 
 /**
  * Componente responsável pela segurança da aplicação
- * Apenas utilizadores com tokens de autenticação válidos conseguem aceder a outras páginas para além da landing page
+ * Apenas utilizadores com tokens de autenticação válidos conseguem aceder a outras páginas para além das páginas iniciais
  */
 export class AuthGuard implements CanActivate {
 
@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
     if (!this.authService.hasToken()) {
-      this.router.navigate(['/landing']);
+      this.router.navigate(['']);
       return false;
     }
 

@@ -7,6 +7,10 @@ import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component'
   styleUrl: './privacy.component.css',
   imports: [NavbarSimpleComponent]
 })
+
+/**
+ * Componente responsável pela página de privacidade
+ */
 export class PrivacyComponent {
 
 }

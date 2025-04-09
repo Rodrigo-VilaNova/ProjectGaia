@@ -7,6 +7,10 @@ import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component'
   styleUrl: './terms.component.css',
   imports: [NavbarSimpleComponent]
 })
+
+/**
+ * Componente responsável pela página de termos e condições
+ */
 export class TermsComponent {
 
 }
