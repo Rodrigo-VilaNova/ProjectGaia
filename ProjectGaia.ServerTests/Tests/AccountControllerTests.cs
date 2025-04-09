@@ -358,6 +358,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) se as credenciais estiverem corretas e retornar um token.
+        /// </summary>
         [Fact]
         public async Task LoginAccount_ValidCredentials_ReturnsOk()
         {
@@ -370,6 +373,9 @@ namespace ProjectGaia.ServerTests.Tests
             Assert.Contains("Token", assertResult.Value.ToString());
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token fornecido for inválido.
+        /// </summary>
         [Fact]
         public async Task LogoutAccount_InvalidToken_ReturnsUnauthorized()
         {
@@ -383,6 +389,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) se o token for válido e o logout ocorrer com sucesso.
+        /// </summary>
         [Fact]
         public async Task LogoutAccount_ValidToken_ReturnsOk()
         {
@@ -399,6 +408,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido.
+        /// </summary>
         [Fact]
         public async Task DeleteAccount_InvalidToken_ReturnsUnauthorized()
         {
@@ -412,6 +424,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se a conta estiver bloqueada.
+        /// </summary>
         [Fact]
         public async Task DeleteAccount_AccountBlocked_ReturnsForbidden()
         {
@@ -436,6 +451,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) ao excluir a conta com token válido.
+        /// </summary>
         [Fact]
         public async Task DeleteAccount_ValidToken_ReturnsOk()
         {
@@ -452,6 +470,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token na requisição.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_NoToken_ReturnsUnauthorized()
         {
@@ -465,6 +486,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token fornecido for inválido.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_InvalidToken_ReturnsUnauthorized()
         {
@@ -480,6 +504,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se a conta estiver bloqueada.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_AccountBlocked_ReturnsForbidden()
         {
@@ -506,6 +533,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se a senha atual estiver incorreta.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_InvalidOldPassword_ReturnsUnauthorized()
         {
@@ -524,6 +554,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se a nova senha não atender aos requisitos de segurança.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_InvalidNewPassword_ReturnsBadRequest()
         {
@@ -542,6 +575,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) ao trocar a senha com sucesso, e permitir login com a nova senha.
+        /// </summary>
         [Fact]
         public async Task ChangePassword_ValidInput_ReturnsOk()
         {
