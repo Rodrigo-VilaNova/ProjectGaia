@@ -200,6 +200,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar NotFound (404) quando o evento não existe.
+        /// </summary>
         [Fact]
         public async Task GetEvent_EventDoesNotExist_ReturnsNotFound()
         {
@@ -215,6 +218,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(404, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token fornecido for inválido.
+        /// </summary>
         [Fact]
         public async Task GetEvent_InvalidToken_ReturnsUnauthorized()
         {
@@ -230,6 +236,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se o evento tem o token da conta errada.
+        /// </summary>
         [Fact]
         public async Task GetEvent_WrongAccountToken_ReturnsForbidden()
         {
@@ -245,6 +254,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não existir um token.
+        /// </summary>
         [Fact]
         public async Task GetEvent_NoToken_ReturnsUnauthorized()
         {
@@ -256,6 +268,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar NoContent (204) se o evento for editado com sucesso.
+        /// </summary>
         [Fact]
         public async Task EditEvent_ValidEvent_ReturnsNoContent()
         {
@@ -272,6 +287,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(204, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se o modelo enviado for inválido.
+        /// </summary>
         [Fact]
         public async Task EditEvent_InvalidModel_ReturnsBadRequest()
         {
@@ -288,6 +306,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido.
+        /// </summary>
         [Fact]
         public async Task EditEvent_InvalidToken_ReturnsUnauthorized()
         {
@@ -304,6 +325,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se o token pertencer a outra conta.
+        /// </summary>
         [Fact]
         public async Task EditEvent_WrongAccountToken_ReturnsForbidden()
         {
@@ -320,6 +344,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não existir um token.
+        /// </summary>
         [Fact]
         public async Task EditEvent_NoToken_ReturnsUnauthorized()
         {
@@ -332,6 +359,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) se o evento for deletado com sucesso.
+        /// </summary>
         [Fact]
         public async Task DeleteEvent_ValidToken_ReturnsOK()
         {
@@ -347,6 +377,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se o token não pertencer ao dono do evento.
+        /// </summary>
         [Fact]
         public async Task DeleteEvent_WrongAccountToken_ReturnsForbidden()
         {
@@ -362,6 +395,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido.
+        /// </summary>
         [Fact]
         public async Task DeleteEvent_InvalidToken_ReturnsUnauthorized()
         {
@@ -377,6 +413,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não existir um token.
+        /// </summary>
         [Fact]
         public async Task DeleteEvent_NoToken_ReturnsUnauthorized()
         {
