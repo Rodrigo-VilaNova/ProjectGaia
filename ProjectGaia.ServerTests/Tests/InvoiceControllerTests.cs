@@ -128,7 +128,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         /// <summary>
-        /// Deve retornar OK (200) com a lista de IDs das faturas do usuário.
+        /// Deve retornar OK (200) com a lista de IDs das faturas do utilizador.
         /// </summary>
         [Fact]
         public async Task GetInvoices_ValidToken_ReturnsInvoices()
@@ -151,7 +151,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         /// <summary>
-        /// Deve retornar Unauthorized (401) se o token for inválido ao buscar faturas.
+        /// Deve retornar Unauthorized (401) se o token for inválido ao procurar faturas.
         /// </summary>
         [Fact]
         public async Task GetInvoices_InvalidToken_ReturnsUnauthorized()
@@ -169,7 +169,7 @@ namespace ProjectGaia.ServerTests.Tests
         }
 
         /// <summary>
-        /// Deve retornar Unauthorized (401) se não houver token ao buscar faturas.
+        /// Deve retornar Unauthorized (401) se não houver token ao procurar faturas.
         /// </summary>
         [Fact]
         public async Task GetInvoices_NoToken_ReturnsUnauthorized()
@@ -218,6 +218,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(404, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido ao buscar fatura.
+        /// </summary>
         [Fact]
         public async Task GetInvoice_InvalidToken_ReturnsUnauthorized()
         {
@@ -233,6 +236,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se o token for de outro utilizador.
+        /// </summary>
         [Fact]
         public async Task GetInvoice_WrongAccountToken_ReturnsForbidden()
         {
@@ -248,6 +254,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token ao buscar fatura.
+        /// </summary>
         [Fact]
         public async Task GetInvoice_NoToken_ReturnsUnauthorized()
         {
@@ -259,6 +268,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar NoContent (204) se a fatura for atualizada com sucesso.
+        /// </summary>
         [Fact]
         public async Task EditInvoice_ValidInvoice_ReturnsNoContent()
         {
@@ -275,6 +287,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(204, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se os dados da fatura forem inválidos.
+        /// </summary>
         [Fact]
         public async Task EditInvoice_InvalidModel_ReturnsBadRequest()
         {
@@ -291,6 +306,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido ao editar uma fatura.
+        /// </summary>
         [Fact]
         public async Task EditInvoice_InvalidToken_ReturnsUnauthorized()
         {
@@ -307,6 +325,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se o token for de outro utilizador ao editar fatura.
+        /// </summary>
         [Fact]
         public async Task EditInvoice_WrongAccountToken_ReturnsForbidden()
         {
@@ -323,6 +344,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token ao editar fatura.
+        /// </summary>
         [Fact]
         public async Task EditInvoice_NoToken_ReturnsUnauthorized()
         {
@@ -335,6 +359,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) ao apagar uma fatura com sucesso.
+        /// </summary>
         [Fact]
         public async Task DeleteInvoice_ValidToken_ReturnsOK()
         {
