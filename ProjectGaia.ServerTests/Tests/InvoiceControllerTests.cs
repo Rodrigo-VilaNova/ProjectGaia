@@ -377,6 +377,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar Forbidden (403) se o token for de outro utilizador ao apagar uma fatura.
+        /// </summary>
         [Fact]
         public async Task DeleteInvoice_WrongAccountToken_ReturnsForbidden()
         {
@@ -392,6 +395,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(403, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido ao apagar uma fatura.
+        /// </summary>
         [Fact]
         public async Task DeleteInvoice_InvalidToken_ReturnsUnauthorized()
         {
@@ -407,6 +413,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token ao apagar uma fatura.
+        /// </summary>
         [Fact]
         public async Task DeleteInvoice_NoToken_ReturnsUnauthorized()
         {
