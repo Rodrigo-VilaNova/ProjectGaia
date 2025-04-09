@@ -45,12 +45,6 @@
                 {{ event.date | date:'dd-MM-yyyy'}}
               </td>
               <td>
-                <span [ngSwitch]="event.type">
-                  <span *ngSwitchCase="0">🌿</span>
-                  <span *ngSwitchCase="1">⚡</span>
-                  <span *ngSwitchCase="2">💧</span>
-                  <span *ngSwitchDefault>📅</span>
-                </span>
                 {{ getEventTypeName(event.type) }}
               </td>
             </tr>
