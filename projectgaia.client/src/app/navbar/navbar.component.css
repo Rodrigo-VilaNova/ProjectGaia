@@ -26,6 +26,7 @@
   background-color: transparent;
   background-image: url("/1144760.png");
   transition: background-color 0.3s ease;
+  margin-right: 15px;
 }
 
 .profile-circle:hover {
@@ -63,8 +64,18 @@ h1 {
 }
 
 .dashboard-btn {
-  width: 120px;
+  height: 100%;
+  width: 75px;
+  border: 5px solid red;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 
+.dashboard-img {
+  width: 75px;
+  pointer-events: none;
 }
 
 .page-selected-btn {

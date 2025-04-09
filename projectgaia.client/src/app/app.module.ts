@@ -32,8 +32,7 @@ import { AboutUsComponent } from './about-us/about-us.component';
  */
 @NgModule({
   declarations: [
-    AppComponent,
-    AboutUsComponent,
+    AppComponent
   ], // Only AppComponent should be declared here
   imports: [
     BrowserModule,
@@ -59,6 +58,7 @@ import { AboutUsComponent } from './about-us/about-us.component';
     EditInvoiceComponent,
     BrowserAnimationsModule,
     SimulationComponent,
+    AboutUsComponent
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),

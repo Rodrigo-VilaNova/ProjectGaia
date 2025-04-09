@@ -250,7 +250,7 @@ namespace ProjectGaia.Server.Controllers
                     }
                     else await transaction.RollbackAsync();
 
-                    return StatusCode(401, "Invalid email or password");
+                    return StatusCode(401, "Invalid credentials or account not yet confirmed.");
                 }
 #pragma warning restore CS8604 // Possible null reference argument.
 
