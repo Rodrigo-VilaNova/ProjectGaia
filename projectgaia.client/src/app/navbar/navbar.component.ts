@@ -71,5 +71,4 @@ export class NavbarComponent {
   goToProfile() {
     this.router.navigate(['/account']);
   }
-
 }

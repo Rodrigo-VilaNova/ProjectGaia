@@ -151,3 +151,17 @@ input:focus {
 .forgot-password:hover {
   color: #333;
 }
+
+.disclaimer {
+  margin-top: 20px;
+}
+
+.disclaimer a {
+  color: #007cdc;
+  border-bottom: none;
+  text-decoration: none;
+}
+
+.disclaimer a:hover {
+  border-bottom: 2px solid #007cdc;
+}
