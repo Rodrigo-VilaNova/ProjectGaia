@@ -43,6 +43,16 @@ export class DashboardComponent {
   /** Limite de consumo personalizado definido pelo utilizador */
   customConsumptionLimit: number = 150;
 
+  ecoTip: string = '';
+
+  tips: string[] = [
+    'Unplug chargers when not in use',
+    'Use LED light bulbs',
+    'Run full loads in dishwashers and washing machines',
+    'Air dry your clothes when possible',
+    'Keep your thermostat at a stable temperature'
+  ];
+
   /**
    * Método do ciclo de vida do Angular chamado quando o componente é inicializado.
    * Carrega os eventos e faturas necessários e ainda o valor do consumo "máximo" definido pelo utilizador
@@ -52,6 +62,8 @@ export class DashboardComponent {
     if (savedLimit) {
       this.customConsumptionLimit = parseInt(savedLimit, 10);
     }
+
+    this.ecoTip = this.tips[Math.floor(Math.random() * this.tips.length)];
 
     this.loadUpcomingEvents();
     this.loadInvoices();
@@ -142,4 +154,5 @@ export class DashboardComponent {
       return 'normal-consumption';
     }
   }
+
 }
