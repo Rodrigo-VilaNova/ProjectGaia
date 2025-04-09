@@ -4,12 +4,15 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
+import { FooterComponent } from '../footer/footer.component';
+import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component';
+
 @Component({
   selector: 'app-recovery',
   templateUrl: './recovery.component.html',
   styleUrls: ['./recovery.component.css'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule,NavbarSimpleComponent, FooterComponent],
 })
 
 /**

@@ -4,13 +4,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
+import { FooterComponent } from '../footer/footer.component';
+import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component';
 
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
   styleUrls: ['./reset-password.component.css'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule, CommonModule, NavbarSimpleComponent, FooterComponent]
 })
 
 /**

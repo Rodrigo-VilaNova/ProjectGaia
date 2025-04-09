@@ -4,13 +4,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractContro
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../environments/environment';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule]
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, FooterComponent]
 })
 
 /**

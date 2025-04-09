@@ -6,13 +6,14 @@ import { InvoiceService, Invoice } from '../services/invoice.service';
 import { environment } from '../../environments/environment';
 import { FormsModule } from '@angular/forms';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-invoices',
   templateUrl: './invoices.component.html',
   styleUrls: ['./invoices.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, NavbarComponent]
+  imports: [RouterModule, CommonModule, FormsModule, NavbarComponent, FooterComponent]
 })
 
 /**

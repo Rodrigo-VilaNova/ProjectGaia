@@ -1,26 +1,24 @@
 * {
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  box-sizing: border-box;
 }
 
 html, body {
   height: 100vh;
-  overflow: hidden;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
   top: 0;
   left: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Page layout */
 .page-container {
+  flex: 1;
   display: flex;
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
   top: 0;
   left: 0;
 }
@@ -35,8 +33,6 @@ html, body {
   background: linear-gradient(120deg, #fff9ce, #fff98b);
   color: #2a7125;
   text-align: center;
-  height: 100vh;
-  width: 100vw;
 }
 
 h1 {

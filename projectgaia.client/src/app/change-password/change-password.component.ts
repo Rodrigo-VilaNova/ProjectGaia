@@ -5,13 +5,14 @@ import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.css'],
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, NavbarComponent]
+  imports: [ReactiveFormsModule, CommonModule, NavbarComponent, FooterComponent]
 })
 
 /**

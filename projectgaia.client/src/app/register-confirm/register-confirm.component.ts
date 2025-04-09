@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { FooterComponent } from '../footer/footer.component';
+import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component';
 
 @Component({
   selector: 'app-register-confirm',
   standalone: true,
   templateUrl: './register-confirm.component.html',
   styleUrl: './register-confirm.component.css',
-  imports: [RouterModule]
+  imports: [RouterModule, NavbarSimpleComponent, FooterComponent]
 })
 
 /**

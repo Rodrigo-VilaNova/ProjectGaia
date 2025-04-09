@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../navbar/navbar.component';
+import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-about-us',
   templateUrl: './about-us.component.html',
   styleUrl: './about-us.component.css',
   standalone: true,
-  imports: [NavbarComponent]
+  imports: [NavbarSimpleComponent, FooterComponent]
 })
 
 /**

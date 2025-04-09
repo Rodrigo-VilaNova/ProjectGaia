@@ -16,19 +16,11 @@ body {
 }
 
 .simulation-container {
-  /*flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(120deg, #fff9ce, #fff98b);
-  color: #2a7125;
-  text-align: center;*/
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   background: linear-gradient(120deg, #fff9ce, #fff98b);
   color: #2a7125;
   text-align: center;

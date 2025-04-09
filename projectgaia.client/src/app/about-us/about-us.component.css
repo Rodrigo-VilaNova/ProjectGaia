@@ -6,6 +6,7 @@
 
 body {
   width: 100%;
+  /*height: 100vh;*/
   font-family: Arial, sans-serif;
 }
 
@@ -16,11 +17,11 @@ body {
 }
 
 .about-us-container {
+  flex: 1;
   background: linear-gradient(120deg, #fff9ce, #fff98b);
-  min-height: 100vh;
   padding: 40px 20px;
   text-align: center;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .title {

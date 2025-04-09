@@ -5,13 +5,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractContro
 import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-edit-event',
   templateUrl: './edit-event.component.html',
   styleUrls: ['./edit-event.component.css'],
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, NavbarComponent]
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, NavbarComponent, FooterComponent]
 })
 
 /**

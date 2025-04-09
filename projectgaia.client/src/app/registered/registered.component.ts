@@ -3,13 +3,15 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
+import { FooterComponent } from '../footer/footer.component';
+import { NavbarSimpleComponent } from '../navbar-simple/navbar-simple.component';
 
 
 @Component({
   selector: 'app-registered',
   templateUrl: './registered.component.html',
   styleUrls: ['./registered.component.css'],
-  imports: [CommonModule]
+  imports: [CommonModule, NavbarSimpleComponent, FooterComponent]
 })
 
 /**

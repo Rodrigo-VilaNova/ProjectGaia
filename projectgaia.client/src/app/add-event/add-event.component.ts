@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 /**
  * Interface que representa os dados necessários para criar um evento.
@@ -21,7 +22,7 @@ export interface EventDTO {
   templateUrl: './add-event.component.html',
   styleUrl: './add-event.component.css',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent]
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent, FooterComponent]
 })
 
 /**

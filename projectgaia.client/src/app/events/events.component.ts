@@ -6,13 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { EventService, Event, EventType } from '../services/event.service';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, FormsModule, NavbarComponent]
+  imports: [RouterModule, CommonModule, FormsModule, NavbarComponent, FooterComponent]
 })
 
 /**

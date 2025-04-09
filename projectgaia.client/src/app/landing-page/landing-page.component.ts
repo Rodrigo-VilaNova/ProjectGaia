@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-landing-page',
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.css'],
   standalone: true,
-  imports: [RouterModule]
+  imports: [RouterModule, FooterComponent]
 })
 
 /**

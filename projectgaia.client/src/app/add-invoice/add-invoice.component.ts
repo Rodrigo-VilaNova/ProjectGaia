@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-add-invoice',
   templateUrl: './add-invoice.component.html',
   styleUrls: ['./add-invoice.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent, FooterComponent],
 })
 
 /**

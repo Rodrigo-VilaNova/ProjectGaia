@@ -6,13 +6,14 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { Invoice, InvoiceService } from '../services/invoice.service';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-simulation',
   templateUrl: './simulation.component.html',
   styleUrls: ['./simulation.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent]
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, NavbarComponent, FooterComponent]
 })
 
 /**

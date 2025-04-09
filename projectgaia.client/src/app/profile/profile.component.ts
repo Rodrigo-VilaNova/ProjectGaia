@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { NavbarComponent } from '../navbar/navbar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { NavbarComponent } from '../navbar/navbar.component';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   standalone: true,
-  imports: [NavbarComponent]
+  imports: [NavbarComponent, FooterComponent]
 })
 
 /**

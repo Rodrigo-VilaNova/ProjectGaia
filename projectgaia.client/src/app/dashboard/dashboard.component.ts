@@ -5,13 +5,14 @@ import { EventService, Event, EventType } from '../services/event.service';
 import { Invoice, InvoiceService } from '../services/invoice.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { Form, FormsModule } from '@angular/forms';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   standalone: true,
-  imports: [RouterModule, CommonModule, NavbarComponent, FormsModule],
+  imports: [RouterModule, CommonModule, NavbarComponent, FooterComponent, FormsModule],
 })
 
 /**

@@ -64,10 +64,6 @@ export class NavbarComponent {
     this.router.navigate(['/simulation']);
   }
 
-  goToAboutUs() {
-    this.router.navigate(['/about-us']);
-  }
-
   goToProfile() {
     this.router.navigate(['/account']);
   }
