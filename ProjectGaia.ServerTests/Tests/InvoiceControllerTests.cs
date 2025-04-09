@@ -42,6 +42,12 @@ namespace ProjectGaia.ServerTests.Tests
             _controller = new InvoiceController(_context, _tokenService);
         }
 
+        /// <summary>
+        /// Verifica se a resposta recebida é do tipo <see cref="ObjectResult"/> e se o código de status retornado é o esperado.
+        /// </summary>
+        /// <param name="statusCode">Código de status HTTP esperado (por exemplo, 200, 400, 404).</param>
+        /// <param name="response">Objeto de resposta retornado pelo método do controller.</param>
+        /// <returns>Instância de <see cref="ObjectResult"/> contendo a resposta verificada.</returns>
         private ObjectResult AssertStatusCode(int statusCode, object? response)
         {
             ObjectResult assertResponse = Assert.IsAssignableFrom<ObjectResult>(response);
@@ -49,6 +55,9 @@ namespace ProjectGaia.ServerTests.Tests
             return assertResponse;
         }
 
+        /// <summary>
+        /// Deve retornar Created (201) se a fatura enviada for válida.
+        /// </summary>
         [Fact]
         public async Task UploadInvoice_ValidInvoice_ReturnsCreated()
         {
@@ -65,6 +74,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(201, result);
         }
 
+        /// <summary>
+        /// Deve retornar BadRequest (400) se o modelo de fatura for inválido.
+        /// </summary>
         [Fact]
         public async Task UploadInvoice_InvalidModel_ReturnsBadRequest()
         {
@@ -81,6 +93,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(400, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido.
+        /// </summary>
         [Fact]
         public async Task UploadInvoice_InvalidToken_ReturnsUnauthorized()
         {
@@ -97,6 +112,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token.
+        /// </summary>
         [Fact]
         public async Task UploadInvoice_NoToken_ReturnsUnauthorized()
         {
@@ -109,6 +127,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) com a lista de IDs das faturas do usuário.
+        /// </summary>
         [Fact]
         public async Task GetInvoices_ValidToken_ReturnsInvoices()
         {
@@ -129,6 +150,9 @@ namespace ProjectGaia.ServerTests.Tests
             Assert.Contains(1, invoiceIDs);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se o token for inválido ao buscar faturas.
+        /// </summary>
         [Fact]
         public async Task GetInvoices_InvalidToken_ReturnsUnauthorized()
         {
@@ -144,6 +168,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar Unauthorized (401) se não houver token ao buscar faturas.
+        /// </summary>
         [Fact]
         public async Task GetInvoices_NoToken_ReturnsUnauthorized()
         {
@@ -155,6 +182,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(401, result);
         }
 
+        /// <summary>
+        /// Deve retornar OK (200) com os dados da fatura, se ela existir e o token for válido.
+        /// </summary>
         [Fact]
         public async Task GetInvoice_InvoiceExists_ReturnsInvoice()
         {
@@ -170,6 +200,9 @@ namespace ProjectGaia.ServerTests.Tests
             AssertStatusCode(200, result);
         }
 
+        /// <summary>
+        /// Deve retornar NotFound (404) se a fatura não existir.
+        /// </summary>
         [Fact]
         public async Task GetInvoice_InvoiceDoesNotExist_ReturnsNotFound()
         {
