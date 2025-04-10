@@ -72,6 +72,7 @@ export class AddInvoiceComponent {
 
     const selectedDateString: string = this.invoiceForm.value.emissionDate;
     const selectedDate = new Date(selectedDateString);
+    selectedDate.setHours(0, 0, 0, 0);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
