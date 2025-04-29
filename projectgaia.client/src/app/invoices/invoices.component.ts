@@ -56,7 +56,7 @@ export class InvoicesComponent implements OnInit {
    * Construtor do componente
    * @param router Serviço de routing para navegação
    * @param http Cliente HTTP para comunicação com a API
-   * @param invoiceService~Serviço responsável pelas faturas
+   * @param invoiceService Serviço responsável pelas faturas
    */
   constructor(private router: Router, private http: HttpClient, private invoiceService: InvoiceService) { }
 
